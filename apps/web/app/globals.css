@@ -10,10 +10,13 @@
   --tnd-ink-900: #1c1a17;
   --tnd-ink-700: #3d3a34;
   --tnd-ink-500: #6b665c;
+  --tnd-ink-100: #e7e3da;
   --tnd-paper: #fbf9f4;
   --tnd-primary-700: #1f5c3d;
   --tnd-primary-600: #26714b;
   --tnd-primary-500: #2f8a5b;
+  --tnd-primary-50: #eef6f1;
+  --tnd-accent-600: #b4531f;
   --tnd-accent-500: #d06a30;
   --tnd-info: #2c5f8a;
   --tnd-danger: #b23b3b;
@@ -21,6 +24,7 @@
 
 html {
   color-scheme: light;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -28,17 +32,20 @@ body {
   min-height: 100dvh;
   background: var(--tnd-paper);
   color: var(--tnd-ink-900);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-body), "Segoe UI", system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
-h3 {
-  font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  line-height: 1.2;
+h3,
+h4 {
+  font-family: var(--font-heading), "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 
 a {
@@ -48,4 +55,11 @@ a {
 :focus-visible {
   outline: 3px solid var(--tnd-info);
   outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

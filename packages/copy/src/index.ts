@@ -12,6 +12,25 @@ export {
   buildJargonRegex,
   type JargonHit,
 } from "./blacklist";
+export { site } from "./site";
+export { landing, type Landing } from "./landing";
+export {
+  offers,
+  offerRows,
+  offersCopy,
+  type Offer,
+  type OfferRow,
+} from "./offers";
+export { faq, faqCopy, type FaqItem } from "./faq";
+export {
+  legalIdentity,
+  mentionsLegales,
+  conditionsGenerales,
+  politiqueConfidentialite,
+  cookiesCopy,
+  type LegalPage,
+  type LegalSection,
+} from "./legal";
 
 import { glossary } from "./glossary";
 
@@ -45,6 +64,59 @@ export const auth = {
       "Ce lien a expiré. Demandez-en un nouveau depuis la page de connexion.",
     generic: "La connexion n'a pas abouti. Redemandez un lien et réessayez.",
   },
+} as const;
+
+/** Barre de navigation et pied de page du site public. */
+export const nav = {
+  home: "Accueil",
+  catalogue: "Employés disponibles",
+  pricing: "Tarifs",
+  faq: "Questions",
+  account: "Mon espace",
+  talkToHuman: glossary.actions.talkToHuman,
+  skipToContent: "Aller au contenu",
+} as const;
+
+export const footer = {
+  baseline: "Votre employé virtuel, 24h/24, 7j/7.",
+  columns: {
+    product: {
+      title: "Le produit",
+      links: [
+        { label: "Employés disponibles", href: "/employes-virtuels" },
+        { label: "Sur mesure", href: "/questionnaire" },
+        { label: "Tarifs", href: "/tarifs" },
+        { label: "Questions", href: "/faq" },
+      ],
+    },
+    legal: {
+      title: "Informations",
+      links: [
+        { label: "Mentions légales", href: "/mentions-legales" },
+        { label: "Conditions générales", href: "/cgv" },
+        { label: "Confidentialité", href: "/confidentialite" },
+        { label: "Cookies", href: "/cookies" },
+      ],
+    },
+  },
+  rights: "Tous droits réservés.",
+} as const;
+
+/** Pages encore en construction (catalogue, questionnaire, contact). */
+export const stub = {
+  catalogue: {
+    title: "Les employés disponibles arrivent très bientôt.",
+    body: "On finit de préparer les assistants par métier : dentiste, restaurateur, garagiste, coiffeur, agent immobilier, artisan. En attendant, vous pouvez nous décrire votre besoin.",
+  },
+  questionnaire: {
+    title: "Le questionnaire sur mesure arrive très bientôt.",
+    body: "Vous pourrez bientôt décrire votre besoin en quelques minutes et recevoir un devis clair. En attendant, écrivez-nous : on vous rappelle.",
+  },
+  contact: {
+    title: "Parlons de votre besoin.",
+    body: "Écrivez-nous à bonjour@tando.fr en quelques mots : votre métier, ce qui vous prend du temps, et quand vous rappeler. Une vraie personne vous répond.",
+  },
+  backHome: "Revenir à l'accueil",
 } as const;
 
 /** Coquille de l'espace client (Lot 0 : squelette, rempli au Lot 5). */

@@ -127,5 +127,21 @@ pnpm dev                        # api (:3333) + web (:3000)
   (organisations, users, memberships, magic_links, sessions, audit_logs), auth par lien
   magique (API + web + squelette mobile), design tokens, `packages/*`, CI. `pnpm dev`
   démarre tout, la connexion par lien magique fonctionne de bout en bout.
-- Lots 1 → 11 : voir `prompt-claude-code-tando.md` §10. Mettre cette section à jour à
+- **Lot 1 — Vitrine : fait.** Landing avec les textes du §8 (hero, problème, solution,
+  « depuis votre poche », les deux voies, rassurance, CTA final), `/tarifs` (§7, prix
+  provisoires dans `@tando/copy/offers`), `/faq` (+ données structurées FAQPage),
+  `/mentions-legales`, `/cgv`, `/confidentialite`, `/cookies` (identité de l'éditeur en
+  `[À COMPLÉTER]` — à renseigner avant mise en ligne), bandeau cookies CNIL. Pages relais
+  `/employes-virtuels` (Lot 2), `/questionnaire` (Lot 3), `/contact`. SEO : `metadata` +
+  canoniques, `sitemap.ts`, `robots.ts`, `app/icon.svg`, `opengraph-image`, JSON-LD
+  Organization. Polices : Inter + Bricolage Grotesque via `next/font`. Tout en Tailwind
+  (preset `@tando/config`), mobile-first, texte 16px min, cibles 44px.
+- Lots 2 → 11 : voir `prompt-claude-code-tando.md` §10. Mettre cette section à jour à
   chaque lot livré.
+
+### À renseigner avant mise en ligne du site public (Lot 1)
+
+`packages/copy/src/legal.ts` (`legalIdentity`) : raison sociale, forme juridique, capital,
+SIREN, RCS, TVA intracom, siège social, directeur de publication, hébergeur, médiateur
+conso. `packages/copy/src/site.ts` : téléphone du support. `packages/copy/src/offers.ts` :
+prix définitifs (sinon repris tels quels du §7).
