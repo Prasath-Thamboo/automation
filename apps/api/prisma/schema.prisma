@@ -1,0 +1,149 @@
+// Schéma Prisma — Lot 0 (Fondations).
+// Périmètre : identité, appartenance à une organisation, connexion par lien magique,
+// sessions, journal d'audit. Les tables métier (§9.2 du cahier des charges) —
+// professions, assistant_templates, quotes, missions, invoices, … — seront ajoutées
+// lot par lot.
+//
+// Règles transverses :
+//  - soft delete via `deletedAt` partout SAUF sur les documents comptables (à venir, immuables) ;
+//  - `organizationId` sur toute table métier, isolation appliquée par une garde centralisée
+//    (voir src/prisma/tenant.ts), jamais laissée à chaque requête ;
+//  - horodatages en UTC ;
+//  - `AuditLog` sur toute action sensible.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Rôle d'un utilisateur au sein d'une organisation cliente.
+/// `admin` est réservé au personnel Tando (accès back-office), il n'appartient à aucune organisation cliente.
+enum MembershipRole {
+  owner
+  member
+  admin
+}
+
+/// Canal d'origine d'une demande de lien magique — détermine la forme du lien envoyé.
+enum AuthChannel {
+  web
+  mobile
+}
+
+/// Une organisation cliente (le compte d'une petite entreprise).
+model Organization {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  /// Identifiant lisible pour les URLs internes / le back-office.
+  slug      String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  memberships Membership[]
+  auditLogs   AuditLog[]
+
+  @@map("organizations")
+}
+
+/// Une personne physique. Peut appartenir à plusieurs organisations (multi-utilisateurs, §6).
+model User {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String    @unique
+  fullName  String?
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  memberships Membership[]
+  magicLinks  MagicLink[]
+  sessions    Session[]
+  auditLogs   AuditLog[]
+
+  @@map("users")
+}
+
+/// Lien entre un utilisateur et une organisation, avec son rôle.
+model Membership {
+  id             String         @id @default(uuid()) @db.Uuid
+  userId         String         @db.Uuid
+  organizationId String         @db.Uuid
+  role           MembershipRole @default(owner)
+  createdAt      DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?      @db.Timestamptz(6)
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+  @@map("memberships")
+}
+
+/// Jeton de connexion à usage unique, envoyé par email. Valable 15 minutes (§9.1).
+/// Seul le hash du jeton est stocké — le jeton en clair ne vit que dans l'email.
+model MagicLink {
+  id         String      @id @default(uuid()) @db.Uuid
+  userId     String      @db.Uuid
+  tokenHash  String      @unique
+  channel    AuthChannel @default(web)
+  expiresAt  DateTime    @db.Timestamptz(6)
+  consumedAt DateTime?   @db.Timestamptz(6)
+  /// Métadonnées de la demande, sans donnée personnelle en clair (§9.4).
+  requestIp  String?
+  createdAt  DateTime    @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("magic_links")
+}
+
+/// Session authentifiée. Web : cookie httpOnly. Mobile : jeton Bearer (expo-secure-store).
+/// Seul le hash du jeton de session est stocké.
+model Session {
+  id         String      @id @default(uuid()) @db.Uuid
+  userId     String      @db.Uuid
+  tokenHash  String      @unique
+  channel    AuthChannel @default(web)
+  userAgent  String?
+  expiresAt  DateTime    @db.Timestamptz(6)
+  revokedAt  DateTime?   @db.Timestamptz(6)
+  lastSeenAt DateTime    @default(now()) @db.Timestamptz(6)
+  createdAt  DateTime    @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+/// Journal d'audit : toute action sensible (accès aux données client, connexion,
+/// changement de prix, envoi de devis…). Immuable — jamais mis à jour ni supprimé.
+model AuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  /// Nullable : certaines actions (ex. demande de lien magique) précèdent la résolution d'une organisation.
+  organizationId String?  @db.Uuid
+  actorUserId    String?  @db.Uuid
+  /// Verbe court, ex. "auth.magic_link.requested", "auth.session.created".
+  action         String
+  /// Cible optionnelle, ex. "user:<id>".
+  target         String?
+  /// Contexte non sensible (jamais d'email/téléphone en clair).
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  actor        User?         @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([action])
+  @@map("audit_logs")
+}

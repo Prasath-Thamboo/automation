@@ -1,0 +1,114 @@
+/*
+ * Styles des composants @tando/ui. Valeurs alignées sur packages/config/src/tokens.ts.
+ * Importé une fois par l'app hôte (apps/web/app/globals.css).
+ */
+
+.tnd-btn {
+  --tnd-btn-bg: var(--tnd-primary-600, #26714b);
+  --tnd-btn-fg: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  background: var(--tnd-btn-bg);
+  color: var(--tnd-btn-fg);
+  transition: filter 120ms ease;
+}
+.tnd-btn:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+.tnd-btn:focus-visible {
+  outline: 3px solid #2c5f8a;
+  outline-offset: 2px;
+}
+.tnd-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.tnd-btn--lg {
+  min-height: 52px;
+  font-size: 18px;
+  padding: 14px 28px;
+}
+.tnd-btn--secondary {
+  --tnd-btn-bg: transparent;
+  --tnd-btn-fg: #1f5c3d;
+  border-color: #26714b;
+}
+.tnd-btn--ghost {
+  --tnd-btn-bg: transparent;
+  --tnd-btn-fg: #3d3a34;
+}
+
+.tnd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tnd-field__label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1a17;
+}
+.tnd-field__hint {
+  font-size: 14px;
+  color: #6b665c;
+  margin: 0;
+}
+.tnd-field__input {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #a8a296;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c1a17;
+}
+.tnd-field__input:focus-visible {
+  outline: 3px solid #2c5f8a;
+  outline-offset: 1px;
+  border-color: #2c5f8a;
+}
+.tnd-field__input[aria-invalid="true"] {
+  border-color: #b23b3b;
+}
+.tnd-field__error {
+  font-size: 14px;
+  color: #b23b3b;
+  margin: 0;
+}
+
+.tnd-callout {
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e7e3da;
+  background: #f6f3ec;
+}
+.tnd-callout--success {
+  border-color: #d8ece0;
+  background: #eef6f1;
+}
+.tnd-callout--warning {
+  border-color: #f6e2d5;
+  background: #fbf3ea;
+}
+.tnd-callout__title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1c1a17;
+}
+.tnd-callout__body {
+  font-size: 16px;
+  color: #3d3a34;
+}

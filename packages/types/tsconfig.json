@@ -1,0 +1,7 @@
+{
+  "extends": "@tando/config/tsconfig/library.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}

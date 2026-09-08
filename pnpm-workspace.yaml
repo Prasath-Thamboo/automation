@@ -1,0 +1,19 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Un seul jeu de types React dans tout le monorepo, sinon les .d.ts internes de
+# Next (qui importent "react") et notre code applicatif chargent deux namespaces
+# React globaux incompatibles. RN 0.76 tolère @types/react 19 (skipLibCheck).
+overrides:
+  "@types/react": "19.0.12"
+  "@types/react-dom": "19.0.4"
+
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  prisma: true
+  esbuild: true
+  msgpackr-extract: true
+  unrs-resolver: true
+  "@scarf/scarf": false

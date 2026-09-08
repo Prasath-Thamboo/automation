@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Variables consommées par les composants @tando/ui (préfixe --tnd-).
+ * Valeurs alignées sur packages/config/src/tokens.ts.
+ */
+:root {
+  --tnd-ink-900: #1c1a17;
+  --tnd-ink-700: #3d3a34;
+  --tnd-ink-500: #6b665c;
+  --tnd-paper: #fbf9f4;
+  --tnd-primary-700: #1f5c3d;
+  --tnd-primary-600: #26714b;
+  --tnd-primary-500: #2f8a5b;
+  --tnd-accent-500: #d06a30;
+  --tnd-info: #2c5f8a;
+  --tnd-danger: #b23b3b;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--tnd-paper);
+  color: var(--tnd-ink-900);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--tnd-primary-700);
+}
+
+:focus-visible {
+  outline: 3px solid var(--tnd-info);
+  outline-offset: 2px;
+}

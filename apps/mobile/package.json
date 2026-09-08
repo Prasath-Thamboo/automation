@@ -1,0 +1,37 @@
+{
+  "name": "@tando/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "build": "echo \"(mobile) build via EAS — voir CLAUDE.md\" && exit 0",
+    "lint": "eslint app src",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"(mobile) parcours critiques via Maestro au Lot 8\" && exit 0"
+  },
+  "dependencies": {
+    "@tando/api-client": "workspace:*",
+    "@tando/copy": "workspace:*",
+    "@tando/types": "workspace:*",
+    "@tando/ui-native": "workspace:*",
+    "expo": "~52.0.27",
+    "expo-constants": "~17.0.4",
+    "expo-linking": "~7.0.5",
+    "expo-router": "~4.0.17",
+    "expo-secure-store": "~14.0.1",
+    "expo-status-bar": "~2.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.6",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0"
+  },
+  "devDependencies": {
+    "@tando/config": "workspace:*",
+    "@types/react": "19.0.12",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2"
+  }
+}

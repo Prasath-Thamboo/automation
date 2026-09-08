@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Tando",
+    "slug": "tando",
+    "scheme": "tando",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "fr.tando.app"
+    },
+    "android": {
+      "package": "fr.tando.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#fbf9f4"
+      }
+    },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:3333"
+    }
+  }
+}

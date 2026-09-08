@@ -1,0 +1,16 @@
+{
+  "extends": "@tando/config/tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "types": ["react", "expo-router"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["app/**/*", "src/**/*", "expo-env.d.ts", ".expo/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

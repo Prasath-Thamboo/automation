@@ -1,0 +1,27 @@
+{
+  "name": "tando",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:up": "docker compose up -d postgres redis minio mailpit",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @tando/api db:migrate",
+    "db:seed": "pnpm --filter @tando/api db:seed",
+    "db:studio": "pnpm --filter @tando/api db:studio",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:migrate:deploy": "pnpm --filter @tando/api db:migrate:deploy"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}

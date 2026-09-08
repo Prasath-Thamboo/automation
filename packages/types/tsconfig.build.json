@@ -1,0 +1,14 @@
+{
+  "extends": "@tando/config/tsconfig/library.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "verbatimModuleSyntax": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+}

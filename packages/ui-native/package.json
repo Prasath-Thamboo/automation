@@ -1,0 +1,28 @@
+{
+  "name": "@tando/ui-native",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tando/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.12",
+    "eslint": "^9.17.0",
+    "react": "18.3.1",
+    "react-native": "0.76.6",
+    "typescript": "^5.7.2"
+  }
+}
