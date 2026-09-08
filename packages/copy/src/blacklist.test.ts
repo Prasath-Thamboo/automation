@@ -21,12 +21,19 @@ const roots = [
   resolve(repoRoot, "apps/web/lib"),
 ];
 
-/** Fichiers qui *définissent* la liste noire — ils contiennent les termes par nature. */
-const isSelfReferential = (file: string) =>
-  /[\\/]blacklist\.(ts|test\.ts)$/.test(file) || /[\\/]scanner\.ts$/.test(file);
+/**
+ * Fichiers non concernés par la règle :
+ *  - ceux qui *définissent* la liste noire (ils contiennent les termes par nature) ;
+ *  - le back-office (`apps/web/app/admin`) : §2 autorise le vocabulaire technique
+ *    dans l'interface interne, qui n'est jamais vue par le client.
+ */
+const isExcluded = (file: string) =>
+  /[\\/]blacklist\.(ts|test\.ts)$/.test(file) ||
+  /[\\/]scanner\.ts$/.test(file) ||
+  /[\\/]apps[\\/]web[\\/]app[\\/]admin[\\/]/.test(file);
 
 describe("liste noire de jargon (§2)", () => {
-  const strings = scanRoots(roots, { excludeFiles: isSelfReferential });
+  const strings = scanRoots(roots, { excludeFiles: isExcluded });
 
   it("scanne effectivement des fichiers", () => {
     expect(strings.length).toBeGreaterThan(0);

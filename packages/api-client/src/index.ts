@@ -4,14 +4,25 @@
  * et valider. Les réponses sont vérifiées avec les schémas de `@tando/types`.
  */
 import {
+  adminProfessionListSchema,
+  adminProfessionSchema,
   apiErrorSchema,
   authResultSchema,
+  catalogListSchema,
   healthSchema,
+  professionDetailSchema,
   sessionUserSchema,
+  type AdminProfession,
+  type AdminProfessionList,
   type AuthResult,
+  type CatalogList,
+  type CreateProfession,
   type Health,
+  type ProfessionDetail,
   type RequestMagicLink,
   type SessionUser,
+  type TemplateContent,
+  type UpdateProfession,
   type VerifyMagicLink,
 } from "@tando/types";
 import { z, type ZodType } from "zod";
@@ -132,10 +143,69 @@ export function createApiClient(options: ApiClientOptions) {
         return request("/auth/sign-out", okSchema, { method: "POST" });
       },
     },
+
+    /** Catalogue public d'employés virtuels prêts à l'emploi (§5). */
+    catalog: {
+      list(): Promise<CatalogList> {
+        return request("/catalog/professions", catalogListSchema);
+      },
+      detail(slug: string): Promise<ProfessionDetail> {
+        return request(`/catalog/professions/${encodeURIComponent(slug)}`, professionDetailSchema);
+      },
+    },
+
+    /** Back-office (réservé au rôle `admin`). */
+    admin: {
+      catalog: {
+        list(): Promise<AdminProfessionList> {
+          return request("/admin/catalog/professions", adminProfessionListSchema);
+        },
+        get(id: string): Promise<AdminProfession> {
+          return request(`/admin/catalog/professions/${id}`, adminProfessionSchema);
+        },
+        create(body: CreateProfession): Promise<AdminProfession> {
+          return request("/admin/catalog/professions", adminProfessionSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        update(id: string, body: UpdateProfession): Promise<AdminProfession> {
+          return request(`/admin/catalog/professions/${id}`, adminProfessionSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        saveDraft(id: string, content: TemplateContent): Promise<AdminProfession> {
+          return request(`/admin/catalog/professions/${id}/template`, adminProfessionSchema, {
+            method: "PUT",
+            body: JSON.stringify(content),
+          });
+        },
+        publish(id: string): Promise<AdminProfession> {
+          return request(
+            `/admin/catalog/professions/${id}/template/publish`,
+            adminProfessionSchema,
+            { method: "POST" },
+          );
+        },
+        remove(id: string): Promise<{ ok: true }> {
+          return request(`/admin/catalog/professions/${id}`, okSchema, { method: "DELETE" });
+        },
+      },
+    },
   };
 }
 
 export type ApiClient = ReturnType<typeof createApiClient>;
 
 export { ApiError as ApiClientError };
-export type { AuthResult, Health, SessionUser } from "@tando/types";
+export type {
+  AuthResult,
+  Health,
+  SessionUser,
+  CatalogList,
+  ProfessionCard,
+  ProfessionDetail,
+  AdminProfession,
+  TemplateContent,
+} from "@tando/types";

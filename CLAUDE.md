@@ -136,8 +136,27 @@ pnpm dev                        # api (:3333) + web (:3000)
   canoniques, `sitemap.ts`, `robots.ts`, `app/icon.svg`, `opengraph-image`, JSON-LD
   Organization. Polices : Inter + Bricolage Grotesque via `next/font`. Tout en Tailwind
   (preset `@tando/config`), mobile-first, texte 16px min, cibles 44px.
-- Lots 2 → 11 : voir `prompt-claude-code-tando.md` §10. Mettre cette section à jour à
-  chaque lot livré.
+- **Lot 2 — Catalogue : fait.** Modèle `professions` / `assistant_templates` /
+  `assistant_template_versions` (contenu de fiche versionné en JSON, validé par
+  `templateContentSchema`). API publique `GET /catalog/professions` (+ filtres secteur /
+  besoin) et `GET /catalog/professions/:slug`. Back-office `/admin` (rôle `admin`, garde
+  `AdminGuard` + layout qui `notFound()` sinon) : créer un métier, éditer la fiche section
+  par section, enregistrer en brouillon, publier (archive la version précédente), masquer,
+  supprimer — sans redéploiement. Web : `/employes-virtuels` (grille + filtres),
+  `/employes-virtuels/[slug]` (fiche §5.1 en 8 parties, démo jouable pré-scriptée, curseurs
+  de gain). 6 métiers seedés et publiés. Le personnel Tando se connecte avec
+  `staff@tando.fr` (membre `admin` d'une organisation interne « Tando »).
+- Lots 3 → 11 : voir `prompt-claude-code-tando.md` §10.
+
+### Notes Lot 2
+
+- Le back-office (`apps/web/app/admin/**`) utilise le vocabulaire technique normal (§2) :
+  il est **exclu** du test anti-jargon (`packages/copy/src/blacklist.test.ts`).
+- Types du catalogue : interfaces écrites à la main dans `packages/types/src/catalog.ts`
+  (schémas Zod annotés `z.ZodType<...>`), pour éviter que `z.infer` sur des structures
+  profondes ne produise des types géants (erreur TS2719 aux frontières de paquets).
+- `apps/api` : arrêter le serveur avant `pnpm build` / `prisma generate` — sinon la DLL
+  du moteur Prisma est verrouillée sous Windows (EPERM).
 
 ### À renseigner avant mise en ligne du site public (Lot 1)
 

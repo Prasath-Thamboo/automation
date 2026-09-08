@@ -1,13 +1,16 @@
 /**
- * Seed de développement — Lot 0.
- * Crée un compte de démonstration pour pouvoir tester la connexion par lien magique
- * sans repartir d'une base vide. Idempotent (upsert).
+ * Seed de développement.
+ * - Compte de démonstration (organisation cliente + propriétaire).
+ * - Compte du personnel Tando (rôle admin, accès back-office).
+ * - Catalogue : les 6 métiers du MVP, publiés (§5 / §10 Lot 2).
+ * Idempotent (upsert).
  */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@prisma/client";
+import { catalogSeed } from "./seed-data/catalog";
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function seedAccounts() {
   const org = await prisma.organization.upsert({
     where: { slug: "demo" },
     update: {},
@@ -26,17 +29,82 @@ async function main() {
     create: { userId: owner.id, organizationId: org.id, role: "owner" },
   });
 
-  // Compte du personnel Tando (accès back-office, aucune organisation cliente).
-  await prisma.user.upsert({
+  // Personnel Tando : une organisation interne + un membre `admin`.
+  const staffOrg = await prisma.organization.upsert({
+    where: { slug: "tando-staff" },
+    update: {},
+    create: { name: "Tando", slug: "tando-staff" },
+  });
+  const staff = await prisma.user.upsert({
     where: { email: "staff@tando.fr" },
     update: {},
     create: { email: "staff@tando.fr", fullName: "Équipe Tando" },
   });
+  await prisma.membership.upsert({
+    where: { userId_organizationId: { userId: staff.id, organizationId: staffOrg.id } },
+    update: { role: "admin" },
+    create: { userId: staff.id, organizationId: staffOrg.id, role: "admin" },
+  });
 
-  console.warn("Seed terminé :");
-  console.warn(`  organisation « ${org.name} » (slug: ${org.slug})`);
-  console.warn(`  propriétaire  ${owner.email}`);
-  console.warn(`  staff Tando   staff@tando.fr`);
+  console.warn("Comptes :");
+  console.warn(`  propriétaire  ${owner.email}  (organisation « ${org.name} »)`);
+  console.warn(`  admin Tando   ${staff.email}`);
+}
+
+async function seedCatalog() {
+  for (const item of catalogSeed) {
+    const profession = await prisma.profession.upsert({
+      where: { slug: item.slug },
+      update: {
+        name: item.name,
+        sector: item.sector,
+        benefit: item.benefit,
+        needs: item.needs,
+        monthlyPriceEur: item.monthlyPriceEur,
+        position: item.position,
+        published: true,
+      },
+      create: {
+        slug: item.slug,
+        name: item.name,
+        sector: item.sector,
+        benefit: item.benefit,
+        needs: item.needs,
+        monthlyPriceEur: item.monthlyPriceEur,
+        position: item.position,
+        published: true,
+        template: { create: {} },
+      },
+      include: { template: { include: { versions: true } } },
+    });
+
+    const templateId = profession.template!.id;
+    const content = item.content as unknown as Prisma.InputJsonValue;
+    const existingPublished = profession.template!.versions.find((v) => v.status === "published");
+
+    if (existingPublished) {
+      await prisma.assistantTemplateVersion.update({
+        where: { id: existingPublished.id },
+        data: { content },
+      });
+    } else {
+      await prisma.assistantTemplateVersion.create({
+        data: {
+          templateId,
+          version: 1,
+          status: "published",
+          publishedAt: new Date(),
+          content,
+        },
+      });
+    }
+  }
+  console.warn(`Catalogue : ${catalogSeed.length} métiers publiés.`);
+}
+
+async function main() {
+  await seedAccounts();
+  await seedCatalog();
 }
 
 main()

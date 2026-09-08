@@ -5,11 +5,12 @@ import { AuthService } from "./auth.service";
 import { MagicLinkService } from "./magic-link.service";
 import { SessionService } from "./session.service";
 import { SessionGuard } from "./session.guard";
+import { AdminGuard } from "./admin.guard";
 
 @Module({
   imports: [QueueModule],
   controllers: [AuthController],
-  providers: [AuthService, MagicLinkService, SessionService, SessionGuard],
-  exports: [SessionService, SessionGuard],
+  providers: [AuthService, MagicLinkService, SessionService, SessionGuard, AdminGuard],
+  exports: [SessionService, SessionGuard, AdminGuard],
 })
 export class AuthModule {}

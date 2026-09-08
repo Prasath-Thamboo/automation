@@ -1,7 +1,9 @@
-// Schéma Prisma — Lot 0 (Fondations).
-// Périmètre : identité, appartenance à une organisation, connexion par lien magique,
-// sessions, journal d'audit. Les tables métier (§9.2 du cahier des charges) —
-// professions, assistant_templates, quotes, missions, invoices, … — seront ajoutées
+// Schéma Prisma — Lots 0 à 2.
+// Lot 0 : identité, appartenance à une organisation, connexion par lien magique,
+//         sessions, journal d'audit.
+// Lot 2 : catalogue d'employés virtuels prêts à l'emploi — professions,
+//         assistant_templates, assistant_template_versions (contenu versionné).
+// Les autres tables métier (§9.2) — quotes, missions, invoices, … — viendront
 // lot par lot.
 //
 // Règles transverses :
@@ -146,4 +148,79 @@ model AuditLog {
   @@index([organizationId])
   @@index([action])
   @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 2 — Catalogue d'employés virtuels prêts à l'emploi (§5)
+// Piloté en base : on ajoute un métier sans redéploiement (back-office).
+// Ces tables ne sont PAS rattachées à une organisation : le catalogue est public.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum TemplateStatus {
+  draft
+  published
+  archived
+}
+
+/// Un métier proposé au catalogue (« l'assistant du dentiste », …).
+model Profession {
+  id              String    @id @default(uuid()) @db.Uuid
+  /// Identifiant d'URL : /employes-virtuels/<slug>
+  slug            String    @unique
+  /// Nom affiché sur la carte et la fiche (« Cabinet dentaire »).
+  name            String
+  /// Secteur, pour le filtre du catalogue (« Santé », « Restauration », …).
+  sector          String
+  /// Phrase de bénéfice affichée sur la carte.
+  benefit         String
+  /// Besoins couverts, pour le filtre « par besoin ».
+  needs           String[]
+  monthlyPriceEur Int       @default(89)
+  setupPriceEur   Int       @default(0)
+  trialDays       Int       @default(14)
+  /// Ordre d'affichage dans la grille.
+  position        Int       @default(0)
+  published       Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt       DateTime? @db.Timestamptz(6)
+
+  template AssistantTemplate?
+
+  @@index([sector])
+  @@map("professions")
+}
+
+/// Le modèle d'assistant d'un métier. Conteneur stable ; le contenu vit dans les versions.
+model AssistantTemplate {
+  id           String   @id @default(uuid()) @db.Uuid
+  professionId String   @unique @db.Uuid
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  profession Profession                 @relation(fields: [professionId], references: [id], onDelete: Cascade)
+  versions   AssistantTemplateVersion[]
+
+  @@map("assistant_templates")
+}
+
+/// Une version du contenu d'une fiche métier (§5.1). Une seule version `published`
+/// à la fois ; publier archive la précédente. `content` suit `templateContentSchema`
+/// (@tando/types) : journée type, ce qu'il sait faire, démo pré-scriptée, curseurs
+/// de gain, contrat, questions de personnalisation.
+model AssistantTemplateVersion {
+  id          String         @id @default(uuid()) @db.Uuid
+  templateId  String         @db.Uuid
+  version     Int
+  status      TemplateStatus @default(draft)
+  content     Json
+  publishedAt DateTime?      @db.Timestamptz(6)
+  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime       @updatedAt @db.Timestamptz(6)
+
+  template AssistantTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, version])
+  @@index([templateId, status])
+  @@map("assistant_template_versions")
 }
