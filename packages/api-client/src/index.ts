@@ -12,8 +12,11 @@ import {
   assessmentStateSchema,
   authResultSchema,
   catalogListSchema,
+  accountInfoSchema,
   adminInvoiceListSchema,
+  assistantDetailSchema,
   checkoutInfoSchema,
+  conversationDetailSchema,
   documentsBundleSchema,
   creditNoteDocSchema,
   healthSchema,
@@ -23,6 +26,8 @@ import {
   publicQuoteSchema,
   sessionUserSchema,
   startAssessmentResultSchema,
+  teamListSchema,
+  escalationItemSchema,
   type AcceptQuote,
   type AdminProfession,
   type AdminProfessionList,
@@ -31,16 +36,25 @@ import {
   type AssessmentState,
   type AuthResult,
   type CatalogList,
+  type AccountInfo,
+  type AddInstruction,
   type AdminInvoiceList,
+  type AnswerEscalation,
+  type AssistantDetail,
   type CheckoutInfo,
+  type ConversationDetail,
   type CreateProfession,
   type CreditNoteDoc,
   type DocumentsBundle,
+  type EscalationItem,
   type Health,
   type IssueCreditNote,
   type JobDescriptionContent,
+  type OnboardingStep,
   type PatchAssessment,
   type PaymentOutcome,
+  type TeamList,
+  type UpdateAccount,
   type ProfessionDetail,
   type PublicQuote,
   type RequestMagicLink,
@@ -276,6 +290,74 @@ export function createApiClient(options: ApiClientOptions) {
           { method: "POST" },
         );
       },
+
+      // ── Mon équipe (§6) ──────────────────────────────────────────────────
+      team(): Promise<TeamList> {
+        return request("/me/team", teamListSchema);
+      },
+      assistant(id: string): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}`, assistantDetailSchema);
+      },
+      conversation(assistantId: string, conversationId: string): Promise<ConversationDetail> {
+        return request(
+          `/me/assistants/${assistantId}/conversations/${conversationId}`,
+          conversationDetailSchema,
+        );
+      },
+      onboarding(id: string, body: OnboardingStep): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}/onboarding`, assistantDetailSchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+      activateAssistant(id: string): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}/activate`, assistantDetailSchema, { method: "POST" });
+      },
+      addInstruction(id: string, body: AddInstruction): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}/instructions`, assistantDetailSchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+      pauseAssistant(id: string): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}/pause`, assistantDetailSchema, { method: "POST" });
+      },
+      resumeAssistant(id: string): Promise<AssistantDetail> {
+        return request(`/me/assistants/${id}/resume`, assistantDetailSchema, { method: "POST" });
+      },
+      answerEscalation(id: string, body: AnswerEscalation): Promise<EscalationItem> {
+        return request(`/me/escalations/${id}/answer`, escalationItemSchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+      subscribeCatalog(slug: string): Promise<{ assistantId: string }> {
+        return request(
+          "/me/catalog/subscribe",
+          z.object({ assistantId: z.string() }),
+          { method: "POST", body: JSON.stringify({ slug }) },
+        );
+      },
+
+      // ── Mon compte ──────────────────────────────────────────────────────
+      account(): Promise<AccountInfo> {
+        return request("/me/account", accountInfoSchema);
+      },
+      updateAccount(body: UpdateAccount): Promise<AccountInfo> {
+        return request("/me/account", accountInfoSchema, {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        });
+      },
+      cancelSubscription(): Promise<AccountInfo> {
+        return request("/me/account/cancel-subscription", accountInfoSchema, { method: "POST" });
+      },
+      exportData(): Promise<string> {
+        return requestText("/me/account/export");
+      },
+      deleteAccount(): Promise<{ ok: true }> {
+        return request("/me/account/delete", okSchema, { method: "POST" });
+      },
     },
 
     /** Back-office (réservé au rôle `admin`). */
@@ -388,4 +470,17 @@ export type {
   AdminInvoiceList,
   AdminInvoiceListItem,
   IssueCreditNote,
+  TeamList,
+  AssistantCard,
+  AssistantDetail,
+  ConversationDetail,
+  EscalationItem,
+  Instruction,
+  LogbookEntry,
+  SpecificQuestion,
+  AccountInfo,
+  OnboardingStep,
+  AddInstruction,
+  AnswerEscalation,
+  UpdateAccount,
 } from "@tando/types";

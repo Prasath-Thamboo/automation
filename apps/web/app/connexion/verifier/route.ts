@@ -20,8 +20,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const result = await anonApi().auth.verify(parsed.data);
     if (!result.token) return back;
 
-    const response = NextResponse.redirect(new URL("/mon-equipe", request.url));
+    const suite = request.cookies.get("tando_after_login")?.value;
+    const target =
+      suite && /^\/[A-Za-z0-9\-/_]*$/.test(suite) && !suite.startsWith("//") ? suite : "/mon-equipe";
+
+    const response = NextResponse.redirect(new URL(target, request.url));
     response.cookies.set(SESSION_COOKIE, result.token, sessionCookieOptions());
+    response.cookies.delete("tando_after_login");
     return response;
   } catch {
     return back;

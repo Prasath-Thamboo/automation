@@ -103,6 +103,60 @@ export class BillingService {
     }
   }
 
+  /** Abonnement prêt à l'emploi (§5) : pas de frais de mise en service, essai gratuit. */
+  async startCatalogSubscription(input: {
+    organizationId: string;
+    formula: string;
+    monthlyCents: number;
+    trialDays: number;
+  }): Promise<{ id: string }> {
+    const now = new Date();
+    const firstBilling = new Date(now.getTime() + Math.max(0, input.trialDays) * DAY);
+    const sub = await this.prisma.subscription.create({
+      data: {
+        organizationId: input.organizationId,
+        formula: input.formula,
+        monthlyCents: input.monthlyCents,
+        setupCents: 0,
+        vatRatePct: this.env.VAT_RATE_PCT,
+        status: "active",
+        startedAt: now,
+        currentPeriodEnd: firstBilling,
+        providerRef: this.provider.name,
+      },
+    });
+    await this.queue.enqueueBillingJob(
+      { type: "monthly", subscriptionId: sub.id },
+      firstBilling.getTime() - now.getTime(),
+    );
+    await this.audit.record({
+      organizationId: input.organizationId,
+      action: "subscription.activated",
+      target: `subscription:${sub.id}`,
+      metadata: { formula: input.formula, trialDays: input.trialDays },
+    });
+    return { id: sub.id };
+  }
+
+  /** Résiliation (§6). L'abonnement s'arrête ; les factures restent inchangées. */
+  async cancelSubscription(organizationId: string): Promise<SubscriptionSummary | null> {
+    const sub = await this.prisma.subscription.findFirst({
+      where: { organizationId, status: { in: ["active", "past_due", "paused", "incomplete"] } },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!sub) return null;
+    const updated = await this.prisma.subscription.update({
+      where: { id: sub.id },
+      data: { status: "canceled", canceledAt: new Date() },
+    });
+    await this.audit.record({
+      organizationId,
+      action: "subscription.canceled",
+      target: `subscription:${sub.id}`,
+    });
+    return toSubSummary(updated);
+  }
+
   async issueInvoice(input: IssueInvoiceInput): Promise<Invoice> {
     const number = await this.seq.next("FAC");
     const vatRatePct = this.env.VAT_RATE_PCT;

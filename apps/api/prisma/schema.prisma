@@ -573,3 +573,146 @@ model WebhookEvent {
 
   @@map("webhook_events")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 5 — Espace client et mise en service (§5.2, §6).
+// L'assistant existe comme enregistrement ; le moteur (`AssistantRuntime`) qui
+// produit conversations et escalades réelles arrive au Lot 6. En attendant, une
+// activité de démonstration est générée à l'activation.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum AssistantState {
+  en_formation
+  au_travail
+  en_pause
+}
+
+enum OnboardingStatus {
+  en_cours
+  termine
+}
+
+enum ConversationChannel {
+  telephone
+  whatsapp
+  email
+  instagram
+  formulaire
+  surplace
+  autre
+}
+
+enum MessageAuthor {
+  client
+  assistant
+  patron
+}
+
+enum EscalationStatus {
+  ouverte
+  repondue
+}
+
+model Assistant {
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  missionId      String?          @unique @db.Uuid
+  subscriptionId String?          @unique @db.Uuid
+  /// Renseigné pour un assistant issu du catalogue (prêt à l'emploi).
+  professionSlug String?
+  name           String
+  role           String
+  state          AssistantState   @default(en_formation)
+  /// Fiche de poste figée (issue de la mission ou du modèle de catalogue).
+  jobDescription Json
+  /// « Premier jour » (§5.2) : informations de l'établissement.
+  establishment  Json             @default("{}")
+  /// Réponses aux questions propres au métier (schéma du modèle).
+  specifics      Json             @default("{}")
+  /// Comment l'assistant joint le patron (email, téléphone, où arrivent les demandes).
+  contactPrefs   Json             @default("{}")
+  onboarding     OnboardingStatus @default(en_cours)
+  onboardingStep Int              @default(0)
+  startedAt      DateTime?        @db.Timestamptz(6)
+  pausedAt       DateTime?        @db.Timestamptz(6)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?        @db.Timestamptz(6)
+
+  instructions  AssistantInstruction[]
+  conversations Conversation[]
+  escalations   Escalation[]
+
+  @@index([organizationId])
+  @@map("assistants")
+}
+
+/// Consigne ajoutée par le client (§6 « Le former »). Versionnée : on garde l'historique.
+model AssistantInstruction {
+  id              String   @id @default(uuid()) @db.Uuid
+  assistantId     String   @db.Uuid
+  version         Int
+  text            String
+  createdByUserId String?  @db.Uuid
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+
+  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+
+  @@unique([assistantId, version])
+  @@index([assistantId])
+  @@map("assistant_instructions")
+}
+
+model Conversation {
+  id             String              @id @default(uuid()) @db.Uuid
+  assistantId    String              @db.Uuid
+  organizationId String              @db.Uuid
+  channel        ConversationChannel
+  /// Étiquette non nominative (« Un client », ou le prénom si le client l'a donné).
+  customerLabel  String?
+  /// Résumé en langage clair de ce que l'assistant a fait.
+  summary        String?
+  startedAt      DateTime            @default(now()) @db.Timestamptz(6)
+  lastMessageAt  DateTime            @default(now()) @db.Timestamptz(6)
+  createdAt      DateTime            @default(now()) @db.Timestamptz(6)
+
+  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([assistantId, lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String        @id @default(uuid()) @db.Uuid
+  conversationId String        @db.Uuid
+  author         MessageAuthor
+  text           String
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("messages")
+}
+
+/// Ce que l'assistant n'a pas su traiter seul et remonte au patron (§6 « À valider »).
+model Escalation {
+  id               String           @id @default(uuid()) @db.Uuid
+  assistantId      String           @db.Uuid
+  organizationId   String           @db.Uuid
+  conversationId   String?          @db.Uuid
+  question         String
+  context          String?
+  status           EscalationStatus @default(ouverte)
+  answer           String?
+  answeredByUserId String?          @db.Uuid
+  answeredAt       DateTime?        @db.Timestamptz(6)
+  createdAt        DateTime         @default(now()) @db.Timestamptz(6)
+
+  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, status])
+  @@map("escalations")
+}

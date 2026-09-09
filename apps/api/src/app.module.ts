@@ -11,6 +11,7 @@ import { AuthModule } from "./auth/auth.module";
 import { CatalogModule } from "./catalog/catalog.module";
 import { QuotesModule } from "./quotes/quotes.module";
 import { BillingModule } from "./billing/billing.module";
+import { TeamModule } from "./team/team.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BillingModule } from "./billing/billing.module";
     CatalogModule,
     QuotesModule,
     BillingModule,
+    TeamModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

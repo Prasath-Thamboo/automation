@@ -9,3 +9,4 @@ export * from "./health";
 export * from "./catalog";
 export * from "./quotes";
 export * from "./billing";
+export * from "./team";

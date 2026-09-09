@@ -171,7 +171,23 @@ pnpm dev                        # api (:3333) + web (:3000)
   imprimable par facture). Abonnement mensuel récurrent via BullMQ (file `billing`).
   Back-office `/admin/factures` : liste, avoir, export comptable CSV et FEC. Identité
   vendeur figée dans chaque facture (`SELLER_*`, `[À COMPLÉTER]`).
-- Lots 5 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 5 — Espace client et mise en service : fait.**
+  - Modèle : `assistants`, `assistant_instructions` (versionnées), `conversations`,
+    `messages`, `escalations`.
+  - **Prêt à l'emploi** : `/employes-virtuels/[slug]/souscrire` (connexion requise ;
+    `?suite=` ramène le client après login) → `Subscription` (essai gratuit, sans frais de
+    mise en service) + `Assistant`.
+  - **Sur mesure** : l'assistant est créé à la volée depuis la mission acceptée (Lot 3)
+    à la première visite de « Mon équipe ».
+  - **Premier jour (§5.2)** : `/mon-equipe/assistants/[id]/premier-jour`, 4 écrans
+    (informations · spécificités du métier depuis le schéma du modèle · comment il vous
+    joint · essai) → « Il peut commencer » → assistant `au_travail`, mission `en_service`,
+    email, activité de démonstration générée (remplacée par le moteur au Lot 6).
+  - **Fiche assistant** : carnet de bord (conversations résumées), à valider (escalades
+    répondues en ligne), le former (consignes versionnées), ses horaires, pause / reprise.
+  - **Mon compte** : coordonnées, membres, contrat, résiliation, **export RGPD** et
+    **suppression de compte** depuis le produit (§9.4).
+- Lots 6 → 11 : voir `prompt-claude-code-tando.md` §10.
 
 ### Notes Lot 2
 
