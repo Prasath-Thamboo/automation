@@ -6,23 +6,46 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "backgroundColor": "#fbf9f4",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "fr.tando.app"
+      "bundleIdentifier": "fr.tando.app",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Pour rouvrir votre espace en toute sécurité."
+      },
+      "associatedDomains": ["applinks:tando.fr"]
     },
     "android": {
       "package": "fr.tando.app",
       "adaptiveIcon": {
         "backgroundColor": "#fbf9f4"
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "tando.fr", "pathPrefix": "/app" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        { "faceIDPermission": "Pour rouvrir votre espace en toute sécurité." }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": "http://localhost:3333"
+      "apiUrl": "http://localhost:3333",
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
     }
   }
 }

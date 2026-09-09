@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { SubscriptionSummary } from "./billing";
 import { subscriptionSummarySchema } from "./billing";
-import type { AppointmentRow } from "./runtime";
+import type { AppointmentRow, AppointmentStatus } from "./runtime";
 import { appointmentRowSchema } from "./runtime";
 
 /**
@@ -112,6 +112,32 @@ export interface TeamList {
   assistants: AssistantCard[];
 }
 
+// ── Écran « Aujourd'hui » (mobile, §6bis) ─────────────────────────────────
+
+export interface TodayEscalation {
+  id: string;
+  assistantId: string;
+  assistantName: string;
+  question: string;
+  createdAt: string;
+}
+
+export interface TodayAppointment {
+  id: string;
+  assistantName: string;
+  customerLabel: string;
+  slot: string | null;
+  status: AppointmentStatus;
+}
+
+export interface TodaySummary {
+  assistants: AssistantCard[];
+  todayCount: number;
+  weekCount: number;
+  openEscalations: TodayEscalation[];
+  upcomingAppointments: TodayAppointment[];
+}
+
 export interface AccountMember {
   email: string;
   fullName: string | null;
@@ -196,6 +222,30 @@ export const assistantCardSchema: z.ZodType<AssistantCard> = z.object(assistantC
 
 export const teamListSchema: z.ZodType<TeamList> = z.object({
   assistants: z.array(assistantCardSchema),
+});
+
+export const todaySummarySchema: z.ZodType<TodaySummary> = z.object({
+  assistants: z.array(assistantCardSchema),
+  todayCount: z.number().int(),
+  weekCount: z.number().int(),
+  openEscalations: z.array(
+    z.object({
+      id: z.string().uuid(),
+      assistantId: z.string().uuid(),
+      assistantName: z.string(),
+      question: z.string(),
+      createdAt: z.string(),
+    }),
+  ),
+  upcomingAppointments: z.array(
+    z.object({
+      id: z.string().uuid(),
+      assistantName: z.string(),
+      customerLabel: z.string(),
+      slot: z.string().nullable(),
+      status: z.enum(["propose", "confirme", "annule"]),
+    }),
+  ),
 });
 
 export const assistantDetailSchema: z.ZodType<AssistantDetail> = z.object({

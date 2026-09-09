@@ -1,24 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Redirect } from "expo-router";
 import { requestMagicLinkSchema } from "@tando/types";
 import { auth as authCopy, common } from "@tando/copy";
 import { api } from "@/src/api";
+import { useAuth } from "@/src/auth";
+import { styles as s, t } from "@/src/theme";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export default function ConnexionScreen() {
+  const { status: authStatus } = useAuth();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string>();
-  const [apiReachable, setApiReachable] = useState<boolean | null>(null);
 
-  // Smoke test du Lot 0 : le client partagé @tando/api-client joint bien l'API.
-  useEffect(() => {
-    api
-      .health()
-      .then((h) => setApiReachable(h.status === "ok"))
-      .catch(() => setApiReachable(false));
-  }, []);
+  if (authStatus === "loading") {
+    return (
+      <View style={[s.screen, { alignItems: "center", justifyContent: "center" }]}>
+        <ActivityIndicator color={t.color.primary} />
+      </View>
+    );
+  }
+  if (authStatus === "unlocked" || authStatus === "locked") {
+    return <Redirect href="/(app)/aujourdhui" />;
+  }
 
   async function submit() {
     const parsed = requestMagicLinkSchema.safeParse({ email, channel: "mobile" });
@@ -39,19 +45,22 @@ export default function ConnexionScreen() {
 
   if (status === "sent") {
     return (
-      <View style={{ flex: 1, padding: 20, gap: 12 }}>
-        <Text style={{ fontSize: 22, fontWeight: "700" }}>{authCopy.sent.title}</Text>
-        <Text style={{ fontSize: 16, lineHeight: 24 }}>{authCopy.sent.body}</Text>
-      </View>
+      <ScrollView contentContainerStyle={{ padding: t.space[5], gap: t.space[3] }}>
+        <Text style={s.h1}>{authCopy.sent.title}</Text>
+        <Text style={s.body}>{authCopy.sent.body}</Text>
+      </ScrollView>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20, gap: 16 }}>
-      <Text style={{ fontSize: 24, fontWeight: "700" }}>{authCopy.title}</Text>
+    <ScrollView contentContainerStyle={{ padding: t.space[5], gap: t.space[4] }}>
+      <Text style={[s.h1, { marginTop: t.space[8] }]}>{common.appName}</Text>
+      <Text style={s.body}>Votre employé virtuel, 24h/24, 7j/7.</Text>
 
-      <View style={{ gap: 6 }}>
-        <Text style={{ fontSize: 16, fontWeight: "600" }}>{authCopy.emailLabel}</Text>
+      <View style={{ gap: 6, marginTop: t.space[4] }}>
+        <Text style={{ fontSize: t.fontSize.base, fontWeight: "600", color: t.color.ink }}>
+          {authCopy.emailLabel}
+        </Text>
         <TextInput
           value={email}
           onChangeText={setEmail}
@@ -59,47 +68,26 @@ export default function ConnexionScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
           inputMode="email"
-          style={{
-            minHeight: 44,
-            borderWidth: 1,
-            borderColor: "#a8a296",
-            borderRadius: 10,
-            paddingHorizontal: 12,
-            fontSize: 16,
-            backgroundColor: "#fff",
-          }}
+          style={s.input}
         />
         {status === "error" ? (
-          <Text style={{ color: "#b23b3b", fontSize: 14 }}>{message}</Text>
+          <Text style={{ color: t.color.danger, fontSize: 14 }}>{message}</Text>
         ) : null}
       </View>
 
       <Pressable
         onPress={submit}
         disabled={status === "sending"}
-        style={{
-          minHeight: 52,
-          borderRadius: 10,
-          backgroundColor: "#26714b",
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: status === "sending" ? 0.6 : 1,
-        }}
+        style={[s.primaryBtn, { opacity: status === "sending" ? 0.6 : 1 }]}
       >
         {status === "sending" ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "600" }}>{authCopy.submit}</Text>
+          <Text style={s.primaryBtnText}>{authCopy.submit}</Text>
         )}
       </Pressable>
 
-      <Text style={{ fontSize: 14, color: "#6b665c" }}>{common.talkToHuman}</Text>
-
-      {apiReachable === false ? (
-        <Text style={{ fontSize: 14, color: "#a9781a" }}>
-          Le service est injoignable pour le moment. Vérifiez votre connexion.
-        </Text>
-      ) : null}
+      <Text style={s.muted}>{common.talkToHuman}</Text>
     </ScrollView>
   );
 }

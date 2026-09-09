@@ -17,6 +17,7 @@ import type {
   OnboardingStep,
   SpecificQuestion,
   TeamList,
+  TodaySummary,
 } from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
@@ -74,6 +75,59 @@ export class AssistantService {
       }
     }
     return { assistants: rows.map(toCard) };
+  }
+
+  /** Vue compacte pour l'écran « Aujourd'hui » du mobile (§6bis). */
+  async today(organizationId: string): Promise<TodaySummary> {
+    await this.ensureFromMissions(organizationId);
+    const assistants = await this.prisma.assistant.findMany({
+      where: { organizationId, deletedAt: null },
+      orderBy: { createdAt: "asc" },
+    });
+    const nameById = new Map(assistants.map((a) => [a.id, a.name]));
+
+    const [todayCount, weekCount, escalations, appointments] = await Promise.all([
+      this.prisma.conversation.count({
+        where: { organizationId, lastMessageAt: { gte: startOfToday() } },
+      }),
+      this.prisma.conversation.count({
+        where: { organizationId, lastMessageAt: { gte: daysAgo(7) } },
+      }),
+      this.prisma.escalation.findMany({
+        where: { organizationId, status: "ouverte" },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      }),
+      this.prisma.appointment.findMany({
+        where: {
+          organizationId,
+          status: { not: "annule" },
+          OR: [{ slot: null }, { slot: { gte: new Date() } }],
+        },
+        orderBy: [{ slot: "asc" }],
+        take: 10,
+      }),
+    ]);
+
+    return {
+      assistants: assistants.map(toCard),
+      todayCount,
+      weekCount,
+      openEscalations: escalations.map((e) => ({
+        id: e.id,
+        assistantId: e.assistantId,
+        assistantName: nameById.get(e.assistantId) ?? "Votre assistant",
+        question: e.question,
+        createdAt: e.createdAt.toISOString(),
+      })),
+      upcomingAppointments: appointments.map((ap) => ({
+        id: ap.id,
+        assistantName: nameById.get(ap.assistantId) ?? "Votre assistant",
+        customerLabel: ap.customerLabel ?? "Un client",
+        slot: ap.slot ? ap.slot.toISOString() : null,
+        status: ap.status as "propose" | "confirme" | "annule",
+      })),
+    };
   }
 
   async detail(organizationId: string, id: string): Promise<AssistantDetail> {

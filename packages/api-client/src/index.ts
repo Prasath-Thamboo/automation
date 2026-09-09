@@ -27,6 +27,7 @@ import {
   sessionUserSchema,
   startAssessmentResultSchema,
   teamListSchema,
+  todaySummarySchema,
   escalationItemSchema,
   runtimeTurnSchema,
   type AcceptQuote,
@@ -56,6 +57,7 @@ import {
   type PaymentOutcome,
   type RuntimeTurn,
   type TeamList,
+  type TodaySummary,
   type UpdateAccount,
   type ProfessionDetail,
   type PublicQuote,
@@ -297,6 +299,9 @@ export function createApiClient(options: ApiClientOptions) {
       team(): Promise<TeamList> {
         return request("/me/team", teamListSchema);
       },
+      today(): Promise<TodaySummary> {
+        return request("/me/today", todaySummarySchema);
+      },
       assistant(id: string): Promise<AssistantDetail> {
         return request(`/me/assistants/${id}`, assistantDetailSchema);
       },
@@ -479,6 +484,7 @@ export type {
   AdminInvoiceListItem,
   IssueCreditNote,
   TeamList,
+  TodaySummary,
   AssistantCard,
   AssistantDetail,
   ConversationDetail,

@@ -31,6 +31,7 @@ import {
   type Simulate,
   type SubscribeCatalog,
   type TeamList,
+  type TodaySummary,
   type UpdateAccount,
 } from "@tando/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
@@ -58,6 +59,12 @@ export class TeamController {
   @ApiOkResponse({ description: "Les employés virtuels de l'organisation et leur état." })
   team(@CurrentUser() user: SessionUser): Promise<TeamList> {
     return this.assistants.team(user.organizationId);
+  }
+
+  @Get("today")
+  @ApiOkResponse({ description: "Vue compacte « Aujourd'hui » (mobile)." })
+  today(@CurrentUser() user: SessionUser): Promise<TodaySummary> {
+    return this.assistants.today(user.organizationId);
   }
 
   @Get("assistants/:id")

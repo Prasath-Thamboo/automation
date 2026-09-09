@@ -203,7 +203,43 @@ pnpm dev                        # api (:3333) + web (:3000)
     des demandes — les vrais canaux seront branchés au Lot 7.
   - L'activation d'un assistant fait passer quelques premières demandes dans le moteur
     (remplace l'ancienne activité de démonstration figée).
-- Lots 7 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 7 — Application mobile, socle : fait.**
+  - `apps/mobile` (Expo SDK 52, Expo Router 4). Session : jeton d'API dans
+    `expo-secure-store` ; `AuthProvider` (`src/auth.tsx`) expose
+    `status: loading | signedOut | locked | unlocked`. Verrou biométrique
+    (`expo-local-authentication`, `src/biometric.ts`) : re-verrouillage quand l'app
+    revient au premier plan (`AppState`).
+  - Connexion par lien magique `channel: "mobile"` → `tando://verifier?token=`
+    (`app/verifier.tsx`). `app/index.tsx` : saisie e-mail → « lien envoyé » ;
+    redirige vers `(app)` si une session valide existe déjà.
+  - Navigation `(app)` en onglets : **Aujourd'hui** (`GET /me/today` — nouveau :
+    ce qu'il a fait aujourd'hui / cette semaine, escalades ouvertes, prochains
+    rendez-vous, l'équipe), **Carnet de bord** (conversations résumées, filtre par
+    assistant, détail `conversation/[id]`), **Mon équipe** (état, pause / reprise,
+    déconnexion). `src/use-query.ts` : rechargement à l'affichage de l'écran et à
+    chaque retour dessus (`useFocusEffect`), pull-to-refresh.
+  - `src/theme.ts` dérive du thème partagé `@tando/ui-native` (tokens
+    `@tando/config`). `eas.json` : profils development / preview / production
+    (`EXPO_PUBLIC_API_URL` par profil). `app.json` : plugin biométrie, deep links
+    `tando://` + `applinks:tando.fr`.
+  - Nouveau côté API : `GET /me/today` → `TodaySummary` (`@tando/types`),
+    méthode `AssistantService.today()`, client `api.me.today()`.
+- Lots 8 → 11 : voir `prompt-claude-code-tando.md` §10.
+
+### Notes Lot 7
+
+- **pnpm + Expo/Metro** : `.npmrc` passe de `node-linker=isolated` à
+  `node-linker=hoisted` — Metro ne sait pas résoudre les dépendances transitives
+  sous le layout isolé de pnpm. `apps/mobile/metro.config.js` garde la recherche
+  hiérarchique (pas de `disableHierarchicalLookup`) et active
+  `unstable_enablePackageExports` (les `packages/*` exposent leurs entrées via le
+  champ `exports`). Ce changement de layout a été revalidé : `turbo run lint
+  typecheck test build` reste vert sur les 26 tâches.
+- Vérif du bundle en environnement headless : `pnpm -F @tando/mobile exec expo
+  export --platform ios` (pas de simulateur / build EAS ici). Le vrai test des
+  parcours mobiles (Maestro) arrive au Lot 11.
+- `@babel/runtime` et `@expo/metro-runtime` ajoutés en dépendances directes de
+  `apps/mobile` (requis par `expo-router` au bundling, absents en isolé).
 
 ### Notes Lot 2
 
