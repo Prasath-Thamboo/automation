@@ -1,7 +1,14 @@
 import type { Config } from "tailwindcss";
 import preset from "@tando/config/tailwind-preset";
 
-const fallbackSans = ["Segoe UI", "system-ui", "-apple-system", "sans-serif"];
+const systemSans = [
+  "Segoe UI",
+  "system-ui",
+  "-apple-system",
+  "Helvetica Neue",
+  "Arial",
+  "sans-serif",
+];
 
 const config: Config = {
   presets: [preset as Config],
@@ -14,8 +21,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ["var(--font-heading)", ...fallbackSans],
-        body: ["var(--font-body)", ...fallbackSans],
+        heading: systemSans,
+        body: systemSans,
       },
       maxWidth: {
         prose: "42rem",

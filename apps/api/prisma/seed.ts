@@ -7,6 +7,7 @@
  */
 import { PrismaClient, type Prisma } from "@prisma/client";
 import { catalogSeed } from "./seed-data/catalog";
+import { pricingRuleSeeds } from "../src/quotes/pricing/default-rules";
 
 const prisma = new PrismaClient();
 
@@ -102,9 +103,28 @@ async function seedCatalog() {
   console.warn(`Catalogue : ${catalogSeed.length} métiers publiés.`);
 }
 
+async function seedPricing() {
+  for (const rule of pricingRuleSeeds) {
+    await prisma.pricingRule.upsert({
+      where: { kind_key: { kind: rule.kind, key: rule.key } },
+      update: {
+        label: rule.label,
+        setupCents: rule.setupCents,
+        monthlyCents: rule.monthlyCents,
+        factor: rule.factor,
+        position: rule.position,
+        active: true,
+      },
+      create: rule,
+    });
+  }
+  console.warn(`Barème de chiffrage : ${pricingRuleSeeds.length} règles.`);
+}
+
 async function main() {
   await seedAccounts();
   await seedCatalog();
+  await seedPricing();
 }
 
 main()

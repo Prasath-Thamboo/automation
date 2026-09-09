@@ -13,16 +13,27 @@ import { MailModule } from "../mail/mail.module";
 import { MailService, type OutgoingMail } from "../mail/mail.service";
 
 export const MAIL_QUEUE = Symbol("MAIL_QUEUE");
+export const QUOTE_QUEUE = Symbol("QUOTE_QUEUE");
 const MAIL_QUEUE_NAME = "mail";
+export const QUOTE_QUEUE_NAME = "quote-lifecycle";
+
+/** Tâche différée de cycle de vie d'un devis (relance J+7 / J+21, expiration J+30). */
+export interface QuoteJob {
+  type: "reminder-j7" | "reminder-j21" | "expire";
+  quoteId: string;
+}
 
 /**
  * Files d'attente BullMQ (§9.1 : emails, relances de devis, génération PDF).
- * Au Lot 0, seule la file « mail » existe : l'API met l'email de lien magique en
- * file, un worker l'envoie. Découplage réseau <-> envoi.
+ * - `mail` : envoi d'emails (un worker ici).
+ * - `quote-lifecycle` : tâches différées sur les devis (worker dans QuotesModule).
  */
 @Injectable()
 export class QueueService {
-  constructor(@Inject(MAIL_QUEUE) private readonly mailQueue: Queue<OutgoingMail>) {}
+  constructor(
+    @Inject(MAIL_QUEUE) private readonly mailQueue: Queue<OutgoingMail>,
+    @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue<QuoteJob>,
+  ) {}
 
   async enqueueEmail(mail: OutgoingMail): Promise<void> {
     await this.mailQueue.add("send", mail, {
@@ -30,6 +41,18 @@ export class QueueService {
       backoff: { type: "exponential", delay: 5_000 },
       removeOnComplete: 1_000,
       removeOnFail: 5_000,
+    });
+  }
+
+  /** Programme une tâche sur un devis dans `delayMs` millisecondes. */
+  async enqueueQuoteJob(job: QuoteJob, delayMs: number): Promise<void> {
+    await this.quoteQueue.add(job.type, job, {
+      delay: Math.max(0, delayMs),
+      jobId: `${job.type}:${job.quoteId}`,
+      attempts: 3,
+      backoff: { type: "exponential", delay: 30_000 },
+      removeOnComplete: 1_000,
+      removeOnFail: 1_000,
     });
   }
 }
@@ -62,24 +85,28 @@ export class MailWorker implements OnModuleInit, OnApplicationShutdown {
   }
 }
 
+const makeQueue = <T>(name: string) => ({
+  inject: [REDIS],
+  useFactory: (redis: Redis) => new Queue<T>(name, { connection: redis }),
+});
+
 @Module({
   imports: [MailModule],
   providers: [
-    {
-      provide: MAIL_QUEUE,
-      inject: [REDIS],
-      useFactory: (redis: Redis) =>
-        new Queue<OutgoingMail>(MAIL_QUEUE_NAME, { connection: redis }),
-    },
+    { provide: MAIL_QUEUE, ...makeQueue<OutgoingMail>(MAIL_QUEUE_NAME) },
+    { provide: QUOTE_QUEUE, ...makeQueue<QuoteJob>(QUOTE_QUEUE_NAME) },
     QueueService,
     MailWorker,
   ],
-  exports: [QueueService],
+  exports: [QueueService, QUOTE_QUEUE],
 })
 export class QueueModule implements OnApplicationShutdown {
-  constructor(@Inject(MAIL_QUEUE) private readonly mailQueue: Queue) {}
+  constructor(
+    @Inject(MAIL_QUEUE) private readonly mailQueue: Queue,
+    @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue,
+  ) {}
 
   async onApplicationShutdown(): Promise<void> {
-    await this.mailQueue.close();
+    await Promise.all([this.mailQueue.close(), this.quoteQueue.close()]);
   }
 }

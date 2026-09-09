@@ -146,7 +146,21 @@ pnpm dev                        # api (:3333) + web (:3000)
   `/employes-virtuels/[slug]` (fiche §5.1 en 8 parties, démo jouable pré-scriptée, curseurs
   de gain). 6 métiers seedés et publiés. Le personnel Tando se connecte avec
   `staff@tando.fr` (membre `admin` d'une organisation interne « Tando »).
-- Lots 3 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 3 — Devis sur mesure : fait.** Questionnaire de besoin (§4.1) adaptatif, une
+  question par écran, barre de progression, sauvegarde à chaque écran, reprise par lien
+  magique (`/questionnaire`, `/questionnaire/reprendre`) — parcours anonyme, jeton de
+  reprise en `localStorage`. Fiche de poste en langage clair générée depuis les réponses
+  (`GET /assessments/current/preview`), corrigeable par le client avant envoi. Moteur de
+  chiffrage configurable en base (`pricing_rules` : socle par formule + modules par tâche +
+  coefficient de volume + coût de connexion par outil + facteur de complexité admin 0,8-2,0
+  avec commentaire obligatoire). Devis numéroté `DEV-AAAA-NNNN`, statuts
+  brouillon → en_relecture → envoye → vu → accepte | refuse | expire. Back-office
+  `/admin/devis` : relire, ajuster, **envoyer** (jamais automatique). Devis vu par le client
+  sur `/devis/[number]?token=` (+ document imprimable `GET /quotes/:number/document`),
+  acceptation en ligne **horodatée** (nom, IP, hash SHA-256 du contenu accepté). À
+  l'acceptation : compte client créé (organisation + `owner`) et **mission** `a_preparer`
+  (§4.3). Relances J+7 / J+21 et expiration J+30 via BullMQ (file `quote-lifecycle`).
+- Lots 4 → 11 : voir `prompt-claude-code-tando.md` §10.
 
 ### Notes Lot 2
 

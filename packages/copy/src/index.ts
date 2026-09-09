@@ -23,6 +23,15 @@ export {
 } from "./offers";
 export { faq, faqCopy, type FaqItem } from "./faq";
 export {
+  questionnaire,
+  questionnaireCopy,
+  SECTORS,
+  type Question,
+  type Choice,
+  type ContactField,
+  type QuestionKind,
+} from "./questionnaire";
+export {
   legalIdentity,
   mentionsLegales,
   conditionsGenerales,

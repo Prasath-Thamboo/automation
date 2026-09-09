@@ -9,6 +9,7 @@ import { AuditModule } from "./audit/audit.module";
 import { HealthModule } from "./health/health.module";
 import { AuthModule } from "./auth/auth.module";
 import { CatalogModule } from "./catalog/catalog.module";
+import { QuotesModule } from "./quotes/quotes.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CatalogModule } from "./catalog/catalog.module";
     HealthModule,
     AuthModule,
     CatalogModule,
+    QuotesModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

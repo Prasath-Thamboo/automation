@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { stub } from "@tando/copy";
-import { StubPage } from "@/components/stub-page";
+import { QuestionnaireClient } from "./questionnaire-client";
 
 export const metadata: Metadata = {
   title: "Décrire mon besoin",
-  description: stub.questionnaire.body,
+  description:
+    "Décrivez votre besoin en quelques minutes et recevez un devis clair, sans jargon et sans engagement.",
   alternates: { canonical: "/questionnaire" },
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
 };
 
 export default function QuestionnairePage() {
-  return <StubPage title={stub.questionnaire.title} body={stub.questionnaire.body} />;
+  return (
+    <div className="mx-auto max-w-content px-4 py-14 sm:px-6 sm:py-20">
+      <QuestionnaireClient />
+    </div>
+  );
 }

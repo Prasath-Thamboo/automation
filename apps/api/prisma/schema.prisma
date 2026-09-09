@@ -224,3 +224,184 @@ model AssistantTemplateVersion {
   @@index([templateId, status])
   @@map("assistant_template_versions")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 3 — Employé virtuel sur mesure : questionnaire → fiche de poste → devis →
+// acceptation → mission (§4). Facturation : Lot 4.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum QuoteStatus {
+  brouillon
+  en_relecture
+  envoye
+  vu
+  accepte
+  refuse
+  expire
+}
+
+enum MissionStatus {
+  a_preparer
+  en_preparation
+  en_service
+  annulee
+}
+
+enum PricingRuleKind {
+  socle
+  module
+  volume
+  outil
+}
+
+/// Compteurs de numérotation séquentielle (DEV-AAAA-NNNN, FAC-AAAA-NNNN, …).
+model Counter {
+  key   String @id
+  value Int    @default(0)
+
+  @@map("counters")
+}
+
+/// Le questionnaire de besoin (§4.1). Rempli anonymement ; repris via un lien
+/// magique envoyé par email. `answers` en JSONB, clé par question.
+model NeedsAssessment {
+  id              String    @id @default(uuid()) @db.Uuid
+  email           String
+  resumeTokenHash String    @unique
+  answers         Json      @default("{}")
+  currentStep     Int       @default(0)
+  completedAt     DateTime? @db.Timestamptz(6)
+  /// Rattaché à une organisation une fois le devis accepté (compte créé).
+  organizationId  String?   @db.Uuid
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt       DateTime? @db.Timestamptz(6)
+
+  jobDescription JobDescription?
+  quote          Quote?
+
+  @@index([email])
+  @@map("needs_assessments")
+}
+
+/// La fiche de poste en langage clair (§4.1 fin), dérivée des réponses puis
+/// corrigeable par le client avant envoi. Versionnée.
+model JobDescription {
+  id                String   @id @default(uuid()) @db.Uuid
+  needsAssessmentId String   @unique @db.Uuid
+  version           Int      @default(1)
+  content           Json
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(6)
+
+  needsAssessment NeedsAssessment @relation(fields: [needsAssessmentId], references: [id], onDelete: Cascade)
+
+  @@map("job_descriptions")
+}
+
+/// Barème de chiffrage, configurable en base (§4.2) — jamais en dur.
+model PricingRule {
+  id           String          @id @default(uuid()) @db.Uuid
+  kind         PricingRuleKind
+  key          String
+  label        String
+  setupCents   Int             @default(0)
+  monthlyCents Int             @default(0)
+  /// Modules : poids d'usage appliqué au mensuel. Volume : coefficient multiplicateur.
+  factor       Float           @default(1)
+  active       Boolean         @default(true)
+  position     Int             @default(0)
+  createdAt    DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime        @updatedAt @db.Timestamptz(6)
+
+  @@unique([kind, key])
+  @@map("pricing_rules")
+}
+
+/// Un devis (§4.2). Numérotation DEV-AAAA-NNNN. Statuts :
+/// brouillon → en_relecture → envoye → vu → accepte | refuse | expire.
+model Quote {
+  id                String      @id @default(uuid()) @db.Uuid
+  needsAssessmentId String      @unique @db.Uuid
+  organizationId    String?     @db.Uuid
+  number            String      @unique
+  status            QuoteStatus @default(brouillon)
+  formula           String
+  setupCents        Int         @default(0)
+  monthlyCents      Int         @default(0)
+  /// Ajustement manuel admin, 0.8 à 2.0. Commentaire obligatoire si ≠ 1.
+  complexityFactor  Float       @default(1)
+  complexityNote    String?
+  engagementMonths  Int         @default(0)
+  serviceDelayDays  Int         @default(14)
+  /// Contenu figé affiché dans le devis (récap fiche de poste, bénéfices, hors périmètre).
+  content           Json
+  sentAt            DateTime?   @db.Timestamptz(6)
+  viewedAt          DateTime?   @db.Timestamptz(6)
+  decidedAt         DateTime?   @db.Timestamptz(6)
+  expiresAt         DateTime?   @db.Timestamptz(6)
+  reminderJ7At      DateTime?   @db.Timestamptz(6)
+  reminderJ21At     DateTime?   @db.Timestamptz(6)
+  createdAt         DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime    @updatedAt @db.Timestamptz(6)
+  deletedAt         DateTime?   @db.Timestamptz(6)
+
+  needsAssessment NeedsAssessment  @relation(fields: [needsAssessmentId], references: [id], onDelete: Cascade)
+  lineItems       QuoteLineItem[]
+  acceptance      QuoteAcceptance?
+  mission         Mission?
+
+  @@index([status])
+  @@map("quotes")
+}
+
+model QuoteLineItem {
+  id           String @id @default(uuid()) @db.Uuid
+  quoteId      String @db.Uuid
+  kind         String
+  label        String
+  setupCents   Int    @default(0)
+  monthlyCents Int    @default(0)
+  position     Int    @default(0)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId])
+  @@map("quote_line_items")
+}
+
+/// Preuve d'acceptation en ligne (§4.2) : horodatage, IP, hash du contenu accepté.
+model QuoteAcceptance {
+  id           String   @id @default(uuid()) @db.Uuid
+  quoteId      String   @unique @db.Uuid
+  acceptedName String
+  cgvAccepted  Boolean
+  ip           String?
+  /// SHA-256 du contenu du devis au moment de l'acceptation.
+  contentHash  String
+  acceptedAt   DateTime @default(now()) @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@map("quote_acceptances")
+}
+
+/// Mission créée automatiquement à l'acceptation d'un devis (§4.3). Le pilotage
+/// complet des missions arrive au Lot 10 ; ici on crée l'enregistrement.
+model Mission {
+  id             String        @id @default(uuid()) @db.Uuid
+  quoteId        String        @unique @db.Uuid
+  organizationId String        @db.Uuid
+  status         MissionStatus @default(a_preparer)
+  jobDescription Json
+  answers        Json
+  checklist      Json          @default("[]")
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("missions")
+}

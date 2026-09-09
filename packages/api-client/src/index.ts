@@ -6,23 +6,39 @@
 import {
   adminProfessionListSchema,
   adminProfessionSchema,
+  adminQuoteListSchema,
+  adminQuoteSchema,
   apiErrorSchema,
+  assessmentStateSchema,
   authResultSchema,
   catalogListSchema,
   healthSchema,
+  jobDescriptionContentSchema,
   professionDetailSchema,
+  publicQuoteSchema,
   sessionUserSchema,
+  startAssessmentResultSchema,
+  type AcceptQuote,
   type AdminProfession,
   type AdminProfessionList,
+  type AdminQuote,
+  type AdminQuoteList,
+  type AssessmentState,
   type AuthResult,
   type CatalogList,
   type CreateProfession,
   type Health,
+  type JobDescriptionContent,
+  type PatchAssessment,
   type ProfessionDetail,
+  type PublicQuote,
   type RequestMagicLink,
   type SessionUser,
+  type StartAssessmentResult,
+  type SubmitAssessment,
   type TemplateContent,
   type UpdateProfession,
+  type UpdateQuote,
   type VerifyMagicLink,
 } from "@tando/types";
 import { z, type ZodType } from "zod";
@@ -154,6 +170,64 @@ export function createApiClient(options: ApiClientOptions) {
       },
     },
 
+    /**
+     * Questionnaire de besoin (§4.1). Anonyme : `resumeToken` sert ensuite de
+     * `getToken` pour les appels suivants (Bearer).
+     */
+    assessments: {
+      start(email: string): Promise<StartAssessmentResult> {
+        return request("/assessments", startAssessmentResultSchema, {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        });
+      },
+      current(): Promise<AssessmentState> {
+        return request("/assessments/current", assessmentStateSchema);
+      },
+      preview(): Promise<JobDescriptionContent> {
+        return request("/assessments/current/preview", jobDescriptionContentSchema);
+      },
+      save(body: PatchAssessment): Promise<AssessmentState> {
+        return request("/assessments/current", assessmentStateSchema, {
+          method: "PATCH",
+          body: JSON.stringify(body),
+        });
+      },
+      submit(body: SubmitAssessment): Promise<AssessmentState> {
+        return request("/assessments/current/submit", assessmentStateSchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+    },
+
+    /** Devis vu par le client (lien magique dans `?token=`). */
+    quotes: {
+      view(number: string, token: string): Promise<PublicQuote> {
+        return request(
+          `/quotes/${encodeURIComponent(number)}?token=${encodeURIComponent(token)}`,
+          publicQuoteSchema,
+        );
+      },
+      accept(number: string, token: string, body: AcceptQuote): Promise<PublicQuote> {
+        return request(
+          `/quotes/${encodeURIComponent(number)}/accept?token=${encodeURIComponent(token)}`,
+          publicQuoteSchema,
+          { method: "POST", body: JSON.stringify(body) },
+        );
+      },
+      refuse(number: string, token: string): Promise<PublicQuote> {
+        return request(
+          `/quotes/${encodeURIComponent(number)}/refuse?token=${encodeURIComponent(token)}`,
+          publicQuoteSchema,
+          { method: "POST" },
+        );
+      },
+      documentUrl(baseUrl: string, number: string, token: string): string {
+        return `${baseUrl.replace(/\/$/, "")}/api/v1/quotes/${encodeURIComponent(number)}/document?token=${encodeURIComponent(token)}`;
+      },
+    },
+
     /** Back-office (réservé au rôle `admin`). */
     admin: {
       catalog: {
@@ -192,6 +266,24 @@ export function createApiClient(options: ApiClientOptions) {
           return request(`/admin/catalog/professions/${id}`, okSchema, { method: "DELETE" });
         },
       },
+
+      quotes: {
+        list(): Promise<AdminQuoteList> {
+          return request("/admin/quotes", adminQuoteListSchema);
+        },
+        get(id: string): Promise<AdminQuote> {
+          return request(`/admin/quotes/${id}`, adminQuoteSchema);
+        },
+        update(id: string, body: UpdateQuote): Promise<AdminQuote> {
+          return request(`/admin/quotes/${id}`, adminQuoteSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        send(id: string): Promise<AdminQuote> {
+          return request(`/admin/quotes/${id}/send`, adminQuoteSchema, { method: "POST" });
+        },
+      },
     },
   };
 }
@@ -208,4 +300,14 @@ export type {
   ProfessionDetail,
   AdminProfession,
   TemplateContent,
+  AssessmentState,
+  AssessmentAnswers,
+  JobDescriptionContent,
+  PublicQuote,
+  QuoteLine,
+  QuoteStatus,
+  AdminQuote,
+  AdminQuoteListItem,
+  UpdateQuote,
+  AcceptQuote,
 } from "@tando/types";

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Bricolage_Grotesque } from "next/font/google";
 import { site, nav } from "@tando/copy";
 import "@tando/ui/styles.css";
 import "./globals.css";
@@ -9,19 +8,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/cookie-consent";
 import { SITE_URL, organizationJsonLd } from "@/lib/site";
 
-// Polices variables : on n'épingle pas de graisse, la variable CSS porte toute la
-// plage et `font-weight` est piloté par les classes/feuilles de style.
-const body = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-});
-
-const heading = Bricolage_Grotesque({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-heading",
-});
+// Typographie : pile système (rapide, aucune requête tierce — cohérent avec
+// « données en France »). Une police de marque auto-hébergée (next/font/local +
+// woff2 versionnés) pourra être ajoutée sans toucher au reste.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -46,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${body.variable} ${heading.variable}`}>
+    <html lang="fr">
       <body className="flex min-h-dvh flex-col bg-paper text-ink-900">
         <script
           type="application/ld+json"
