@@ -620,6 +620,8 @@ model Assistant {
   subscriptionId String?          @unique @db.Uuid
   /// Renseigné pour un assistant issu du catalogue (prêt à l'emploi).
   professionSlug String?
+  /// Identifiant opaque pour l'arrivée des demandes (webhooks de canaux, Lot 7).
+  publicId       String?          @unique
   name           String
   role           String
   state          AssistantState   @default(en_formation)
@@ -642,9 +644,40 @@ model Assistant {
   instructions  AssistantInstruction[]
   conversations Conversation[]
   escalations   Escalation[]
+  appointments  Appointment[]
 
   @@index([organizationId])
   @@map("assistants")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 6 — Runtime (§9.3). Capacité « prendre un rendez-vous ».
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum AppointmentStatus {
+  propose
+  confirme
+  annule
+}
+
+model Appointment {
+  id             String            @id @default(uuid()) @db.Uuid
+  assistantId    String            @db.Uuid
+  organizationId String            @db.Uuid
+  conversationId String?           @db.Uuid
+  customerLabel  String?
+  /// Demande du client en clair (« jeudi après-midi si possible »).
+  requestedText  String
+  /// Créneau proposé / confirmé, si l'assistant a pu en fixer un.
+  slot           DateTime?         @db.Timestamptz(6)
+  status         AppointmentStatus @default(propose)
+  createdAt      DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime          @updatedAt @db.Timestamptz(6)
+
+  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+
+  @@index([assistantId, createdAt])
+  @@map("appointments")
 }
 
 /// Consigne ajoutée par le client (§6 « Le former »). Versionnée : on garde l'historique.
@@ -671,6 +704,8 @@ model Conversation {
   channel        ConversationChannel
   /// Étiquette non nominative (« Un client », ou le prénom si le client l'a donné).
   customerLabel  String?
+  /// Fil de discussion côté canal / session d'essai. Jamais affiché.
+  externalRef    String?
   /// Résumé en langage clair de ce que l'assistant a fait.
   summary        String?
   startedAt      DateTime            @default(now()) @db.Timestamptz(6)
@@ -681,6 +716,7 @@ model Conversation {
   messages  Message[]
 
   @@index([assistantId, lastMessageAt])
+  @@index([assistantId, externalRef])
   @@map("conversations")
 }
 

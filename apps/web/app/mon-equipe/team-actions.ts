@@ -61,6 +61,38 @@ export async function activateAssistant(assistantId: string): Promise<FormState>
   redirect(`/mon-equipe/assistants/${assistantId}`);
 }
 
+export interface ChatTurn {
+  kind: "reply" | "escalate" | "appointment";
+  reply: string;
+  sessionId: string;
+  escalated: boolean;
+  error?: string;
+}
+
+export async function simulateMessage(
+  assistantId: string,
+  text: string,
+  sessionId: string | undefined,
+): Promise<ChatTurn> {
+  try {
+    const t = await (await api()).simulate(assistantId, text, sessionId);
+    return {
+      kind: t.kind,
+      reply: t.reply,
+      sessionId: t.sessionId,
+      escalated: t.escalated,
+    };
+  } catch (e) {
+    return {
+      kind: "reply",
+      reply: "",
+      sessionId: sessionId ?? "",
+      escalated: false,
+      error: msg(e),
+    };
+  }
+}
+
 export async function addInstruction(
   assistantId: string,
   _prev: FormState,

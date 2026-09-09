@@ -21,8 +21,9 @@ import type {
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
 import { AuditService } from "../audit/audit.service";
-import { seedDemoActivity } from "./demo-activity";
+import { RuntimeService } from "../assistants/runtime.service";
 import { assistantReadyEmail } from "./team-mail.templates";
+import { newPublicId } from "./public-id";
 
 type JD = { summary?: string; tasks?: string[]; hours?: string };
 
@@ -32,6 +33,7 @@ export class AssistantService {
     private readonly prisma: PrismaService,
     private readonly queue: QueueService,
     private readonly audit: AuditService,
+    private readonly runtime: RuntimeService,
   ) {}
 
   /** Crée les assistants manquants pour les missions acceptées de l'organisation. */
@@ -45,6 +47,7 @@ export class AssistantService {
         data: {
           organizationId,
           missionId: mission.id,
+          publicId: newPublicId(),
           name: "Votre assistant",
           role: "votre employé virtuel sur mesure",
           state: "en_formation",
@@ -62,33 +65,47 @@ export class AssistantService {
       where: { organizationId, deletedAt: null },
       orderBy: { createdAt: "asc" },
     });
+    for (const row of rows) {
+      if (!row.publicId) {
+        await this.prisma.assistant.update({
+          where: { id: row.id },
+          data: { publicId: newPublicId() },
+        });
+      }
+    }
     return { assistants: rows.map(toCard) };
   }
 
   async detail(organizationId: string, id: string): Promise<AssistantDetail> {
     const a = await this.getOwned(organizationId, id);
 
-    const [instructions, conversations, escalations, todayCount, weekCount] = await Promise.all([
-      this.prisma.assistantInstruction.findMany({
-        where: { assistantId: id },
-        orderBy: { version: "desc" },
-      }),
-      this.prisma.conversation.findMany({
-        where: { assistantId: id },
-        orderBy: { lastMessageAt: "desc" },
-        take: 25,
-      }),
-      this.prisma.escalation.findMany({
-        where: { assistantId: id },
-        orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-      }),
-      this.prisma.conversation.count({
-        where: { assistantId: id, lastMessageAt: { gte: startOfToday() } },
-      }),
-      this.prisma.conversation.count({
-        where: { assistantId: id, lastMessageAt: { gte: daysAgo(7) } },
-      }),
-    ]);
+    const [instructions, conversations, escalations, appointments, todayCount, weekCount] =
+      await Promise.all([
+        this.prisma.assistantInstruction.findMany({
+          where: { assistantId: id },
+          orderBy: { version: "desc" },
+        }),
+        this.prisma.conversation.findMany({
+          where: { assistantId: id },
+          orderBy: { lastMessageAt: "desc" },
+          take: 25,
+        }),
+        this.prisma.escalation.findMany({
+          where: { assistantId: id },
+          orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+        }),
+        this.prisma.appointment.findMany({
+          where: { assistantId: id },
+          orderBy: { createdAt: "desc" },
+          take: 25,
+        }),
+        this.prisma.conversation.count({
+          where: { assistantId: id, lastMessageAt: { gte: startOfToday() } },
+        }),
+        this.prisma.conversation.count({
+          where: { assistantId: id, lastMessageAt: { gte: daysAgo(7) } },
+        }),
+      ]);
 
     const jd = a.jobDescription as JD;
     return {
@@ -116,6 +133,14 @@ export class AssistantService {
         answer: e.answer,
         answeredAt: e.answeredAt ? e.answeredAt.toISOString() : null,
         createdAt: e.createdAt.toISOString(),
+      })),
+      appointments: appointments.map((ap) => ({
+        id: ap.id,
+        customerLabel: ap.customerLabel ?? "Un client",
+        requestedText: ap.requestedText,
+        slot: ap.slot ? ap.slot.toISOString() : null,
+        status: ap.status as "propose" | "confirme" | "annule",
+        createdAt: ap.createdAt.toISOString(),
       })),
       todayCount,
       weekCount,
@@ -172,7 +197,7 @@ export class AssistantService {
       where: { id },
       data: { state: "au_travail", onboarding: "termine", startedAt: new Date(), pausedAt: null },
     });
-    await seedDemoActivity(this.prisma, { id, organizationId, name: a.name });
+    await this.runtime.seedInitialActivity(id);
 
     if (a.missionId) {
       await this.prisma.mission.update({ where: { id: a.missionId }, data: { status: "en_service" } });

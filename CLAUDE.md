@@ -187,7 +187,23 @@ pnpm dev                        # api (:3333) + web (:3000)
     répondues en ligne), le former (consignes versionnées), ses horaires, pause / reprise.
   - **Mon compte** : coordonnées, membres, contrat, résiliation, **export RGPD** et
     **suppression de compte** depuis le produit (§9.4).
-- Lots 6 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 6 — Runtime : fait.**
+  - `AssistantRuntime` (interface) dans `apps/api/src/assistants/runtime/`. Le produit ne
+    dépend jamais d'un fournisseur de modèle. Deux implémentations : `rules` (défaut, à
+    base de règles, sans LLM) et `fake` (tests) — choix par `ASSISTANT_RUNTIME`.
+  - Capacités MVP : **répondre aux questions courantes** (horaires, adresse, accueil, +
+    consignes du patron par recouvrement de mots-clés) et **prendre un rendez-vous**
+    (détection d'intention + résolution de créneau → `appointments`). Le reste est stubbé
+    en escalade.
+  - Garde-fous structurels : prix, urgence, demande d'un humain, ou toute demande non
+    cadrée → **escalade** (l'assistant n'invente pas). Chaque tour est journalisé
+    (`runtime.replied` / `runtime.escalated`).
+  - `POST /me/assistants/:id/simulate` : essai depuis l'espace client (fenêtre de chat,
+    premier jour + fiche). `POST /inbound/:publicId` (jeton `INBOUND_SECRET`) : arrivée
+    des demandes — les vrais canaux seront branchés au Lot 7.
+  - L'activation d'un assistant fait passer quelques premières demandes dans le moteur
+    (remplace l'ancienne activité de démonstration figée).
+- Lots 7 → 11 : voir `prompt-claude-code-tando.md` §10.
 
 ### Notes Lot 2
 

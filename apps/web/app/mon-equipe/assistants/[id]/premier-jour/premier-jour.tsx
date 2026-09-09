@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import type { AssistantDetail } from "@tando/api-client";
 import { activateAssistant, saveOnboardingStep } from "@/app/mon-equipe/team-actions";
+import { AssistantChat } from "@/components/assistant-chat";
 
 const field = "mt-1 w-full rounded-md border border-ink-100 px-3 py-2 text-base";
 const STEPS = ["Vos informations", "Vos spécificités", "Comment il vous joint", "Essai en direct"];
@@ -175,8 +176,14 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
 
       {step === 3 ? (
         <div className="mt-6">
-          <p className="text-base text-ink-700">{assistant.summary}</p>
-          <p className="mt-4 text-base font-semibold text-ink-900">Ce qu&apos;il fera :</p>
+          <p className="text-base text-ink-700">
+            Essayez-le : écrivez comme un de vos clients. S&apos;il n&apos;est pas sûr, il vous
+            transmettra la demande plutôt que d&apos;inventer.
+          </p>
+          <div className="mt-4">
+            <AssistantChat assistantId={assistant.id} name={assistant.name} />
+          </div>
+          <p className="mt-6 text-base font-semibold text-ink-900">Ce qu&apos;il fera :</p>
           <ul className="mt-2 space-y-1">
             {assistant.tasks.map((t, i) => (
               <li key={i} className="flex gap-2 text-base text-ink-700">

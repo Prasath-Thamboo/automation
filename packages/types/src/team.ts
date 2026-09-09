@@ -1,6 +1,8 @@
 import { z } from "zod";
 import type { SubscriptionSummary } from "./billing";
 import { subscriptionSummarySchema } from "./billing";
+import type { AppointmentRow } from "./runtime";
+import { appointmentRowSchema } from "./runtime";
 
 /**
  * Espace client « Mon équipe » (§6) et mise en service « premier jour » (§5.2).
@@ -101,6 +103,7 @@ export interface AssistantDetail extends AssistantCard {
   instructions: Instruction[];
   logbook: LogbookEntry[];
   escalations: EscalationItem[];
+  appointments: AppointmentRow[];
   todayCount: number;
   weekCount: number;
 }
@@ -207,6 +210,7 @@ export const assistantDetailSchema: z.ZodType<AssistantDetail> = z.object({
   instructions: z.array(instructionSchema),
   logbook: z.array(logbookEntrySchema),
   escalations: z.array(escalationItemSchema),
+  appointments: z.array(appointmentRowSchema),
   todayCount: z.number().int(),
   weekCount: z.number().int(),
 });

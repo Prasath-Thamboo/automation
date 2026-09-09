@@ -11,6 +11,7 @@ import { AuthModule } from "./auth/auth.module";
 import { CatalogModule } from "./catalog/catalog.module";
 import { QuotesModule } from "./quotes/quotes.module";
 import { BillingModule } from "./billing/billing.module";
+import { AssistantsModule } from "./assistants/assistants.module";
 import { TeamModule } from "./team/team.module";
 
 @Module({
@@ -25,6 +26,7 @@ import { TeamModule } from "./team/team.module";
     CatalogModule,
     QuotesModule,
     BillingModule,
+    AssistantsModule,
     TeamModule,
   ],
   providers: [

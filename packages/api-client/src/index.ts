@@ -28,6 +28,7 @@ import {
   startAssessmentResultSchema,
   teamListSchema,
   escalationItemSchema,
+  runtimeTurnSchema,
   type AcceptQuote,
   type AdminProfession,
   type AdminProfessionList,
@@ -53,6 +54,7 @@ import {
   type OnboardingStep,
   type PatchAssessment,
   type PaymentOutcome,
+  type RuntimeTurn,
   type TeamList,
   type UpdateAccount,
   type ProfessionDetail,
@@ -319,6 +321,12 @@ export function createApiClient(options: ApiClientOptions) {
           body: JSON.stringify(body),
         });
       },
+      simulate(id: string, text: string, sessionId?: string): Promise<RuntimeTurn> {
+        return request(`/me/assistants/${id}/simulate`, runtimeTurnSchema, {
+          method: "POST",
+          body: JSON.stringify({ text, sessionId }),
+        });
+      },
       pauseAssistant(id: string): Promise<AssistantDetail> {
         return request(`/me/assistants/${id}/pause`, assistantDetailSchema, { method: "POST" });
       },
@@ -483,4 +491,8 @@ export type {
   AddInstruction,
   AnswerEscalation,
   UpdateAccount,
+  RuntimeTurn,
+  AppointmentRow,
+  Inbound,
+  InboundResult,
 } from "@tando/types";

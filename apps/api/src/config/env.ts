@@ -58,6 +58,12 @@ export const envSchema = z.object({
   PAYMENT_PROVIDER: z.enum(["fake", "stripe"]).default("fake"),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
+  // --- Moteur « employé virtuel » (Lot 6) ---
+  /** Implémentation de `AssistantRuntime` : `rules` (défaut) ou `fake`. */
+  ASSISTANT_RUNTIME: z.enum(["rules", "fake"]).default("rules"),
+  /** Jeton partagé exigé sur l'endpoint d'arrivée des demandes (`/inbound`). */
+  INBOUND_SECRET: z.string().default("dev-inbound-secret"),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -16,6 +16,7 @@ import {
   addInstructionSchema,
   answerEscalationSchema,
   onboardingStepSchema,
+  simulateSchema,
   subscribeCatalogSchema,
   updateAccountSchema,
   type AccountInfo,
@@ -25,7 +26,9 @@ import {
   type ConversationDetail,
   type EscalationItem,
   type OnboardingStep,
+  type RuntimeTurn,
   type SessionUser,
+  type Simulate,
   type SubscribeCatalog,
   type TeamList,
   type UpdateAccount,
@@ -33,6 +36,7 @@ import {
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { SessionGuard } from "../auth/session.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
+import { RuntimeService } from "../assistants/runtime.service";
 import { AssistantService } from "./assistant.service";
 import { EscalationsService } from "./escalations.service";
 import { CatalogSubscribeService } from "./catalog-subscribe.service";
@@ -47,6 +51,7 @@ export class TeamController {
     private readonly escalations: EscalationsService,
     private readonly catalog: CatalogSubscribeService,
     private readonly account: AccountService,
+    private readonly runtime: RuntimeService,
   ) {}
 
   @Get("team")
@@ -96,6 +101,16 @@ export class TeamController {
     @Body(new ZodValidationPipe(addInstructionSchema)) body: AddInstruction,
   ): Promise<AssistantDetail> {
     return this.assistants.addInstruction(user.organizationId, id, body, user.id);
+  }
+
+  @Post("assistants/:id/simulate")
+  @ApiOkResponse({ description: "Teste l'assistant (essai depuis l'espace client)." })
+  simulate(
+    @CurrentUser() user: SessionUser,
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body(new ZodValidationPipe(simulateSchema)) body: Simulate,
+  ): Promise<RuntimeTurn> {
+    return this.runtime.simulate(user.organizationId, id, body.text, body.sessionId);
   }
 
   @Post("assistants/:id/pause")

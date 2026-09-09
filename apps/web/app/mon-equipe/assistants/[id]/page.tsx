@@ -4,6 +4,7 @@ import { ApiError } from "@tando/api-client";
 import { glossary } from "@tando/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
+import { AssistantChat } from "@/components/assistant-chat";
 import {
   EscalationCard,
   InstructionForm,
@@ -47,6 +48,9 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
 
   const openEscalations = a.escalations.filter((e) => e.status === "ouverte");
   const closedEscalations = a.escalations.filter((e) => e.status === "repondue");
+  const upcomingAppointments = a.appointments.filter((ap) => ap.status !== "annule");
+  const slotFmt = (s: string | null) =>
+    s ? new Date(s).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : null;
 
   return (
     <section className="mx-auto max-w-content px-4 py-14 sm:px-6 sm:py-20">
@@ -113,6 +117,36 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
           </div>
         </details>
       ) : null}
+
+      {/* Ses rendez-vous */}
+      {upcomingAppointments.length > 0 ? (
+        <>
+          <h2 className="mt-12 text-xl font-bold text-ink-900">Les rendez-vous qu&apos;il a pris</h2>
+          <ul className="mt-3 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+            {upcomingAppointments.map((ap) => (
+              <li key={ap.id} className="p-4">
+                <p className="text-base text-ink-900">
+                  {ap.status === "confirme" && ap.slot
+                    ? slotFmt(ap.slot)
+                    : "Créneau à confirmer"}
+                </p>
+                <p className="text-xs text-ink-500">
+                  {ap.customerLabel} — « {ap.requestedText} »
+                </p>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+
+      {/* Le tester */}
+      <h2 className="mt-12 text-xl font-bold text-ink-900">Lui parler</h2>
+      <p className="mt-1 text-base text-ink-700">
+        Posez-lui une question comme le ferait un client, pour vérifier ses réponses.
+      </p>
+      <div className="mt-4">
+        <AssistantChat assistantId={id} name={a.name} />
+      </div>
 
       {/* Le former */}
       <h2 className="mt-12 text-xl font-bold text-ink-900">Le former</h2>

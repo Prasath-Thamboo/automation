@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { BillingService } from "../billing/billing.service";
+import { newPublicId } from "./public-id";
 
 interface TemplateContentShape {
   assistantName?: string;
@@ -50,6 +51,7 @@ export class CatalogSubscribeService {
         organizationId,
         subscriptionId: sub.id,
         professionSlug: slug,
+        publicId: newPublicId(),
         name: content.assistantName ?? profession.name,
         role: content.assistantRole ?? `votre assistant ${profession.name.toLowerCase()}`,
         state: "en_formation",
