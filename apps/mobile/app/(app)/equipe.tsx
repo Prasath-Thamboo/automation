@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -8,6 +8,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { Link, useLocalSearchParams } from "expo-router";
+import { mobileNotifications as nx, mobileTraining as tx } from "@tando/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";
@@ -21,8 +23,14 @@ const STATE_LABEL: Record<string, string> = {
 
 export default function EquipeScreen() {
   const { signOut } = useAuth();
-  const { data, loading, error, refreshing, refetch } = useQuery(() => api.me.team());
+  const { data, loading, error, refreshing, refetch, stale } = useQuery(() => api.me.team(), [], {
+    cache: "team",
+  });
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Deep link depuis le widget / une notification : tando://(app)/equipe?do=pause
+  const { do: intent } = useLocalSearchParams<{ do?: string }>();
+  const intentDone = useRef(false);
 
   async function toggle(id: string, paused: boolean) {
     setBusyId(id);
@@ -37,7 +45,15 @@ export default function EquipeScreen() {
     }
   }
 
-  if (loading) {
+  useEffect(() => {
+    if (intentDone.current || !data || (intent !== "pause" && intent !== "resume")) return;
+    const target = data.assistants.find((a) => a.onboarding === "termine");
+    if (!target) return;
+    intentDone.current = true;
+    void toggle(target.id, intent === "resume");
+  }, [data, intent]);
+
+  if (loading && !data) {
     return (
       <View style={[s.screen, { alignItems: "center", justifyContent: "center" }]}>
         <ActivityIndicator color={t.color.primary} />
@@ -51,7 +67,8 @@ export default function EquipeScreen() {
       contentContainerStyle={{ padding: t.space[4], gap: t.space[3] }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetch} />}
     >
-      {error ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {error && !data ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {stale ? <Text style={s.muted}>Dernière version reçue.</Text> : null}
 
       {data && data.assistants.length === 0 ? (
         <Text style={s.body}>
@@ -72,32 +89,62 @@ export default function EquipeScreen() {
                 Terminez sa mise en service depuis le site pour qu&apos;il prenne son poste.
               </Text>
             ) : (
-              <Pressable
-                onPress={() => toggle(a.id, paused)}
-                disabled={busyId === a.id}
-                style={{
-                  minHeight: 44,
-                  marginTop: t.space[3],
-                  borderRadius: t.radius.md,
-                  borderWidth: 1,
-                  borderColor: t.color.primary,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: busyId === a.id ? 0.5 : 1,
-                }}
-              >
-                <Text style={{ color: t.color.primaryStrong, fontWeight: "600", fontSize: 15 }}>
-                  {busyId === a.id
-                    ? "…"
-                    : paused
-                      ? "Le remettre au travail"
-                      : "Le mettre en pause"}
-                </Text>
-              </Pressable>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: t.space[3] }}>
+                <Pressable
+                  onPress={() => toggle(a.id, paused)}
+                  disabled={busyId === a.id}
+                  style={{
+                    minHeight: 44,
+                    paddingHorizontal: 14,
+                    borderRadius: t.radius.md,
+                    borderWidth: 1,
+                    borderColor: t.color.primary,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: busyId === a.id ? 0.5 : 1,
+                  }}
+                >
+                  <Text style={{ color: t.color.primaryStrong, fontWeight: "600", fontSize: 15 }}>
+                    {busyId === a.id
+                      ? "…"
+                      : paused
+                        ? "Le remettre au travail"
+                        : "Le mettre en pause"}
+                  </Text>
+                </Pressable>
+                <Link
+                  href={{ pathname: "/(app)/former/[assistantId]", params: { assistantId: a.id } }}
+                  asChild
+                >
+                  <Pressable
+                    style={{
+                      minHeight: 44,
+                      paddingHorizontal: 14,
+                      borderRadius: t.radius.md,
+                      borderWidth: 1,
+                      borderColor: t.color.primary,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ color: t.color.primaryStrong, fontWeight: "600", fontSize: 15 }}>
+                      {tx.title}
+                    </Text>
+                  </Pressable>
+                </Link>
+              </View>
             )}
           </View>
         );
       })}
+
+      <Link href="/(app)/reglages" asChild>
+        <Pressable style={{ padding: t.space[4], alignItems: "center" }}>
+          <Text style={{ color: t.color.primaryStrong, fontSize: 15, fontWeight: "600" }}>
+            {nx.title}
+          </Text>
+        </Pressable>
+      </Link>
 
       <Pressable onPress={() => void signOut()} style={{ padding: t.space[4], alignItems: "center" }}>
         <Text style={{ color: t.color.inkFaint, fontSize: 15 }}>Se déconnecter</Text>

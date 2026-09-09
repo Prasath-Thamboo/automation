@@ -28,6 +28,7 @@ import {
   startAssessmentResultSchema,
   teamListSchema,
   todaySummarySchema,
+  notificationPrefsSchema,
   escalationItemSchema,
   runtimeTurnSchema,
   type AcceptQuote,
@@ -58,6 +59,9 @@ import {
   type RuntimeTurn,
   type TeamList,
   type TodaySummary,
+  type NotificationPrefs,
+  type RegisterPushToken,
+  type UpdateNotificationPrefs,
   type UpdateAccount,
   type ProfessionDetail,
   type PublicQuote,
@@ -371,6 +375,29 @@ export function createApiClient(options: ApiClientOptions) {
       deleteAccount(): Promise<{ ok: true }> {
         return request("/me/account/delete", okSchema, { method: "POST" });
       },
+
+      // ── Notifications (§6bis) ────────────────────────────────────────────
+      registerPushToken(body: RegisterPushToken): Promise<{ ok: true }> {
+        return request("/me/push-tokens", okSchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+      removePushToken(token: string): Promise<{ ok: true }> {
+        return request("/me/push-tokens/remove", okSchema, {
+          method: "POST",
+          body: JSON.stringify({ token }),
+        });
+      },
+      notificationPrefs(): Promise<NotificationPrefs> {
+        return request("/me/notification-preferences", notificationPrefsSchema);
+      },
+      updateNotificationPrefs(body: UpdateNotificationPrefs): Promise<NotificationPrefs> {
+        return request("/me/notification-preferences", notificationPrefsSchema, {
+          method: "PUT",
+          body: JSON.stringify(body),
+        });
+      },
     },
 
     /** Back-office (réservé au rôle `admin`). */
@@ -501,4 +528,8 @@ export type {
   AppointmentRow,
   Inbound,
   InboundResult,
+  NotificationPrefs,
+  RegisterPushToken,
+  UpdateNotificationPrefs,
+  DevicePlatform,
 } from "@tando/types";

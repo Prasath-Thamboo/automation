@@ -40,6 +40,15 @@ export {
   type LegalPage,
   type LegalSection,
 } from "./legal";
+export {
+  escalations as mobileEscalations,
+  voice as mobileVoice,
+  training as mobileTraining,
+  notifications as mobileNotifications,
+  connectivity as mobileConnectivity,
+  widget as mobileWidget,
+  type MobileNotifications,
+} from "./mobile";
 
 import { glossary } from "./glossary";
 

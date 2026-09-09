@@ -28,23 +28,27 @@ type Row = LogbookEntry & { assistantId: string; assistantName: string };
 export default function CarnetScreen() {
   const [assistantId, setAssistantId] = useState<string | null>(null);
 
-  const { data, loading, error, refreshing, refetch } = useQuery(async () => {
-    const { assistants } = await api.me.team();
-    const active = assistants.filter((a) => a.onboarding === "termine");
-    const details = await Promise.all(active.map((a) => api.me.assistant(a.id)));
-    const rows: Row[] = details.flatMap((d) =>
-      d.logbook.map((l) => ({ ...l, assistantId: d.id, assistantName: d.name })),
-    );
-    rows.sort((a, b) => b.lastMessageAt.localeCompare(a.lastMessageAt));
-    return { assistants: active.map((a) => ({ id: a.id, name: a.name })), rows };
-  });
+  const { data, loading, error, refreshing, refetch, stale } = useQuery(
+    async () => {
+      const { assistants } = await api.me.team();
+      const active = assistants.filter((a) => a.onboarding === "termine");
+      const details = await Promise.all(active.map((a) => api.me.assistant(a.id)));
+      const rows: Row[] = details.flatMap((d) =>
+        d.logbook.map((l) => ({ ...l, assistantId: d.id, assistantName: d.name })),
+      );
+      rows.sort((a, b) => b.lastMessageAt.localeCompare(a.lastMessageAt));
+      return { assistants: active.map((a) => ({ id: a.id, name: a.name })), rows };
+    },
+    [],
+    { cache: "carnet" },
+  );
 
   const rows = useMemo(
     () => (data ? data.rows.filter((r) => !assistantId || r.assistantId === assistantId) : []),
     [data, assistantId],
   );
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <View style={[s.screen, { alignItems: "center", justifyContent: "center" }]}>
         <ActivityIndicator color={t.color.primary} />
@@ -58,7 +62,8 @@ export default function CarnetScreen() {
       contentContainerStyle={{ padding: t.space[4], gap: t.space[3] }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetch} />}
     >
-      {error ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {error && !data ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {stale ? <Text style={s.muted}>Dernière version reçue.</Text> : null}
 
       {data && data.assistants.length > 1 ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>

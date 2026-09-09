@@ -5,6 +5,7 @@ import type { InboundResult, RuntimeTurn } from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { QueueService } from "../queue/queue.module";
+import { PushService } from "../notifications/push.service";
 import { escalationNoticeEmail } from "./runtime-mail.templates";
 import {
   ASSISTANT_RUNTIME,
@@ -28,6 +29,7 @@ export class RuntimeService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly queue: QueueService,
+    private readonly push: PushService,
     @Inject(ASSISTANT_RUNTIME) private readonly runtime: AssistantRuntime,
   ) {}
 
@@ -180,7 +182,7 @@ export class RuntimeService {
           data: { conversationId, author: "assistant", text: reply.ackText },
         });
       }
-      await this.prisma.escalation.create({
+      const escalation = await this.prisma.escalation.create({
         data: {
           assistantId: assistant.id,
           organizationId: assistant.organizationId,
@@ -195,6 +197,12 @@ export class RuntimeService {
         if (email) {
           await this.queue.enqueueEmail(escalationNoticeEmail(email, assistant.name, reply.question));
         }
+        await this.push.notifyEscalation({
+          organizationId: assistant.organizationId,
+          assistantName: assistant.name,
+          question: reply.question,
+          escalationId: escalation.id,
+        });
       }
     }
 

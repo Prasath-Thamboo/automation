@@ -13,9 +13,13 @@ const STATE_LABEL: Record<string, string> = {
 
 export default function AujourdhuiScreen() {
   const { user } = useAuth();
-  const { data, loading, error, refreshing, refetch } = useQuery(() => api.me.today());
+  const { data, loading, error, refreshing, refetch, stale } = useQuery(
+    () => api.me.today(),
+    [],
+    { cache: "today" },
+  );
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <View style={[s.screen, { alignItems: "center", justifyContent: "center" }]}>
         <ActivityIndicator color={t.color.primary} />
@@ -32,7 +36,8 @@ export default function AujourdhuiScreen() {
       <Text style={s.h1}>Aujourd&apos;hui</Text>
       {user ? <Text style={s.muted}>{user.organizationName}</Text> : null}
 
-      {error ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {error && !data ? <Text style={{ color: t.color.warning }}>{error}</Text> : null}
+      {stale ? <Text style={s.muted}>Dernière version reçue.</Text> : null}
 
       {data ? (
         <>
@@ -50,15 +55,20 @@ export default function AujourdhuiScreen() {
               <Text style={[s.body, { marginTop: 4 }]}>Rien à valider. Il gère.</Text>
             ) : (
               data.openEscalations.map((e) => (
-                <View key={e.id} style={{ marginTop: t.space[3] }}>
+                <Link
+                  key={e.id}
+                  href={{
+                    pathname: "/(app)/valider/[id]",
+                    params: { id: e.id, assistantName: e.assistantName, question: e.question },
+                  }}
+                  style={{ marginTop: t.space[3] }}
+                >
                   <Text style={{ fontSize: t.fontSize.base, color: t.color.ink }}>{e.question}</Text>
-                  <Text style={s.muted}>{e.assistantName}</Text>
-                </View>
+                  {"\n"}
+                  <Text style={s.muted}>{e.assistantName} · Répondre</Text>
+                </Link>
               ))
             )}
-            <Text style={[s.muted, { marginTop: t.space[3] }]}>
-              Répondre à une demande arrivera par notification au prochain lot.
-            </Text>
           </View>
 
           <View style={s.card}>

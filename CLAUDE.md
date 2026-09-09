@@ -224,7 +224,61 @@ pnpm dev                        # api (:3333) + web (:3000)
     `tando://` + `applinks:tando.fr`.
   - Nouveau côté API : `GET /me/today` → `TodaySummary` (`@tando/types`),
     méthode `AssistantService.today()`, client `api.me.today()`.
-- Lots 8 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 8 — Application mobile, le cœur : fait.**
+  - **À valider** : onglet dédié (`app/(app)/valider.tsx` + `valider/[id].tsx`),
+    réponses rapides toutes prêtes, réponse libre au clavier **ou à la voix**,
+    envoi en un tapotement. Alimenté par `GET /me/today` (`openEscalations`).
+  - **Notifications push** (`expo-notifications`, APNs/FCM via Expo) : modèle
+    `PushToken`, file BullMQ `push` + `PushWorker`, client Expo Push maison
+    (`apps/api/src/notifications/expo-push.ts`, pas de SDK). Déclenchées à
+    l'escalade (`RuntimeService`, si `notify`), à l'échec de paiement
+    (`BillingService.markPaymentFailed`) et par un résumé quotidien (job
+    répétable horaire → `PushService.runDailySummaryTick`). Jetons morts
+    (`DeviceNotRegistered`) désactivés automatiquement.
+  - **Réglages** (`app/(app)/reglages.tsx`) : escalades / résumé quotidien
+    (+ heure) / échec de paiement, **heures de silence** (fenêtre qui peut
+    passer minuit, calcul dans le fuseau de l'appareil —
+    `apps/api/src/notifications/quiet-hours.ts`). Modèle `NotificationPreference`
+    (défauts si absent), `GET`/`PUT /me/notification-preferences`.
+  - **Dictée vocale** (`expo-speech-recognition`, `src/voice.ts` +
+    `DictateField`) pour la réponse d'escalade et « Le former »
+    (`app/(app)/former/[assistantId].tsx`). Repli clavier si l'appareil ne sait
+    pas faire.
+  - **Hors ligne partiel** : `use-query.ts` gagne une option `cache` (lecture de
+    la dernière réponse hors connexion, badge « dernière version reçue ») ;
+    `src/offline-queue.ts` met en file les actions (réponse d'escalade, pause /
+    reprise, consigne) et les rejoue dans l'ordre à la reconnexion
+    (`src/net.ts` via NetInfo) ; `ConnectivityBanner` global.
+  - **Deep links** : une notification route vers le bon écran via `data.screen`
+    (`src/notifications.ts` → `useNotificationRouting`) ; `tando://(app)/equipe?do=pause`
+    déclenche la mise en pause (widget / notification).
+  - **Widget de mise en pause** : scaffold + plan dans
+    `apps/mobile/targets/pause-widget/README.md`. Cible native (WidgetKit /
+    Glance) → câblée au premier build EAS du Lot 9.
+  - Nouveau côté API : file `push`, `NotificationsModule` (global),
+    `PushService` / `NotificationPrefsService`, routes `/me/push-tokens`,
+    `/me/push-tokens/remove`, `/me/notification-preferences`. Types
+    `packages/types/src/notifications.ts` ; client `api.me.registerPushToken` /
+    `removePushToken` / `notificationPrefs` / `updateNotificationPrefs`.
+  - Env : `PUSH_ENABLED` (false = ne contacte pas Expo), `EXPO_PUSH_URL`,
+    `EXPO_ACCESS_TOKEN`.
+- Lots 9 → 11 : voir `prompt-claude-code-tando.md` §10.
+
+### Notes Lot 8
+
+- **Notifications push** : pas de dépendance à `expo-server-sdk` — un `fetch`
+  vers l'API Expo Push suffit (APNs/FCM gérés par Expo). En dev/CI, garder
+  `PUSH_ENABLED=false` : les jobs sont créés puis ignorés.
+- **Résumé quotidien** : un seul job répétable (`daily-summary-tick`, cron
+  `0 * * * *`) ; à chaque heure, on n'envoie qu'aux utilisateurs dont l'heure
+  locale == `dailySummaryHour`. Pas de colonne « déjà envoyé » : la cadence
+  horaire suffit, `jobId` par jour en filet de sécurité.
+- **Copy mobile** : `packages/copy/src/mobile.ts` (exports `mobile*`). Passe le
+  test anti-jargon comme le reste de `@tando/copy`.
+- **Dépendances natives** (`expo-notifications`, `expo-speech-recognition`,
+  `@react-native-async-storage/async-storage`, `@react-native-community/netinfo`,
+  `expo-device`) : le bundle `expo export` (iOS + Android) résout tout ; l'envoi
+  réel des notifications et la dictée ne se testent que sur appareil / build EAS.
 
 ### Notes Lot 7
 

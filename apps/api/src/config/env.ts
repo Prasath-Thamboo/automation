@@ -64,6 +64,14 @@ export const envSchema = z.object({
   ASSISTANT_RUNTIME: z.enum(["rules", "fake"]).default("rules"),
   /** Jeton partagé exigé sur l'endpoint d'arrivée des demandes (`/inbound`). */
   INBOUND_SECRET: z.string().default("dev-inbound-secret"),
+
+  // --- Notifications push (Lot 8, §6bis) ---
+  /** Coupe l'envoi réel des notifications (utile en dev/CI). */
+  PUSH_ENABLED: booleanish.default("true"),
+  /** Endpoint de l'API Expo Push. */
+  EXPO_PUSH_URL: z.string().url().default("https://exp.host/--/api/v2/push/send"),
+  /** Jeton d'accès Expo (recommandé en production, facultatif en dev). */
+  EXPO_ACCESS_TOKEN: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

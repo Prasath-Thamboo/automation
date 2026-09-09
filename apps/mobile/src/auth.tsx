@@ -13,6 +13,8 @@ import type { SessionUser } from "@tando/api-client";
 import { api } from "./api";
 import { clearSessionToken, getSessionToken, setSessionToken } from "./session";
 import { canUseBiometrics, promptUnlock } from "./biometric";
+import { dropPushToken, syncPushToken } from "./notifications";
+import { flushQueue } from "./offline-queue";
 
 type Status = "loading" | "signedOut" | "locked" | "unlocked";
 
@@ -42,6 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(me);
       biometricsRef.current = await canUseBiometrics();
       setStatus(biometricsRef.current ? "locked" : "unlocked");
+      void syncPushToken();
+      void flushQueue();
     } catch {
       await clearSessionToken();
       setUser(null);
@@ -70,9 +74,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(me);
     biometricsRef.current = await canUseBiometrics();
     setStatus("unlocked");
+    void syncPushToken();
   }, []);
 
   const signOut = useCallback(async () => {
+    await dropPushToken();
     try {
       await api.auth.signOut();
     } catch {

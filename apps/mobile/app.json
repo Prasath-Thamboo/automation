@@ -12,7 +12,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "fr.tando.app",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Pour rouvrir votre espace en toute sécurité."
+        "NSFaceIDUsageDescription": "Pour rouvrir votre espace en toute sécurité.",
+        "NSMicrophoneUsageDescription": "Pour dicter vos réponses et vos consignes à la voix.",
+        "NSSpeechRecognitionUsageDescription": "Pour transcrire ce que vous dictez à votre employé virtuel.",
+        "UIBackgroundModes": ["remote-notification"]
       },
       "associatedDomains": ["applinks:tando.fr"]
     },
@@ -36,6 +39,21 @@
       [
         "expo-local-authentication",
         { "faceIDPermission": "Pour rouvrir votre espace en toute sécurité." }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#2f7d4f",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Pour dicter vos réponses et vos consignes à la voix.",
+          "speechRecognitionPermission": "Pour transcrire ce que vous dictez à votre employé virtuel.",
+          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+        }
       ]
     ],
     "experiments": {

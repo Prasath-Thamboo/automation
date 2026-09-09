@@ -61,10 +61,12 @@ model User {
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
 
-  memberships Membership[]
-  magicLinks  MagicLink[]
-  sessions    Session[]
-  auditLogs   AuditLog[]
+  memberships            Membership[]
+  magicLinks             MagicLink[]
+  sessions               Session[]
+  auditLogs              AuditLog[]
+  pushTokens             PushToken[]
+  notificationPreference NotificationPreference?
 
   @@map("users")
 }
@@ -751,4 +753,59 @@ model Escalation {
 
   @@index([organizationId, status])
   @@map("escalations")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 8 — Application mobile, le cœur (§6bis). Notifications push + préférences.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum DevicePlatform {
+  ios
+  android
+}
+
+/// Jeton de notification push d'un appareil (Expo Push Token). Un utilisateur
+/// peut avoir plusieurs appareils. On désactive (`disabledAt`) plutôt que
+/// supprimer quand Expo signale l'appareil comme injoignable.
+model PushToken {
+  id             String         @id @default(uuid()) @db.Uuid
+  userId         String         @db.Uuid
+  organizationId String         @db.Uuid
+  token          String         @unique
+  platform       DevicePlatform
+  deviceName     String?
+  disabledAt     DateTime?      @db.Timestamptz(6)
+  lastSeenAt     DateTime       @default(now()) @db.Timestamptz(6)
+  createdAt      DateTime       @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([organizationId])
+  @@map("push_tokens")
+}
+
+/// Réglages de notification d'un utilisateur (§6bis : escalade urgente, résumé
+/// quotidien optionnel, échec de paiement ; heures de silence ; jamais de push
+/// marketing). Une ligne par utilisateur ; valeurs par défaut si absente.
+model NotificationPreference {
+  userId           String   @id @db.Uuid
+  /// Escalade que l'assistant n'a pas su traiter → notification immédiate.
+  escalations      Boolean  @default(true)
+  /// Résumé de la veille, une fois par jour, à `dailySummaryHour` (heure locale).
+  dailySummary     Boolean  @default(false)
+  dailySummaryHour Int      @default(8)
+  /// Échec d'un paiement d'abonnement.
+  paymentFailure   Boolean  @default(true)
+  /// Fenêtre de silence « HH:mm » (heure locale) — aucune notification non vitale.
+  quietStart       String?
+  quietEnd         String?
+  /// Fuseau de l'utilisateur, pour l'heure du résumé et les heures de silence.
+  timezone         String   @default("Europe/Paris")
+  updatedAt        DateTime @updatedAt @db.Timestamptz(6)
+  createdAt        DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }

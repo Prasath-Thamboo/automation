@@ -23,6 +23,7 @@ import { webBaseUrl, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
 import { AuditService } from "../audit/audit.service";
+import { PushService } from "../notifications/push.service";
 import { PAYMENT_PROVIDER, type PaymentProvider } from "./payment/payment-provider";
 import { SequenceService } from "./sequence.service";
 import {
@@ -54,6 +55,7 @@ export class BillingService {
     private readonly seq: SequenceService,
     private readonly queue: QueueService,
     private readonly audit: AuditService,
+    private readonly push: PushService,
     @Inject(PAYMENT_PROVIDER) private readonly provider: PaymentProvider,
     @Inject(ENV) private readonly env: Env,
   ) {}
@@ -385,6 +387,10 @@ export class BillingService {
           ),
         );
       }
+      await this.push.notifyPaymentFailure({
+        organizationId: payment.organizationId,
+        invoiceNumber: payment.invoice.number,
+      });
     }
     return this.outcomeFor(payment.invoiceId);
   }
