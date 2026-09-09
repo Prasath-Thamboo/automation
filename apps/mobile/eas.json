@@ -21,6 +21,28 @@
     }
   },
   "submit": {
-    "production": {}
+    "preview": {
+      "ios": {
+        "appleId": "[À COMPLÉTER — Apple ID du compte développeur]",
+        "ascAppId": "[À COMPLÉTER — App Store Connect App ID]",
+        "appleTeamId": "[À COMPLÉTER — Apple Team ID]"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/play-service-account.json",
+        "track": "internal"
+      }
+    },
+    "production": {
+      "ios": {
+        "appleId": "[À COMPLÉTER — Apple ID du compte développeur]",
+        "ascAppId": "[À COMPLÉTER — App Store Connect App ID]",
+        "appleTeamId": "[À COMPLÉTER — Apple Team ID]"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./credentials/play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    }
   }
 }

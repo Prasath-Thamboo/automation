@@ -79,6 +79,24 @@ export interface DocumentsBundle {
   creditNotes: CreditNoteDoc[];
 }
 
+/**
+ * Où et comment gérer son contrat en dehors de l'application mobile (§10, Lot 9).
+ * L'abonnement se souscrit et se règle sur le web ; l'app mobile n'encaisse rien
+ * et n'affiche aucun lien de paiement cliquable sur iOS — juste `hint`.
+ */
+export interface BillingManageHandoff {
+  /** Adresse de gestion (espace client web). `null` si aucune gestion en ligne. */
+  url: string | null;
+  /** Phrase affichée telle quelle au client. */
+  hint: string;
+}
+
+/** Vue « mon contrat » de l'application mobile. */
+export interface MobileBillingView {
+  subscription: SubscriptionSummary | null;
+  manage: BillingManageHandoff;
+}
+
 /** Retour du démarrage d'un paiement. */
 export interface CheckoutInfo {
   provider: string;
@@ -179,6 +197,16 @@ export const documentsBundleSchema: z.ZodType<DocumentsBundle> = z.object({
   subscription: subscriptionSummarySchema.nullable(),
   invoices: z.array(invoiceDocSchema),
   creditNotes: z.array(creditNoteDocSchema),
+});
+
+export const billingManageHandoffSchema: z.ZodType<BillingManageHandoff> = z.object({
+  url: z.string().nullable(),
+  hint: z.string(),
+});
+
+export const mobileBillingViewSchema: z.ZodType<MobileBillingView> = z.object({
+  subscription: subscriptionSummarySchema.nullable(),
+  manage: billingManageHandoffSchema,
 });
 
 export const checkoutInfoSchema: z.ZodType<CheckoutInfo> = z.object({

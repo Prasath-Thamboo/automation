@@ -94,6 +94,59 @@ export const connectivity = {
   synced: "Tout est à jour.",
 } as const;
 
+/** Écran « Mon compte » sur mobile (§9.4 — droits du client, dans le produit). */
+export const account = {
+  title: "Mon compte",
+  identity: {
+    title: "Vos coordonnées",
+    nameLabel: "Nom",
+    emailLabel: "Adresse e-mail",
+    save: "Enregistrer",
+    saving: "Enregistrement…",
+    saved: "C'est enregistré.",
+  },
+  team: {
+    title: "Les personnes de l'entreprise",
+    you: "vous",
+  },
+  contract: {
+    title: "Votre contrat",
+    none: "Aucun contrat en cours.",
+    formulaLabel: "Formule",
+    monthlyLabel: "Par mois",
+    renewsLabel: "Prochaine échéance",
+    canceledLabel: "Résilié le",
+    status: {
+      incomplete: "En cours d'ouverture",
+      active: "En cours",
+      past_due: "Règlement en attente",
+      paused: "En pause",
+      canceled: "Résilié",
+    },
+    manageOnWeb: "Pour changer de formule ou résilier, rendez-vous dans votre espace sur le site.",
+  },
+  data: {
+    title: "Vos données",
+    exportLabel: "Recevoir une copie de mes données",
+    exporting: "Préparation…",
+    exportReady: "Copie prête. Choisissez où l'enregistrer.",
+    exportFailed: "Impossible de préparer la copie pour l'instant.",
+  },
+  danger: {
+    title: "Fermer le compte",
+    body: "Cette action ferme le compte de l'entreprise, met fin au contrat et déconnecte tout le monde. Elle est définitive.",
+    button: "Fermer définitivement le compte",
+    confirmTitle: "Fermer le compte ?",
+    confirmBody:
+      "Le compte, l'équipe et le contrat seront fermés. Vous ne pourrez pas revenir en arrière.",
+    confirmCta: "Oui, fermer le compte",
+    cancel: "Annuler",
+    ownerOnly: "Seul le titulaire du compte peut le fermer.",
+    done: "Votre compte est fermé.",
+    failed: "La fermeture n'a pas abouti. Réessayez dans un moment.",
+  },
+} as const;
+
 /** Widget d'écran d'accueil (mise en pause rapide). */
 export const widget = {
   pause: "Mettre en pause",

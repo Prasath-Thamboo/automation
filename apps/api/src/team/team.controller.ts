@@ -25,6 +25,7 @@ import {
   type AssistantDetail,
   type ConversationDetail,
   type EscalationItem,
+  type MobileBillingView,
   type OnboardingStep,
   type RuntimeTurn,
   type SessionUser,
@@ -156,6 +157,12 @@ export class TeamController {
   @Get("account")
   accountInfo(@CurrentUser() user: SessionUser): Promise<AccountInfo> {
     return this.account.info(user);
+  }
+
+  @Get("billing")
+  @ApiOkResponse({ description: "État du contrat + renvoi vers sa gestion (mobile)." })
+  billing(@CurrentUser() user: SessionUser): Promise<MobileBillingView> {
+    return this.account.billingView(user);
   }
 
   @Patch("account")

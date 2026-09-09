@@ -9,10 +9,11 @@ import {
   View,
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import { mobileNotifications as nx, mobileTraining as tx } from "@tando/copy";
+import { mobileAccount as ax, mobileNotifications as nx, mobileTraining as tx } from "@tando/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";
+import { syncWidget } from "@/src/widget-bridge";
 import { styles as s, t } from "@/src/theme";
 
 const STATE_LABEL: Record<string, string> = {
@@ -27,6 +28,11 @@ export default function EquipeScreen() {
     cache: "team",
   });
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Tient le widget d'écran d'accueil à jour à chaque état d'équipe reçu.
+  useEffect(() => {
+    if (data) void syncWidget(data);
+  }, [data]);
 
   // Deep link depuis le widget / une notification : tando://(app)/equipe?do=pause
   const { do: intent } = useLocalSearchParams<{ do?: string }>();
@@ -142,6 +148,14 @@ export default function EquipeScreen() {
         <Pressable style={{ padding: t.space[4], alignItems: "center" }}>
           <Text style={{ color: t.color.primaryStrong, fontSize: 15, fontWeight: "600" }}>
             {nx.title}
+          </Text>
+        </Pressable>
+      </Link>
+
+      <Link href="/(app)/compte" asChild>
+        <Pressable style={{ padding: t.space[4], alignItems: "center" }}>
+          <Text style={{ color: t.color.primaryStrong, fontSize: 15, fontWeight: "600" }}>
+            {ax.title}
           </Text>
         </Pressable>
       </Link>

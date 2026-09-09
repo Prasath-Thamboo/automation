@@ -49,6 +49,7 @@ export default function AppLayout() {
         <Tabs.Screen name="valider/[id]" options={{ href: null, title: "À valider" }} />
         <Tabs.Screen name="former/[assistantId]" options={{ href: null, title: "Le former" }} />
         <Tabs.Screen name="reglages" options={{ href: null, title: "Notifications" }} />
+        <Tabs.Screen name="compte" options={{ href: null, title: "Mon compte" }} />
       </Tabs>
     </View>
   );

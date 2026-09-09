@@ -3,25 +3,49 @@
     "name": "Tando",
     "slug": "tando",
     "scheme": "tando",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#fbf9f4",
+    "icon": "./assets/icon.png",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fbf9f4"
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "fr.tando.app",
+      "buildNumber": "1",
+      "appleTeamId": "[À COMPLÉTER — Apple Team ID]",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "infoPlist": {
         "NSFaceIDUsageDescription": "Pour rouvrir votre espace en toute sécurité.",
         "NSMicrophoneUsageDescription": "Pour dicter vos réponses et vos consignes à la voix.",
         "NSSpeechRecognitionUsageDescription": "Pour transcrire ce que vous dictez à votre employé virtuel.",
         "UIBackgroundModes": ["remote-notification"]
       },
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.fr.tando.app"]
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      },
       "associatedDomains": ["applinks:tando.fr"]
     },
     "android": {
       "package": "fr.tando.app",
+      "versionCode": 1,
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbf9f4"
       },
       "intentFilters": [
@@ -43,6 +67,7 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/notification-icon.png",
           "color": "#2f7d4f",
           "defaultChannel": "default"
         }

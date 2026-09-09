@@ -59,6 +59,16 @@ export const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 
+  // --- Abonnement / stores (Lot 9) ---
+  /** Rail d'abonnement. `out-of-app` (défaut) = géré sur le web ; `revenuecat` réservé. */
+  BILLING_PROVIDER: z.enum(["out-of-app", "revenuecat"]).default("out-of-app"),
+  /** Adresse de gestion du contrat (espace client web), affichée dans l'app mobile. */
+  BILLING_MANAGE_URL: z.string().url().default("http://localhost:3000/mon-equipe/compte"),
+  /** Phrase de renvoi vers la gestion du contrat, affichée telle quelle. */
+  BILLING_MANAGE_HINT: z
+    .string()
+    .default("Gérez votre contrat depuis votre espace, sur tando.fr."),
+
   // --- Moteur « employé virtuel » (Lot 6) ---
   /** Implémentation de `AssistantRuntime` : `rules` (défaut) ou `fake`. */
   ASSISTANT_RUNTIME: z.enum(["rules", "fake"]).default("rules"),

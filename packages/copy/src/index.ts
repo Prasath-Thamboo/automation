@@ -46,6 +46,7 @@ export {
   training as mobileTraining,
   notifications as mobileNotifications,
   connectivity as mobileConnectivity,
+  account as mobileAccount,
   widget as mobileWidget,
   type MobileNotifications,
 } from "./mobile";

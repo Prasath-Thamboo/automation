@@ -1,8 +1,14 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
-import type { AccountInfo, SessionUser, UpdateAccount } from "@tando/types";
+import { ForbiddenException, Inject, Injectable } from "@nestjs/common";
+import type {
+  AccountInfo,
+  MobileBillingView,
+  SessionUser,
+  UpdateAccount,
+} from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { BillingService } from "../billing/billing.service";
+import { BILLING_PROVIDER, type BillingProvider } from "../billing/subscription/billing-provider";
 
 @Injectable()
 export class AccountService {
@@ -10,6 +16,7 @@ export class AccountService {
     private readonly prisma: PrismaService,
     private readonly billing: BillingService,
     private readonly audit: AuditService,
+    @Inject(BILLING_PROVIDER) private readonly billingProvider: BillingProvider,
   ) {}
 
   async info(user: SessionUser): Promise<AccountInfo> {
@@ -33,6 +40,19 @@ export class AccountService {
       })),
       subscription: docs.subscription,
     };
+  }
+
+  /** Vue « mon contrat » de l'app mobile (§10, Lot 9). L'app n'encaisse rien :
+   *  elle affiche l'état de l'abonnement et le renvoi vers la gestion sur le web. */
+  async billingView(user: SessionUser): Promise<MobileBillingView> {
+    const [docs, manage] = await Promise.all([
+      this.billing.documentsFor(user.organizationId),
+      this.billingProvider.manageHandoff({
+        organizationId: user.organizationId,
+        customerEmail: user.email,
+      }),
+    ]);
+    return { subscription: docs.subscription, manage };
   }
 
   async updateProfile(user: SessionUser, dto: UpdateAccount): Promise<AccountInfo> {

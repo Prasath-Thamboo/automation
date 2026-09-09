@@ -3,13 +3,27 @@
 But : mettre l'employé virtuel en pause / le remettre au travail **en deux
 tapotements**, depuis l'écran d'accueil, sans ouvrir l'app.
 
-## État : scaffold
+## État : pont JS en place, cible native à compiler
 
 Le widget est une **cible native** (iOS WidgetKit en Swift, Android Glance /
 RemoteViews en Kotlin). Elle se compile via un build EAS — impossible à vérifier
-dans l'environnement de dev headless. Le câblage natif est fait au **Lot 9**
-(publication stores), en même temps que l'icône, l'écran de lancement et les
-premiers builds EAS.
+dans l'environnement de dev headless.
+
+Fait au Lot 9 :
+
+- **Pont JS** : `apps/mobile/src/widget-bridge.ts` — `syncWidget(team)` publie
+  l'état de l'équipe (`label` + `working`) dans le conteneur partagé via le
+  module natif optionnel `TandoWidgetBridge`, avec repli sur le cache local
+  quand le module est absent. Appelé depuis `app/(app)/equipe.tsx` à chaque
+  état d'équipe reçu.
+- **Entitlement App Group** `group.fr.tando.app` déclaré dans
+  `app.json > ios.entitlements` + manifeste de confidentialité User Defaults.
+- **Copy** : `mobileWidget` dans `@tando/copy`.
+
+Reste à faire au 1er build EAS : ajouter `@bacons/apple-targets` (iOS) + le
+plugin Android, implémenter le module natif `TandoWidgetBridge`
+(`set(group, key, value)`) et les vues du widget, câbler l'entitlement côté
+Android (`SharedPreferences`).
 
 ## Mécanique prévue
 

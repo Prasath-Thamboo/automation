@@ -118,8 +118,11 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Emails** : nodemailer → SMTP (mailpit en dev). Envoyés via la file BullMQ `mail`.
 - **`@types/react`** épinglé en 19.0.x pour tout le monorepo (`pnpm-workspace.yaml` →
   `overrides`) sinon Next et RN chargent deux namespaces React globaux incompatibles.
-- **Facturation mobile** : à trancher au Lot 9, derrière une abstraction `BillingProvider`
-  (Stripe hors app vs RevenueCat). Ne pas trancher seul.
+- **Facturation mobile** (tranché au Lot 9) : **Stripe hors application**. L'abonnement se
+  souscrit et se règle sur le web ; l'app mobile n'encaisse rien et n'affiche aucun lien de
+  paiement cliquable sur iOS. Abstraction `BillingProvider`
+  (`apps/api/src/billing/subscription/`) : seul `out-of-app` est implémenté ; `revenuecat`
+  (achat intégré) reste réservé derrière la même interface.
 
 ## État de la roadmap
 
@@ -262,7 +265,57 @@ pnpm dev                        # api (:3333) + web (:3000)
     `removePushToken` / `notificationPrefs` / `updateNotificationPrefs`.
   - Env : `PUSH_ENABLED` (false = ne contacte pas Expo), `EXPO_PUSH_URL`,
     `EXPO_ACCESS_TOKEN`.
-- Lots 9 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 9 — Publication sur les stores : fait.**
+  - **Décision facturation** : Stripe hors application (voir « Décisions prises »).
+    Abstraction `BillingProvider` (`apps/api/src/billing/subscription/` :
+    `billing-provider.ts`, `out-of-app-billing.provider.ts`,
+    `billing-provider.module.ts` — `@Global()`). `BILLING_PROVIDER=out-of-app`
+    (défaut) ; `revenuecat` lève une erreur explicite au démarrage. Env :
+    `BILLING_PROVIDER`, `BILLING_MANAGE_URL`, `BILLING_MANAGE_HINT`.
+  - Nouveau côté API : `GET /me/billing` → `MobileBillingView`
+    (`{ subscription, manage: { url, hint } }`), `AccountService.billingView()`.
+    Types `packages/types/src/billing.ts` (`BillingManageHandoff`,
+    `MobileBillingView`) ; client `api.me.billing()`.
+  - **Mobile — Mon compte** : `app/(app)/compte.tsx` (onglet caché, lien depuis
+    « Mon équipe »). Coordonnées (nom éditable), personnes de l'entreprise, état
+    du contrat (texte de renvoi vers le web, **aucun lien cliquable sur iOS**),
+    export RGPD (`GET /me/account/export` → feuille de partage système),
+    **fermeture du compte** (`POST /me/account/delete`, double confirmation,
+    titulaire uniquement) — exigence App Store 5.1.1(v). Copy : `mobileAccount`
+    dans `@tando/copy`.
+  - **Pont widget** : `apps/mobile/src/widget-bridge.ts` — `syncWidget(team)`
+    publie `{ label, working }` vers le module natif optionnel
+    `TandoWidgetBridge` (repli cache local si absent). Appelé depuis
+    `app/(app)/equipe.tsx`. Cible native à compiler au 1er build EAS.
+  - **`app.json`** : `version` 1.0.0, `buildNumber`/`versionCode` 1, `icon` +
+    `splash` (visuels provisoires générés par `assets/generate-placeholders.mjs`),
+    `android.adaptiveIcon`, icône de notification, `usesNonExemptEncryption:false`,
+    App Group `group.fr.tando.app` (entitlement + `privacyManifests` User Defaults
+    `CA92.1`). **`eas.json`** : profils `submit` `preview` / `production`
+    (TestFlight + piste interne Play), identifiants en `[À COMPLÉTER]`.
+  - **Fiches store** : `apps/mobile/store/` (`listing-fr.md`, `app-privacy.md`,
+    `data-safety.md`, `review-notes.md`, `README.md` avec la checklist de
+    pré-soumission). `apps/mobile/credentials/` est git-ignoré.
+- Lots 10 → 11 : voir `prompt-claude-code-tando.md` §10.
+
+### Notes Lot 9
+
+- **Pas de dépendance native ajoutée.** `requireOptionalNativeModule` vient de
+  `expo` (pas de `expo-modules-core` en dep directe). `expo-splash-screen` non
+  installé → écran de lancement via la clé `splash` héritée d'`app.json` (encore
+  supportée en SDK 52). Export de données mobile via `Share` de React Native
+  (pas de `expo-file-system`/`expo-sharing`).
+- **Visuels d'app provisoires** : `assets/generate-placeholders.mjs` (encodeur
+  PNG maison, aucune dépendance) — aplats marque sans texte, à remplacer avant
+  soumission (`store/README.md`).
+- **Pas d'achat intégré** : justifié dans `store/review-notes.md` (service B2B,
+  abonnement acquis sur le web, règle App Store 3.1.3(b)). L'app ne doit jamais
+  gagner d'écran de souscription ni de lien de paiement iOS.
+- **`GET /me/billing`** relit l'abonnement via `BillingService.documentsFor()`
+  (pas de nouvelle requête Prisma) + `manageHandoff()` du fournisseur.
+- Bundle vérifié en headless : `pnpm -F @tando/mobile exec expo export
+  --platform ios` (1121 modules, OK). `turbo run lint typecheck test build`
+  reste vert (26 tâches, 45 tests API).
 
 ### Notes Lot 8
 

@@ -18,6 +18,7 @@ import {
   checkoutInfoSchema,
   conversationDetailSchema,
   documentsBundleSchema,
+  mobileBillingViewSchema,
   creditNoteDocSchema,
   healthSchema,
   jobDescriptionContentSchema,
@@ -53,6 +54,7 @@ import {
   type Health,
   type IssueCreditNote,
   type JobDescriptionContent,
+  type MobileBillingView,
   type OnboardingStep,
   type PatchAssessment,
   type PaymentOutcome,
@@ -360,6 +362,9 @@ export function createApiClient(options: ApiClientOptions) {
       account(): Promise<AccountInfo> {
         return request("/me/account", accountInfoSchema);
       },
+      billing(): Promise<MobileBillingView> {
+        return request("/me/billing", mobileBillingViewSchema);
+      },
       updateAccount(body: UpdateAccount): Promise<AccountInfo> {
         return request("/me/account", accountInfoSchema, {
           method: "PATCH",
@@ -505,6 +510,8 @@ export type {
   InvoiceDoc,
   CreditNoteDoc,
   SubscriptionSummary,
+  MobileBillingView,
+  BillingManageHandoff,
   CheckoutInfo,
   PaymentOutcome,
   AdminInvoiceList,

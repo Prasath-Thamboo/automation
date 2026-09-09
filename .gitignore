@@ -21,6 +21,9 @@ Thumbs.db
 # Prisma
 apps/api/prisma/*.db
 
+# Stores — clés de soumission (Lot 9)
+apps/mobile/credentials/
+
 # Editor
 .idea/
 .vscode/*

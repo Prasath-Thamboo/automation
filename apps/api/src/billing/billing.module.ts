@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
 import { QueueModule } from "../queue/queue.module";
 import { PaymentModule } from "./payment/payment.module";
+import { BillingProviderModule } from "./subscription/billing-provider.module";
 import { SequenceService } from "./sequence.service";
 import { BillingService } from "./billing.service";
 import { BillingController } from "./billing.controller";
@@ -11,7 +12,7 @@ import { AdminBillingController } from "./admin-billing.controller";
 import { MonthlyBillingWorker } from "./monthly-billing.worker";
 
 @Module({
-  imports: [AuthModule, QueueModule, PaymentModule],
+  imports: [AuthModule, QueueModule, PaymentModule, BillingProviderModule],
   controllers: [BillingController, WebhooksController, AdminBillingController],
   providers: [SequenceService, BillingService, AdminBillingService, MonthlyBillingWorker],
   exports: [BillingService],
