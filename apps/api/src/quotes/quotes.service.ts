@@ -9,6 +9,7 @@ import type { AcceptQuote, AssessmentAnswers, JobDescriptionContent, PublicQuote
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
 import { AuditService } from "../audit/audit.service";
+import { BillingService } from "../billing/billing.service";
 import { generateToken, hashToken } from "../auth/tokens";
 import { quoteAcceptedEmail, quoteReminderEmail } from "./quote-mail.templates";
 import { quoteWithRelations, toPublicQuote, type QuoteRow } from "./quote-mappers";
@@ -27,6 +28,7 @@ export class QuotesService {
     private readonly prisma: PrismaService,
     private readonly queue: QueueService,
     private readonly audit: AuditService,
+    private readonly billing: BillingService,
   ) {}
 
   /** Retrouve un devis à partir de son numéro et du jeton envoyé au client. */
@@ -101,6 +103,7 @@ export class QuotesService {
     const jobDescription = (row.content as unknown as { jobDescription: JobDescriptionContent })
       .jobDescription;
     const companyName = str(answers.entreprise) || "Mon entreprise";
+    let organizationId = "";
 
     await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.upsert({
@@ -126,7 +129,7 @@ export class QuotesService {
           include: { organization: true },
         });
       }
-      const organizationId = membership.organizationId;
+      organizationId = membership.organizationId;
 
       await tx.quoteAcceptance.create({
         data: {
@@ -160,11 +163,22 @@ export class QuotesService {
     });
 
     await this.audit.record({
+      organizationId,
       action: "quote.accepted",
       target: `quote:${row.id}`,
       metadata: { number, contentHash },
     });
     await this.queue.enqueueEmail(quoteAcceptedEmail(email, number));
+
+    // Abonnement + facture de mise en service (§4.3, Lot 4).
+    await this.billing.onQuoteAccepted({
+      organizationId,
+      quoteId: row.id,
+      orgName: companyName,
+      formula: row.formula,
+      monthlyCents: row.monthlyCents,
+      setupCents: row.setupCents,
+    });
 
     const fresh = await this.prisma.quote.findUniqueOrThrow({
       where: { id: row.id },

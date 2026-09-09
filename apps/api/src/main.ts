@@ -12,7 +12,11 @@ async function bootstrap(): Promise<void> {
   const env = bootstrapEnv();
   const logger = new Logger("Bootstrap");
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bufferLogs: false,
+    // Corps brut conservé pour la vérification de signature des webhooks de paiement.
+    rawBody: true,
+  });
 
   app.setGlobalPrefix("api/v1");
   app.use(helmet());

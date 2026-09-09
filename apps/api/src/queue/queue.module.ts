@@ -14,13 +14,21 @@ import { MailService, type OutgoingMail } from "../mail/mail.service";
 
 export const MAIL_QUEUE = Symbol("MAIL_QUEUE");
 export const QUOTE_QUEUE = Symbol("QUOTE_QUEUE");
+export const BILLING_QUEUE = Symbol("BILLING_QUEUE");
 const MAIL_QUEUE_NAME = "mail";
 export const QUOTE_QUEUE_NAME = "quote-lifecycle";
+export const BILLING_QUEUE_NAME = "billing";
 
 /** Tâche différée de cycle de vie d'un devis (relance J+7 / J+21, expiration J+30). */
 export interface QuoteJob {
   type: "reminder-j7" | "reminder-j21" | "expire";
   quoteId: string;
+}
+
+/** Tâche de facturation récurrente (abonnement mensuel). */
+export interface BillingJob {
+  type: "monthly";
+  subscriptionId: string;
 }
 
 /**
@@ -33,6 +41,7 @@ export class QueueService {
   constructor(
     @Inject(MAIL_QUEUE) private readonly mailQueue: Queue<OutgoingMail>,
     @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue<QuoteJob>,
+    @Inject(BILLING_QUEUE) private readonly billingQueue: Queue<BillingJob>,
   ) {}
 
   async enqueueEmail(mail: OutgoingMail): Promise<void> {
@@ -48,11 +57,23 @@ export class QueueService {
   async enqueueQuoteJob(job: QuoteJob, delayMs: number): Promise<void> {
     await this.quoteQueue.add(job.type, job, {
       delay: Math.max(0, delayMs),
-      jobId: `${job.type}:${job.quoteId}`,
+      jobId: `${job.type}_${job.quoteId}`,
       attempts: 3,
       backoff: { type: "exponential", delay: 30_000 },
       removeOnComplete: 1_000,
       removeOnFail: 1_000,
+    });
+  }
+
+  /** Programme la prochaine échéance de facturation d'un abonnement. */
+  async enqueueBillingJob(job: BillingJob, delayMs: number): Promise<void> {
+    await this.billingQueue.add(job.type, job, {
+      delay: Math.max(0, delayMs),
+      jobId: `${job.type}_${job.subscriptionId}_${Date.now()}`,
+      attempts: 5,
+      backoff: { type: "exponential", delay: 60_000 },
+      removeOnComplete: 1_000,
+      removeOnFail: 5_000,
     });
   }
 }
@@ -95,18 +116,24 @@ const makeQueue = <T>(name: string) => ({
   providers: [
     { provide: MAIL_QUEUE, ...makeQueue<OutgoingMail>(MAIL_QUEUE_NAME) },
     { provide: QUOTE_QUEUE, ...makeQueue<QuoteJob>(QUOTE_QUEUE_NAME) },
+    { provide: BILLING_QUEUE, ...makeQueue<BillingJob>(BILLING_QUEUE_NAME) },
     QueueService,
     MailWorker,
   ],
-  exports: [QueueService, QUOTE_QUEUE],
+  exports: [QueueService, QUOTE_QUEUE, BILLING_QUEUE],
 })
 export class QueueModule implements OnApplicationShutdown {
   constructor(
     @Inject(MAIL_QUEUE) private readonly mailQueue: Queue,
     @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue,
+    @Inject(BILLING_QUEUE) private readonly billingQueue: Queue,
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
-    await Promise.all([this.mailQueue.close(), this.quoteQueue.close()]);
+    await Promise.all([
+      this.mailQueue.close(),
+      this.quoteQueue.close(),
+      this.billingQueue.close(),
+    ]);
   }
 }

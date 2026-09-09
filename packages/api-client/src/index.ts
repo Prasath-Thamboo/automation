@@ -12,8 +12,13 @@ import {
   assessmentStateSchema,
   authResultSchema,
   catalogListSchema,
+  adminInvoiceListSchema,
+  checkoutInfoSchema,
+  documentsBundleSchema,
+  creditNoteDocSchema,
   healthSchema,
   jobDescriptionContentSchema,
+  paymentOutcomeSchema,
   professionDetailSchema,
   publicQuoteSchema,
   sessionUserSchema,
@@ -26,10 +31,16 @@ import {
   type AssessmentState,
   type AuthResult,
   type CatalogList,
+  type AdminInvoiceList,
+  type CheckoutInfo,
   type CreateProfession,
+  type CreditNoteDoc,
+  type DocumentsBundle,
   type Health,
+  type IssueCreditNote,
   type JobDescriptionContent,
   type PatchAssessment,
+  type PaymentOutcome,
   type ProfessionDetail,
   type PublicQuote,
   type RequestMagicLink,
@@ -130,6 +141,22 @@ export function createApiClient(options: ApiClientOptions) {
     return schema.parse(payload);
   }
 
+  /** Variante pour les réponses non-JSON (documents HTML, exports CSV/FEC). */
+  async function requestText(path: string, init: RequestInit = {}): Promise<string> {
+    const headers = new Headers(init.headers);
+    const token = getToken ? await getToken() : null;
+    if (token) headers.set("authorization", `Bearer ${token}`);
+    let res: Response;
+    try {
+      res = await fetchImpl(`${root}${path}`, { ...init, headers, credentials });
+    } catch {
+      throw new NetworkError();
+    }
+    if (res.status === 401) onUnauthorized?.();
+    if (!res.ok) throw new ApiError(res.status, "Le document n'a pas pu être récupéré.");
+    return res.text();
+  }
+
   return {
     /** État de santé de l'API (utilisé par le smoke test mobile du Lot 0). */
     health(): Promise<Health> {
@@ -228,6 +255,29 @@ export function createApiClient(options: ApiClientOptions) {
       },
     },
 
+    /** Facturation, espace client (session requise). */
+    me: {
+      documents(): Promise<DocumentsBundle> {
+        return request("/me/documents", documentsBundleSchema);
+      },
+      invoiceDocument(number: string): Promise<string> {
+        return requestText(`/me/invoices/${encodeURIComponent(number)}/document`);
+      },
+      startPayment(invoiceNumber: string): Promise<CheckoutInfo> {
+        return request("/me/payments/start", checkoutInfoSchema, {
+          method: "POST",
+          body: JSON.stringify({ invoiceNumber }),
+        });
+      },
+      confirmPayment(paymentRef: string): Promise<PaymentOutcome> {
+        return request(
+          `/me/payments/${encodeURIComponent(paymentRef)}/confirm`,
+          paymentOutcomeSchema,
+          { method: "POST" },
+        );
+      },
+    },
+
     /** Back-office (réservé au rôle `admin`). */
     admin: {
       catalog: {
@@ -284,6 +334,25 @@ export function createApiClient(options: ApiClientOptions) {
           return request(`/admin/quotes/${id}/send`, adminQuoteSchema, { method: "POST" });
         },
       },
+
+      billing: {
+        invoices(): Promise<AdminInvoiceList> {
+          return request("/admin/invoices", adminInvoiceListSchema);
+        },
+        creditNote(invoiceId: string, body: IssueCreditNote): Promise<CreditNoteDoc> {
+          return request(`/admin/invoices/${invoiceId}/credit-note`, creditNoteDocSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        export(params: { from?: string; to?: string; format: "csv" | "fec" }): Promise<string> {
+          const q = new URLSearchParams();
+          if (params.from) q.set("from", params.from);
+          if (params.to) q.set("to", params.to);
+          q.set("format", params.format);
+          return requestText(`/admin/accounting/export?${q.toString()}`);
+        },
+      },
     },
   };
 }
@@ -310,4 +379,13 @@ export type {
   AdminQuoteListItem,
   UpdateQuote,
   AcceptQuote,
+  DocumentsBundle,
+  InvoiceDoc,
+  CreditNoteDoc,
+  SubscriptionSummary,
+  CheckoutInfo,
+  PaymentOutcome,
+  AdminInvoiceList,
+  AdminInvoiceListItem,
+  IssueCreditNote,
 } from "@tando/types";

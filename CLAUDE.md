@@ -160,7 +160,18 @@ pnpm dev                        # api (:3333) + web (:3000)
   acceptation en ligne **horodatée** (nom, IP, hash SHA-256 du contenu accepté). À
   l'acceptation : compte client créé (organisation + `owner`) et **mission** `a_preparer`
   (§4.3). Relances J+7 / J+21 et expiration J+30 via BullMQ (file `quote-lifecycle`).
-- Lots 4 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 4 — Paiement et facturation : fait.** À l'acceptation d'un devis : `Subscription`
+  + facture de mise en service. Fournisseur de paiement derrière `PaymentProvider`
+  (`PAYMENT_PROVIDER=fake` en dev/CI, `stripe` en prod ; SDK chargé paresseusement).
+  Webhook `POST /webhooks/payments` idempotent (`webhook_events`). Factures
+  `FAC-AAAA-NNNN`, avoirs `AV-AAAA-NNNN`, numérotation séquentielle inaltérable ;
+  **une facture n'est jamais modifiée** — seul son statut / ses horodatages de
+  paiement bougent, une erreur se corrige par un avoir. TVA configurable
+  (`VAT_RATE_PCT`). Espace documents client (`/mon-equipe/documents` + document HTML
+  imprimable par facture). Abonnement mensuel récurrent via BullMQ (file `billing`).
+  Back-office `/admin/factures` : liste, avoir, export comptable CSV et FEC. Identité
+  vendeur figée dans chaque facture (`SELLER_*`, `[À COMPLÉTER]`).
+- Lots 5 → 11 : voir `prompt-claude-code-tando.md` §10.
 
 ### Notes Lot 2
 

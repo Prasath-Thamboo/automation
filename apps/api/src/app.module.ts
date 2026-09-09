@@ -10,6 +10,7 @@ import { HealthModule } from "./health/health.module";
 import { AuthModule } from "./auth/auth.module";
 import { CatalogModule } from "./catalog/catalog.module";
 import { QuotesModule } from "./quotes/quotes.module";
+import { BillingModule } from "./billing/billing.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { QuotesModule } from "./quotes/quotes.module";
     AuthModule,
     CatalogModule,
     QuotesModule,
+    BillingModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

@@ -405,3 +405,171 @@ model Mission {
   @@index([status])
   @@map("missions")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 4 — Paiement et facturation (§4.3, §9.4).
+// Notre système est l'autorité sur la numérotation et le contenu des factures
+// (séquentiel, inaltérable). Stripe (ou le fournisseur `fake` en dev) n'est que
+// le rail de paiement.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum SubscriptionStatus {
+  incomplete
+  active
+  past_due
+  paused
+  canceled
+}
+
+enum InvoiceKind {
+  mise_en_service
+  abonnement
+}
+
+enum InvoiceStatus {
+  emise
+  payee
+  impayee
+  annulee
+}
+
+enum PaymentStatus {
+  en_attente
+  reussi
+  echoue
+  rembourse
+}
+
+enum PaymentMethodType {
+  carte
+  prelevement
+}
+
+model Subscription {
+  id               String             @id @default(uuid()) @db.Uuid
+  organizationId   String             @db.Uuid
+  quoteId          String?            @unique @db.Uuid
+  status           SubscriptionStatus @default(incomplete)
+  formula          String
+  currency         String             @default("eur")
+  monthlyCents     Int
+  setupCents       Int                @default(0)
+  vatRatePct       Float              @default(20)
+  /// Référence côté fournisseur (Stripe subscription id, ou "fake").
+  providerRef      String?
+  startedAt        DateTime?          @db.Timestamptz(6)
+  canceledAt       DateTime?          @db.Timestamptz(6)
+  currentPeriodEnd DateTime?          @db.Timestamptz(6)
+  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @db.Timestamptz(6)
+
+  invoices Invoice[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+/// Facture. Inaltérable après émission (§9.4) : seuls `status` et les horodatages
+/// de paiement/annulation évoluent, jamais le numéro, le contenu ou les montants.
+model Invoice {
+  id             String        @id @default(uuid()) @db.Uuid
+  number         String        @unique
+  organizationId String        @db.Uuid
+  subscriptionId String?       @db.Uuid
+  kind           InvoiceKind
+  status         InvoiceStatus @default(emise)
+  currency       String        @default("eur")
+  vatRatePct     Float
+  subtotalCents  Int
+  vatCents       Int
+  totalCents     Int
+  issuedAt       DateTime      @default(now()) @db.Timestamptz(6)
+  dueAt          DateTime?     @db.Timestamptz(6)
+  periodStart    DateTime?     @db.Timestamptz(6)
+  periodEnd      DateTime?     @db.Timestamptz(6)
+  paidAt         DateTime?     @db.Timestamptz(6)
+  voidedAt       DateTime?     @db.Timestamptz(6)
+  /// Instantané figé : identité éditeur + client, lignes en clair, mentions légales.
+  content        Json
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+
+  subscription Subscription?     @relation(fields: [subscriptionId], references: [id])
+  lineItems    InvoiceLineItem[]
+  payments     Payment[]
+  creditNotes  CreditNote[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id         String @id @default(uuid()) @db.Uuid
+  invoiceId  String @db.Uuid
+  label      String
+  quantity   Int    @default(1)
+  unitCents  Int
+  totalCents Int
+  position   Int    @default(0)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_line_items")
+}
+
+/// Avoir. Une facture erronée n'est jamais corrigée : on émet un avoir (§4.3).
+model CreditNote {
+  id             String   @id @default(uuid()) @db.Uuid
+  number         String   @unique
+  invoiceId      String   @db.Uuid
+  organizationId String   @db.Uuid
+  reason         String
+  currency       String   @default("eur")
+  vatRatePct     Float
+  subtotalCents  Int
+  vatCents       Int
+  totalCents     Int
+  content        Json
+  issuedAt       DateTime @default(now()) @db.Timestamptz(6)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@index([organizationId])
+  @@map("credit_notes")
+}
+
+model Payment {
+  id             String             @id @default(uuid()) @db.Uuid
+  organizationId String             @db.Uuid
+  invoiceId      String?            @db.Uuid
+  amountCents    Int
+  currency       String             @default("eur")
+  status         PaymentStatus      @default(en_attente)
+  method         PaymentMethodType?
+  provider       String
+  providerRef    String?
+  failureReason  String?
+  paidAt         DateTime?          @db.Timestamptz(6)
+  createdAt      DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime           @updatedAt @db.Timestamptz(6)
+
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+
+  @@index([organizationId])
+  @@index([providerRef])
+  @@map("payments")
+}
+
+/// Journal des évènements de webhook, pour l'idempotence (§10 Lot 4).
+model WebhookEvent {
+  id          String    @id
+  provider    String
+  type        String
+  receivedAt  DateTime  @default(now()) @db.Timestamptz(6)
+  processedAt DateTime? @db.Timestamptz(6)
+
+  @@map("webhook_events")
+}

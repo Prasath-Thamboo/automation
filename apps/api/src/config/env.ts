@@ -44,6 +44,20 @@ export const envSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   /** Schéma de lien profond mobile : <scheme>://verifier?token=... */
   MOBILE_DEEP_LINK_SCHEME: z.string().default("tando"),
+
+  // --- Facturation (Lot 4) ---
+  /** Taux de TVA par défaut, en pourcentage. */
+  VAT_RATE_PCT: z.coerce.number().min(0).max(100).default(20),
+  /** Identité du vendeur, figée dans chaque facture (mentions légales). */
+  SELLER_NAME: z.string().default("Tando"),
+  SELLER_LEGAL: z
+    .string()
+    .default("[À COMPLÉTER — forme juridique, capital, SIREN, RCS, TVA intracommunautaire]"),
+  SELLER_ADDRESS: z.string().default("[À COMPLÉTER — adresse du siège social]"),
+  /** Fournisseur de paiement : `fake` (dev/CI) ou `stripe`. */
+  PAYMENT_PROVIDER: z.enum(["fake", "stripe"]).default("fake"),
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

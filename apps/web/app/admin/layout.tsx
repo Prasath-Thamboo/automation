@@ -20,6 +20,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <Link href="/admin/devis" className="text-base text-ink-700 no-underline hover:text-primary-700">
           Devis
         </Link>
+        <Link href="/admin/factures" className="text-base text-ink-700 no-underline hover:text-primary-700">
+          Factures
+        </Link>
         <span className="ml-auto text-sm text-ink-500">{user.email}</span>
       </div>
       <div className="py-8">{children}</div>
