@@ -30,6 +30,14 @@ export const envSchema = z.object({
         .filter(Boolean),
     ),
 
+  // --- Limitation de débit (§9.4) ---
+  /** Fenêtre glissante du rate limiting global, en secondes. */
+  RATE_LIMIT_TTL_SECONDS: z.coerce.number().int().positive().default(60),
+  /** Nombre de requêtes autorisées par fenêtre et par IP. */
+  RATE_LIMIT_MAX: z.coerce.number().int().positive().default(120),
+  /** Coupe le rate limiting (tests e2e / dev). Interdit en production. */
+  RATE_LIMIT_DISABLED: booleanish.default("false"),
+
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET doit faire au moins 32 caractères"),
   SESSION_COOKIE: z.string().default("tando_session"),
   SESSION_TTL_SECONDS: z.coerce.number().int().positive().default(2_592_000),
@@ -84,10 +92,20 @@ export const envSchema = z.object({
   EXPO_ACCESS_TOKEN: z.string().optional(),
 });
 
+const envWithGuards = envSchema.superRefine((env, ctx) => {
+  if (env.NODE_ENV === "production" && env.RATE_LIMIT_DISABLED) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["RATE_LIMIT_DISABLED"],
+      message: "Le rate limiting ne peut pas être désactivé en production.",
+    });
+  }
+});
+
 export type Env = z.infer<typeof envSchema>;
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
-  const parsed = envSchema.safeParse(source);
+  const parsed = envWithGuards.safeParse(source);
   if (!parsed.success) {
     const details = parsed.error.issues
       .map((i) => `  - ${i.path.join(".") || "(racine)"} : ${i.message}`)

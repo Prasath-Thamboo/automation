@@ -20,6 +20,11 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["WEB_URL", "API_URL", "MAILPIT_URL", "CI"]
     }
   }
 }

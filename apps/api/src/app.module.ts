@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
-import { AppConfigModule } from "./config/config.module";
+import { AppConfigModule, ENV } from "./config/config.module";
+import type { Env } from "./config/env";
 import { HttpExceptionFilter } from "./common/http-exception.filter";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RedisModule } from "./redis/redis.module";
@@ -22,7 +23,14 @@ import { AdminModule } from "./admin/admin.module";
     PrismaModule,
     RedisModule,
     AuditModule,
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
+    ThrottlerModule.forRootAsync({
+      inject: [ENV],
+      useFactory: (env: Env) => ({
+        throttlers: [{ ttl: env.RATE_LIMIT_TTL_SECONDS * 1000, limit: env.RATE_LIMIT_MAX }],
+        // Coupe-circuit dev/CI (interdit en production, cf. env.ts).
+        skipIf: () => env.RATE_LIMIT_DISABLED,
+      }),
+    }),
     HealthModule,
     AuthModule,
     CatalogModule,

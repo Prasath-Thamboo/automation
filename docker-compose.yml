@@ -1,5 +1,13 @@
 name: tando
 
+# Les ports hôte sont surchargeables via .env (substitution docker compose) pour
+# cohabiter avec d'autres stacks locales. Défauts inchangés. Si tu changes un
+# port ici, ajuste l'URL correspondante dans .env :
+#   POSTGRES_HOST_PORT      -> DATABASE_URL
+#   REDIS_HOST_PORT         -> REDIS_URL
+#   MINIO_HOST_PORT         -> S3_ENDPOINT
+#   MAILPIT_SMTP_HOST_PORT  -> SMTP_PORT
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -9,7 +17,7 @@ services:
       POSTGRES_PASSWORD: tando
       POSTGRES_DB: tando
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +30,7 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_HOST_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -39,8 +47,8 @@ services:
       MINIO_ROOT_USER: tando
       MINIO_ROOT_PASSWORD: tando-secret
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_HOST_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
     volumes:
       - minio_data:/data
     healthcheck:
@@ -66,8 +74,8 @@ services:
     image: axllent/mailpit:latest
     restart: unless-stopped
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "${MAILPIT_SMTP_HOST_PORT:-1025}:1025"
+      - "${MAILPIT_UI_HOST_PORT:-8025}:8025"
     environment:
       MP_MAX_MESSAGES: 500
 

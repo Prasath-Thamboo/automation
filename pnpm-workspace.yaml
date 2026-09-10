@@ -1,6 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+  - "e2e"
 
 # Un seul jeu de types React dans tout le monorepo, sinon les .d.ts internes de
 # Next (qui importent "react") et notre code applicatif chargent deux namespaces
