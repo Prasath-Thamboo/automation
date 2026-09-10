@@ -12,17 +12,29 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-ink-100 pb-4">
-        <span className="font-heading text-lg font-bold text-ink-900">Tando · back-office</span>
-        <Link href="/admin/metiers" className="text-base text-ink-700 no-underline hover:text-primary-700">
-          Métiers
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-ink-100 pb-4">
+        <Link href="/admin" className="font-heading text-lg font-bold text-ink-900 no-underline">
+          Tando · back-office
         </Link>
-        <Link href="/admin/devis" className="text-base text-ink-700 no-underline hover:text-primary-700">
-          Devis
-        </Link>
-        <Link href="/admin/factures" className="text-base text-ink-700 no-underline hover:text-primary-700">
-          Factures
-        </Link>
+        {(
+          [
+            ["/admin", "Tableau de bord"],
+            ["/admin/missions", "Missions"],
+            ["/admin/devis", "Devis"],
+            ["/admin/metiers", "Métiers"],
+            ["/admin/prix", "Prix"],
+            ["/admin/clients", "Clients"],
+            ["/admin/factures", "Factures"],
+          ] as const
+        ).map(([href, label]) => (
+          <Link
+            key={href}
+            href={href}
+            className="text-base text-ink-700 no-underline hover:text-primary-700"
+          >
+            {label}
+          </Link>
+        ))}
         <span className="ml-auto text-sm text-ink-500">{user.email}</span>
       </div>
       <div className="py-8">{children}</div>

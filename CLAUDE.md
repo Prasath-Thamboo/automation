@@ -296,7 +296,56 @@ pnpm dev                        # api (:3333) + web (:3000)
   - **Fiches store** : `apps/mobile/store/` (`listing-fr.md`, `app-privacy.md`,
     `data-safety.md`, `review-notes.md`, `README.md` avec la checklist de
     pré-soumission). `apps/mobile/credentials/` est git-ignoré.
-- Lots 10 → 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 10 — Back-office : fait.**
+  - Module transversal `AdminModule` (`apps/api/src/admin/`), tous les
+    contrôleurs sous `@UseGuards(AdminGuard)`. Le catalogue, les devis et les
+    factures gardent leurs propres contrôleurs `admin-*` (Lots 2/3/4).
+  - **Tableau de bord** : `GET /admin/dashboard` → `AdminDashboard`
+    (`AdminDashboardService`, agrégats en lecture seule sans donnée
+    personnelle) : devis par statut + taux d'acceptation + 30 jours glissants,
+    MRR / abonnements actifs / factures impayées, missions par statut,
+    assistants par état, clients (total / avec abonnement / nouveaux 30 j),
+    escalades ouvertes. Helpers testés `acceptanceRatePct` / `tally`.
+  - **Missions** : `GET /admin/missions` (filtre `?status=`),
+    `GET/PATCH /admin/missions/:id` — statut
+    (`a_preparer` → `en_preparation` → `en_service` | `annulee`) et check-list
+    de préparation (JSON validé par `updateMissionSchema`). Audit sur chaque
+    modification.
+  - **Prix** : `GET/POST/PATCH/DELETE /admin/pricing-rules` — CRUD du barème
+    (`pricing_rules`, relu par `PricingService` à chaque devis). `kind` ∈
+    `socle|module|volume|outil`, `key` unique par `kind`. Audit sur les
+    mutations.
+  - **Clients** : `GET /admin/clients` (liste cross-tenant : membres,
+    assistants, statut d'abonnement, escalades ouvertes),
+    `GET /admin/clients/:id` (fiche : contrat, équipe, 5 dernières factures,
+    5 dernières escalades). Lecture transverse assumée (staff Tando), gardée
+    par `AdminGuard` — pas de `forOrganization()`, comme les `admin-*`
+    existants.
+  - Web : nav `/admin` remaniée (Tableau de bord · Missions · Devis · Métiers ·
+    Prix · Clients · Factures) ; pages `/admin`, `/admin/missions[/[id]]`,
+    `/admin/prix`, `/admin/clients[/[id]]`. Server actions avec `guard()`
+    (rôle `admin`) + `safeParse` Zod + `revalidatePath`.
+  - Contrat : `packages/types/src/admin.ts` (schémas Zod + interfaces à la
+    main), méthodes `api.admin.dashboard() / missions / pricing / clients` dans
+    `@tando/api-client`.
+- Lot 11 : voir `prompt-claude-code-tando.md` §10.
+
+### Notes Lot 10
+
+- **Isolation multi-tenant** : le back-office lit et écrit en travers des
+  organisations (par conception). L'accès est gardé par `AdminGuard`
+  (rôle `admin`) ; on n'applique pas `forOrganization()`, cohérent avec
+  `admin-quotes` / `admin-billing` / `admin-catalog`.
+- **Immutabilité comptable** respectée : Lot 10 ne modifie ni factures ni
+  avoirs. Les `pricing_rules` sont de la configuration (CRUD complet) ; les
+  missions n'exposent que statut + check-list.
+- **Types du back-office** : interfaces écrites à la main dans
+  `packages/types/src/admin.ts` (schémas `z.ZodType<...>` annotés), même raison
+  qu'au Lot 2 — éviter les types géants de `z.infer` aux frontières de paquets.
+- `apps/web/app/admin/**` reste **exclu** du test anti-jargon (§2, note Lot 2).
+- Vérifs : `turbo run build lint typecheck test` vert (26 tâches, 0 cache) ;
+  49 tests API dont `admin-dashboard.service.test.ts` (4). Smoke test HTTP
+  bout-à-bout des 11 lots OK (33 requêtes). Pas de migration Prisma.
 
 ### Notes Lot 9
 

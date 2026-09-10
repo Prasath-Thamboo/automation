@@ -19,6 +19,13 @@ import {
   conversationDetailSchema,
   documentsBundleSchema,
   mobileBillingViewSchema,
+  adminDashboardSchema,
+  adminMissionListSchema,
+  adminMissionDetailSchema,
+  adminPricingRuleListSchema,
+  adminPricingRuleSchema,
+  adminClientListSchema,
+  adminClientDetailSchema,
   creditNoteDocSchema,
   healthSchema,
   jobDescriptionContentSchema,
@@ -55,6 +62,16 @@ import {
   type IssueCreditNote,
   type JobDescriptionContent,
   type MobileBillingView,
+  type AdminDashboard,
+  type AdminMissionList,
+  type AdminMissionDetail,
+  type UpdateMission,
+  type AdminPricingRule,
+  type AdminPricingRuleList,
+  type CreatePricingRule,
+  type UpdatePricingRule,
+  type AdminClientList,
+  type AdminClientDetail,
   type OnboardingStep,
   type PatchAssessment,
   type PaymentOutcome,
@@ -480,6 +497,56 @@ export function createApiClient(options: ApiClientOptions) {
           return requestText(`/admin/accounting/export?${q.toString()}`);
         },
       },
+
+      dashboard(): Promise<AdminDashboard> {
+        return request("/admin/dashboard", adminDashboardSchema);
+      },
+
+      missions: {
+        list(status?: string): Promise<AdminMissionList> {
+          const q = status ? `?status=${encodeURIComponent(status)}` : "";
+          return request(`/admin/missions${q}`, adminMissionListSchema);
+        },
+        get(id: string): Promise<AdminMissionDetail> {
+          return request(`/admin/missions/${id}`, adminMissionDetailSchema);
+        },
+        update(id: string, body: UpdateMission): Promise<AdminMissionDetail> {
+          return request(`/admin/missions/${id}`, adminMissionDetailSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+      },
+
+      pricing: {
+        list(): Promise<AdminPricingRuleList> {
+          return request("/admin/pricing-rules", adminPricingRuleListSchema);
+        },
+        create(body: CreatePricingRule): Promise<AdminPricingRule> {
+          return request("/admin/pricing-rules", adminPricingRuleSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        update(id: string, body: UpdatePricingRule): Promise<AdminPricingRule> {
+          return request(`/admin/pricing-rules/${id}`, adminPricingRuleSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        remove(id: string): Promise<{ ok: true }> {
+          return request(`/admin/pricing-rules/${id}`, okSchema, { method: "DELETE" });
+        },
+      },
+
+      clients: {
+        list(): Promise<AdminClientList> {
+          return request("/admin/clients", adminClientListSchema);
+        },
+        get(id: string): Promise<AdminClientDetail> {
+          return request(`/admin/clients/${id}`, adminClientDetailSchema);
+        },
+      },
     },
   };
 }
@@ -512,6 +579,21 @@ export type {
   SubscriptionSummary,
   MobileBillingView,
   BillingManageHandoff,
+  AdminDashboard,
+  AdminMissionList,
+  AdminMissionListItem,
+  AdminMissionDetail,
+  UpdateMission,
+  MissionStatus,
+  MissionChecklistItem,
+  AdminPricingRule,
+  AdminPricingRuleList,
+  CreatePricingRule,
+  UpdatePricingRule,
+  PricingRuleKind,
+  AdminClientList,
+  AdminClientListItem,
+  AdminClientDetail,
   CheckoutInfo,
   PaymentOutcome,
   AdminInvoiceList,

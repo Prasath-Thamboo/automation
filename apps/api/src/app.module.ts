@@ -14,6 +14,7 @@ import { BillingModule } from "./billing/billing.module";
 import { AssistantsModule } from "./assistants/assistants.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { TeamModule } from "./team/team.module";
+import { AdminModule } from "./admin/admin.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TeamModule } from "./team/team.module";
     AssistantsModule,
     NotificationsModule,
     TeamModule,
+    AdminModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
