@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadEnv } from "./env";
+import { loadEnv, shouldServeApiDocs } from "./env";
 
 const base = {
   DATABASE_URL: "postgresql://tando:tando@localhost:5432/tando?schema=public",
@@ -30,5 +30,27 @@ describe("loadEnv — rate limiting", () => {
     const env = loadEnv({ ...base, RATE_LIMIT_TTL_SECONDS: "30", RATE_LIMIT_MAX: "1000" });
     expect(env.RATE_LIMIT_TTL_SECONDS).toBe(30);
     expect(env.RATE_LIMIT_MAX).toBe(1000);
+  });
+});
+
+describe("shouldServeApiDocs", () => {
+  it("ouverte hors production par défaut", () => {
+    expect(shouldServeApiDocs(loadEnv({ ...base, NODE_ENV: "development" }))).toBe(true);
+  });
+
+  it("fermée en production par défaut", () => {
+    expect(shouldServeApiDocs(loadEnv({ ...base, NODE_ENV: "production" }))).toBe(false);
+  });
+
+  it("surcharge explicite : ouverte en production si demandé", () => {
+    expect(
+      shouldServeApiDocs(loadEnv({ ...base, NODE_ENV: "production", API_DOCS_ENABLED: "true" })),
+    ).toBe(true);
+  });
+
+  it("surcharge explicite : fermée en dev si demandé", () => {
+    expect(
+      shouldServeApiDocs(loadEnv({ ...base, NODE_ENV: "development", API_DOCS_ENABLED: "false" })),
+    ).toBe(false);
   });
 });

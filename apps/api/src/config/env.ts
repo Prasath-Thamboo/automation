@@ -19,6 +19,11 @@ export const envSchema = z.object({
 
   API_PORT: z.coerce.number().int().positive().default(3333),
   API_URL: z.string().url().default("http://localhost:3333"),
+  /**
+   * Sert la doc OpenAPI sur `/api/docs`. Par défaut : ouverte hors production,
+   * fermée en production. Surcharge explicite possible.
+   */
+  API_DOCS_ENABLED: booleanish.optional(),
   /** Origines autorisées CORS, séparées par des virgules. */
   WEB_ORIGIN: z
     .string()
@@ -118,4 +123,9 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
 /** Base d'URL du site web (pour construire les liens magiques web). */
 export function webBaseUrl(env: Env): string {
   return env.NEXT_PUBLIC_SITE_URL ?? env.WEB_ORIGIN[0] ?? "http://localhost:3000";
+}
+
+/** Faut-il exposer la doc OpenAPI ? Fermée par défaut en production. */
+export function shouldServeApiDocs(env: Env): boolean {
+  return env.API_DOCS_ENABLED ?? env.NODE_ENV !== "production";
 }

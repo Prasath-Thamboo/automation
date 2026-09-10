@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
 import { bootstrapEnv } from "./config/config.module";
+import { shouldServeApiDocs } from "./config/env";
 
 async function bootstrap(): Promise<void> {
   const env = bootstrapEnv();
@@ -19,21 +20,26 @@ async function bootstrap(): Promise<void> {
   });
 
   app.setGlobalPrefix("api/v1");
-  app.use(helmet());
+  // L'API ne sert que du JSON et ne doit jamais être encadrée.
+  app.use(helmet({ frameguard: { action: "deny" } }));
   app.use(cookieParser());
   app.set("trust proxy", 1);
+  app.disable("x-powered-by");
   app.enableCors({ origin: env.WEB_ORIGIN, credentials: true });
   app.enableShutdownHooks();
 
-  const openapi = new DocumentBuilder()
-    .setTitle("Tando API")
-    .setDescription("Contrat unique consommé par le web, le mobile et le back-office.")
-    .setVersion("v1")
-    .build();
-  SwaggerModule.setup("api/docs", app, SwaggerModule.createDocument(app, openapi));
+  if (shouldServeApiDocs(env)) {
+    const openapi = new DocumentBuilder()
+      .setTitle("Tando API")
+      .setDescription("Contrat unique consommé par le web, le mobile et le back-office.")
+      .setVersion("v1")
+      .build();
+    SwaggerModule.setup("api/docs", app, SwaggerModule.createDocument(app, openapi));
+    logger.log("Doc OpenAPI exposée sur /api/docs");
+  }
 
   await app.listen(env.API_PORT);
-  logger.log(`API prête sur ${env.API_URL} (docs: ${env.API_URL}/api/docs)`);
+  logger.log(`API prête sur ${env.API_URL}`);
 }
 
 void bootstrap();
