@@ -1,0 +1,28 @@
+# §5 / §6bis — mettre l'employé virtuel en pause puis le remettre au travail,
+# depuis « Mon équipe ». Prérequis : un employé virtuel déjà au travail.
+appId: fr.tando.app
+tags:
+  - equipe
+---
+- runFlow: ../common/login.yaml
+- tapOn: "Mon équipe"
+
+- runFlow:
+    when:
+      visible: "Le mettre en pause"
+    commands:
+      - tapOn: "Le mettre en pause"
+      - assertVisible: "Le remettre au travail"
+      - assertVisible:
+          text: "État : en pause"
+      # On le remet au travail (état d'origine)
+      - tapOn: "Le remettre au travail"
+      - assertVisible: "Le mettre en pause"
+      - assertVisible:
+          text: "État : au travail"
+
+- runFlow:
+    when:
+      notVisible: "Le mettre en pause"
+    commands:
+      - assertVisible: "Mon équipe"

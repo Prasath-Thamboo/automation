@@ -86,8 +86,8 @@ pnpm --filter @tando/web start
 
 - L'API a besoin de `trust proxy` (déjà activé) : la placer derrière un reverse
   proxy / load balancer qui termine le TLS et transmet `X-Forwarded-*`.
-- **Healthcheck** : `GET /api/v1/health` → `{"status":"ok","checks":{"database":"ok","redis":"ok"}}`.
-  Retourne un statut dégradé si Postgres ou Redis est injoignable.
+- Réponses JSON compressées (`compression`) — si le proxy compresse déjà, c'est
+  inoffensif.
 - `enableShutdownHooks` est actif : envoyer `SIGTERM` pour un arrêt propre
   (drain des files).
 - Les jobs répétables (résumé quotidien push, cycle de vie des devis, abonnement
@@ -107,13 +107,49 @@ pnpm --filter @tando/web start
 - Registre des traitements, politique de confidentialité relue, DPA type,
   bandeau cookies conforme CNIL (déjà en place, à valider juridiquement).
 
-## 7. CI
+## 7. Observabilité & alertes
+
+### Sondes
+| Endpoint | Usage | Réponse |
+|---|---|---|
+| `GET /api/v1/health/live` | **liveness** (le process répond) — ne touche aucune dépendance | 200 `{ status, uptimeSeconds }` |
+| `GET /api/v1/health` | **readiness** (base + Redis) | 200 si sain, **503** si dégradé (corps `{ status:"degraded", checks }`) |
+
+Brancher la liveness sur le redémarrage d'instance, la readiness sur le retrait
+du load balancer + une alerte.
+
+### Journaux
+- **Une ligne par requête** (`RequestLoggerMiddleware`) : `MÉTHODE chemin -> statut durée`.
+  Chemin seul, jamais la query string (jetons). `warn` si ≥ 400 ou lent, `error`
+  si ≥ 500. `REQUEST_LOG_ENABLED`, `SLOW_REQUEST_MS` (1000).
+- **5xx** : `HttpExceptionFilter` journalise le message + la stack en `error`.
+- **Crash non géré** : `unhandledRejection` / `uncaughtException` → `error`
+  (+ `exit(1)` pour le second).
+- **Files BullMQ** : échecs journalisés en `warn` ; `removeOnFail` conserve les
+  jobs échoués pour inspection ; `attempts` + backoff exponentiel.
+- Rediriger stdout/stderr vers un agrégateur (JSON via la plateforme si possible).
+
+### Alertes recommandées
+- readiness `/health` en 503 plus de N minutes ;
+- taux de 5xx > seuil (depuis les lignes `error` du logger de requêtes) ;
+- taux de requêtes `(lent)` en hausse ;
+- pic d'échecs de jobs BullMQ ;
+- échec du webhook de paiement (`POST /webhooks/payments` — déjà journalisé,
+  idempotent via `webhook_events`).
+
+### Différé
+Métriques Prometheus `/metrics`, tracing distribué / APM. Le schéma Prisma est
+déjà largement indexé (jetons `@unique`, `@@index` sur `organizationId` /
+`status` / clés composites des listes).
+
+## 8. CI
 
 `.github/workflows/ci.yml` : job `verify` (lint / typecheck / test / build) +
-job `e2e` (services docker + Playwright, upload du rapport). Le CD (build image,
-migrations, déploiement) est à câbler selon la plateforme cible.
+job `e2e` (services docker + Playwright, upload du rapport) + bloc `e2e-mobile`
+commenté (Maestro, à activer au 1er build EAS). Le CD (build image, migrations,
+déploiement) est à câbler selon la plateforme cible.
 
-## 8. Rollback
+## 9. Rollback
 
 - Code : redéployer l'artefact précédent.
 - Base : les migrations Prisma ne sont pas réversibles automatiquement. Prévoir

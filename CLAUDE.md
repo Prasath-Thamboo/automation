@@ -328,7 +328,57 @@ pnpm dev                        # api (:3333) + web (:3000)
   - Contrat : `packages/types/src/admin.ts` (schémas Zod + interfaces à la
     main), méthodes `api.admin.dashboard() / missions / pricing / clients` dans
     `@tando/api-client`.
-- Lot 11 : voir `prompt-claude-code-tando.md` §10.
+- **Lot 11 — Durcissement : fait.**
+  - **e2e web** : paquet `@tando/e2e` (Playwright). `playwright.config.ts` 2
+    projets (chromium = tout ; mobile/Pixel5 = vitrine seulement), `webServer`
+    démarre api+web (reuseExistingServer hors CI), `globalSetup` vérifie
+    API+Mailpit. Fixtures (`fixtures/tando.ts`) : `requestMagicToken` (lien
+    magique via l'API Mailpit), `apiLogin` (Bearer), `webLogin` (cookie
+    httpOnly). Specs : `parcours-mvp` (landing → dentiste → connexion →
+    souscription → « au travail »), `parcours-sur-mesure` (questionnaire →
+    devis relu et **envoyé** par le back-office → acceptation en ligne
+    horodatée → **mission + facture** auto), `isolation-multi-tenant` (2 orgs
+    cloisonnées + accès anonyme refusé), `rgpd-compte` (export JSON +
+    suppression double confirmation), `accessibilite` (`@axe-core/playwright`,
+    WCAG 2.1 A+AA, échoue sur `serious`/`critical`), `securite` (en-têtes),
+    `vitrine` (pas de jargon rendu), `perf` (sondes + budgets). **48 tests**.
+    `turbo run test:e2e` + job CI `e2e` (services docker + rapport).
+  - **e2e mobile** : `apps/mobile/maestro/` (Maestro) — `config.yaml`,
+    `scripts/magic-token.js` (runScript), `common/login.yaml`, 4 flows
+    (connexion, aujourd'hui, escalade « < 15 s », pause/reprise). `testID`
+    ajouté sur le champ email. `pnpm -F @tando/mobile test:e2e`. Job CI
+    `e2e-mobile` **commenté** (émulateur + APK EAS requis). Voir
+    `apps/mobile/maestro/README.md`.
+  - **Sécurité** (voir `SECURITY.md`) : API `helmet({frameguard:{action:"deny"}})`
+    + `x-powered-by` off ; en-têtes web via `next.config.ts` (HSTS, nosniff,
+    X-Frame-Options DENY, Referrer-Policy, Permissions-Policy) + `poweredByHeader:
+    false` ; `/api/docs` **fermée en production** (`API_DOCS_ENABLED`, helper
+    `shouldServeApiDocs`) ; rate limiting déjà configurable (`RATE_LIMIT_*`,
+    `skipIf`, refusé si `NODE_ENV=production`). Audit : socle solide, aucune faille
+    critique ; dette suivie (CSP web à nonce, durées de conservation + purge auto,
+    hébergement UE infra, scan secrets CI).
+  - **Observabilité** : `GET /health` → **503 si dégradé** (readiness),
+    `GET /health/live` (liveness, sans dépendance) ; `RequestLoggerMiddleware`
+    (une ligne par requête, chemin seul, `warn` si lent/≥400, `error` si ≥500 ;
+    `REQUEST_LOG_ENABLED`, `SLOW_REQUEST_MS`) ; handlers `unhandledRejection` /
+    `uncaughtException` dans `main.ts`.
+  - **Perf** : `compression` sur l'API ; schéma Prisma déjà largement indexé
+    (constat) ; budgets de latence en e2e (`perf.spec.ts`).
+  - **Doc** : `SECURITY.md` (posture + audit + dette) et `DEPLOYMENT.md`
+    (services managés UE, variables d'env prod, build → `migrate deploy` →
+    start, observabilité & alertes, rollback) à la racine.
+  - `docker-compose.yml` : ports hôte surchargeables (`${*_HOST_PORT:-…}`) pour
+    cohabiter avec d'autres stacks locales.
+
+### Notes Lot 11
+
+- **e2e non exécutés en CI headless pour le mobile** : Maestro exige un
+  émulateur/simulateur + l'app installée. Authoring fait ; exécution au 1er
+  build EAS `preview`.
+- L'onboarding « premier jour » (4 écrans) est finalisé **par l'API** dans
+  `parcours-mvp` (pas encore de `data-testid` sur ces écrans — dette).
+- Suite e2e = 48 tests, ~21 s ; nécessite la pile (`pnpm db:up` + api + web).
+  `RATE_LIMIT_DISABLED=true` en local/CI e2e (auth répétée).
 
 ### Notes Lot 10
 

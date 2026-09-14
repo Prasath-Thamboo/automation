@@ -1,0 +1,18 @@
+# §11 / §6bis — l'écran « Aujourd'hui » : ce qu'il a fait, à valider, ce qui vous attend.
+appId: fr.tando.app
+tags:
+  - smoke
+---
+- runFlow: ../common/login.yaml
+- assertVisible: "Aujourd'hui"
+- assertVisible: "Ce qu'il a fait"
+- assertVisible: "À valider"
+- assertVisible: "Ce qui vous attend"
+# Navigation entre les onglets
+- tapOn: "Carnet de bord"
+- tapOn: "Mon équipe"
+- assertVisible:
+    text: "État :"
+    optional: true
+- tapOn: "Aujourd'hui"
+- assertVisible: "Aujourd'hui"

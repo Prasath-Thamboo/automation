@@ -1,0 +1,9 @@
+# §11 — connexion par lien magique sur mobile, de bout en bout.
+appId: fr.tando.app
+tags:
+  - smoke
+---
+- runFlow: ../common/login.yaml
+- assertVisible: "Aujourd'hui"
+- assertVisible:
+    text: "Mon équipe"

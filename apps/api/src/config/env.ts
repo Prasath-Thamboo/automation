@@ -24,6 +24,12 @@ export const envSchema = z.object({
    * fermée en production. Surcharge explicite possible.
    */
   API_DOCS_ENABLED: booleanish.optional(),
+
+  // --- Observabilité ---
+  /** Une ligne de log par requête HTTP (méthode, chemin, statut, durée). */
+  REQUEST_LOG_ENABLED: booleanish.default("true"),
+  /** Au-delà, la requête est journalisée en `warn` (seuil de lenteur). */
+  SLOW_REQUEST_MS: z.coerce.number().int().positive().default(1000),
   /** Origines autorisées CORS, séparées par des virgules. */
   WEB_ORIGIN: z
     .string()

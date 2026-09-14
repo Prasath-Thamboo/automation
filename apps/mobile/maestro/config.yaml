@@ -1,0 +1,11 @@
+# Configuration de l'atelier Maestro (Lot 11).
+# Lancer : maestro test apps/mobile/maestro/flows
+#   (depuis la racine, ou `pnpm --filter @tando/mobile test:e2e`)
+
+flows:
+  - flows/*.yaml
+
+# Variables attendues dans l'environnement (voir maestro/README.md) :
+#   MAESTRO_API_URL       ex. http://10.0.2.2:3333   (émulateur Android → hôte)
+#   MAESTRO_MAILPIT_URL   ex. http://10.0.2.2:8025
+#   MAESTRO_TEST_EMAIL    ex. e2e-mobile@tando.local

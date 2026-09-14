@@ -13,13 +13,18 @@ export class HealthService {
     @Inject(REDIS) private readonly redis: Redis,
   ) {}
 
+  /** Secondes écoulées depuis le démarrage du process. */
+  uptimeSeconds(): number {
+    return Math.round((Date.now() - startedAt) / 1000);
+  }
+
   async check(): Promise<Health> {
     const [database, redis] = await Promise.all([this.checkDatabase(), this.checkRedis()]);
     const status: Health["status"] = database === "ok" && redis === "ok" ? "ok" : "degraded";
     return {
       status,
       version: process.env.npm_package_version ?? "0.0.0",
-      uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+      uptimeSeconds: this.uptimeSeconds(),
       checks: { database, redis },
     };
   }

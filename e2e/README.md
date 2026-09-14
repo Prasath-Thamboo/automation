@@ -38,6 +38,7 @@ Variables (défauts entre parenthèses) : `WEB_URL` (`http://localhost:3000`),
 | `tests/isolation-multi-tenant.spec.ts` | deux organisations cloisonnées ; accès non authentifié refusé | « aucune donnée d'une organisation n'est accessible depuis une autre » |
 | `tests/accessibilite.spec.ts` | axe-core WCAG 2.1 A+AA sur 10 pages publiques + « Mon équipe » ; échoue sur `serious`/`critical` | « utilisable au clavier et lisible en contraste AA » |
 | `tests/securite.spec.ts` | en-têtes de sécurité (web + API), pas de `X-Powered-By`, espace client `noindex` | §9.4 en-têtes de sécurité |
+| `tests/perf.spec.ts` | sondes `/health/live` (200 rapide) & `/health` (readiness), budget de latence landing, compression API | §9.1 santé & latence |
 | `tests/vitrine.spec.ts` | pages publiques : chargent, un seul `h1`, `lang=fr`, sans jargon rendu | « le mot agent / LLM / prompt … n'apparaît nulle part » |
 
 ## À compléter (suite du Lot 11)

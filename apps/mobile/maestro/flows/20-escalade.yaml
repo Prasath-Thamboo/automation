@@ -1,0 +1,36 @@
+# §11 / §6bis — « Une escalade est traitée depuis le téléphone, d'une seule
+# main, en moins de 15 secondes. »
+#
+# Prérequis : le compte de test a AU MOINS une escalade ouverte. Sinon la flow
+# vérifie seulement l'état vide (voir maestro/README.md — script de semis).
+appId: fr.tando.app
+tags:
+  - escalade
+---
+- runFlow: ../common/login.yaml
+- tapOn: "À valider"
+
+# Cas « rien à valider » : on s'arrête là.
+- runFlow:
+    when:
+      visible: "Rien à valider."
+    commands:
+      - assertVisible: "Quand votre employé ne saura pas répondre"
+
+# Cas nominal : une escalade est en attente.
+- runFlow:
+    when:
+      notVisible: "Rien à valider."
+    commands:
+      - startRecording: escalade-15s
+      # Ouvre la première question en attente
+      - tapOn:
+          text: "Demandé.*"
+          index: 0
+      - assertVisible: "Réponses rapides"
+      # Réponse toute prête, envoi en un seul tap
+      - tapOn: "C'est noté, je m'en occupe."
+      - assertVisible: "C'est envoyé. Il reprend la main."
+      - stopRecording
+      # Retour automatique sur la liste
+      - assertVisible: "À valider"

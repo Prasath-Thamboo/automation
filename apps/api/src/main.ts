@@ -3,15 +3,28 @@ import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import compression from "compression";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
 import { bootstrapEnv } from "./config/config.module";
 import { shouldServeApiDocs } from "./config/env";
 
+/** Un crash non géré doit être visible dans les logs (alerting), pas silencieux. */
+function installCrashHandlers(logger: Logger): void {
+  process.on("unhandledRejection", (reason) => {
+    logger.error("unhandledRejection", reason instanceof Error ? reason.stack : String(reason));
+  });
+  process.on("uncaughtException", (err) => {
+    logger.error("uncaughtException", err.stack);
+    process.exit(1);
+  });
+}
+
 async function bootstrap(): Promise<void> {
   const env = bootstrapEnv();
   const logger = new Logger("Bootstrap");
+  installCrashHandlers(logger);
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: false,
@@ -22,6 +35,7 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix("api/v1");
   // L'API ne sert que du JSON et ne doit jamais être encadrée.
   app.use(helmet({ frameguard: { action: "deny" } }));
+  app.use(compression());
   app.use(cookieParser());
   app.set("trust proxy", 1);
   app.disable("x-powered-by");

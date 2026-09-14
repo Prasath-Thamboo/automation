@@ -90,3 +90,38 @@ jobs:
 
   # Build de prévisualisation EAS pour le mobile : à ajouter au Lot 7
   # (nécessite EXPO_TOKEN et un compte Expo).
+
+  # e2e mobile (Maestro) — à activer quand un build EAS `preview` est disponible.
+  # Exige un émulateur Android + l'APK installé + la pile back-end joignable.
+  # Voir apps/mobile/maestro/README.md.
+  #
+  # e2e-mobile:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #     - uses: actions/setup-node@v4
+  #       with: { node-version: 22, cache: pnpm }
+  #     - run: pnpm install --frozen-lockfile
+  #     - name: Env + services
+  #       run: |
+  #         cp .env.example .env
+  #         sed -i 's#^SESSION_SECRET=.*#SESSION_SECRET=ci-session-secret-0000000000000000000000000000#' .env
+  #         sed -i 's#^PUSH_ENABLED=.*#PUSH_ENABLED=false#' .env
+  #         sed -i 's#^RATE_LIMIT_DISABLED=.*#RATE_LIMIT_DISABLED=true#' .env
+  #         docker compose up -d postgres redis minio minio-init mailpit
+  #         pnpm db:migrate:deploy && pnpm db:seed
+  #         pnpm build && (node apps/api/dist/main.js &)
+  #     - name: Maestro
+  #       run: curl -Ls "https://get.maestro.mobile.dev" | bash
+  #     - name: APK EAS (preview)
+  #       run: echo "télécharger l'artefact eas build -p android --profile preview"
+  #     - uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 34
+  #         script: |
+  #           adb install app-preview.apk
+  #           MAESTRO_API_URL=http://10.0.2.2:3333 \
+  #           MAESTRO_MAILPIT_URL=http://10.0.2.2:8025 \
+  #           MAESTRO_TEST_EMAIL=e2e-mobile@tando.local \
+  #           ~/.maestro/bin/maestro test apps/mobile/maestro/flows

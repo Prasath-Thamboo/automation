@@ -64,6 +64,8 @@ des charges (`prompt-claude-code-tando.md`).
 - **`metadata` sans donnée personnelle en clair** — audit des 20 sites d'appel :
   uniquement des identifiants, slugs, numéros, montants, compteurs, hashs. Les
   logs applicatifs masquent les adresses (`st***@tando.fr`).
+- **Journal des requêtes** (`RequestLoggerMiddleware`) : méthode + **chemin
+  seul**, jamais la query string (elle porte des jetons : devis, lien magique).
 
 ### Documents comptables
 - Factures / avoirs **jamais modifiés** : numérotation séquentielle inaltérable,

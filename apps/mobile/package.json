@@ -10,7 +10,8 @@
     "build": "echo \"(mobile) build via EAS — voir CLAUDE.md\" && exit 0",
     "lint": "eslint app src",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"(mobile) parcours critiques via Maestro au Lot 8\" && exit 0"
+    "test": "echo \"(mobile) parcours critiques : pnpm test:e2e (Maestro, sur appareil) — voir maestro/README.md\" && exit 0",
+    "test:e2e": "maestro test maestro/flows"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.7",

@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Module, type MiddlewareConsumer, type NestModule } from "@nestjs/common";
 import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { AppConfigModule, ENV } from "./config/config.module";
 import type { Env } from "./config/env";
 import { HttpExceptionFilter } from "./common/http-exception.filter";
+import { RequestLoggerMiddleware } from "./common/request-logger.middleware";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RedisModule } from "./redis/redis.module";
 import { AuditModule } from "./audit/audit.module";
@@ -44,6 +45,11 @@ import { AdminModule } from "./admin/admin.module";
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
+    RequestLoggerMiddleware,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RequestLoggerMiddleware).forRoutes("*");
+  }
+}

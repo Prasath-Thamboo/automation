@@ -62,6 +62,7 @@ export default function ConnexionScreen() {
           {authCopy.emailLabel}
         </Text>
         <TextInput
+          testID="champ-email"
           value={email}
           onChangeText={setEmail}
           placeholder={authCopy.emailPlaceholder}
