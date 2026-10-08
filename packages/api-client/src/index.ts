@@ -4,6 +4,19 @@
  * et valider. Les réponses sont vérifiées avec les schémas de `@tando/types`.
  */
 import {
+  assistantChannelsSchema,
+  adminChannelSchema,
+  adminChannelListSchema,
+  type AdminChannel,
+  type AdminChannelList,
+  type CreateAdminChannel,
+  type UpdateAdminChannel,
+  formReplySchema,
+  publicFormInfoSchema,
+  type AssistantChannels,
+  type FormMessage,
+  type FormReply,
+  type PublicFormInfo,
   adminProfessionListSchema,
   adminProfessionSchema,
   adminQuoteListSchema,
@@ -229,6 +242,19 @@ export function createApiClient(options: ApiClientOptions) {
     },
 
     /** Catalogue public d'employés virtuels prêts à l'emploi (§5). */
+    /** Formulaire public du site du patron (Lot 12, anonyme). */
+    form: {
+      info(publicId: string): Promise<PublicFormInfo> {
+        return request(`/channels/form/${encodeURIComponent(publicId)}`, publicFormInfoSchema);
+      },
+      send(publicId: string, body: FormMessage): Promise<FormReply> {
+        return request(`/channels/form/${encodeURIComponent(publicId)}`, formReplySchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+    },
+
     catalog: {
       list(): Promise<CatalogList> {
         return request("/catalog/professions", catalogListSchema);
@@ -327,6 +353,10 @@ export function createApiClient(options: ApiClientOptions) {
       },
       assistant(id: string): Promise<AssistantDetail> {
         return request(`/me/assistants/${id}`, assistantDetailSchema);
+      },
+      /** Par où ses clients joignent l'assistant (Lot 12). */
+      channels(assistantId: string): Promise<AssistantChannels> {
+        return request(`/me/assistants/${assistantId}/channels`, assistantChannelsSchema);
       },
       conversation(assistantId: string, conversationId: string): Promise<ConversationDetail> {
         return request(
@@ -539,6 +569,28 @@ export function createApiClient(options: ApiClientOptions) {
         },
       },
 
+      /** Raccordement des canaux d'un assistant (Lot 12). */
+      channels: {
+        list(assistantId: string): Promise<AdminChannelList> {
+          return request(`/admin/assistants/${assistantId}/channels`, adminChannelListSchema);
+        },
+        create(assistantId: string, body: CreateAdminChannel): Promise<AdminChannel> {
+          return request(`/admin/assistants/${assistantId}/channels`, adminChannelSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        update(id: string, body: UpdateAdminChannel): Promise<AdminChannel> {
+          return request(`/admin/channels/${id}`, adminChannelSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        remove(id: string): Promise<{ ok: true }> {
+          return request(`/admin/channels/${id}`, okSchema, { method: "DELETE" });
+        },
+      },
+
       clients: {
         list(): Promise<AdminClientList> {
           return request("/admin/clients", adminClientListSchema);
@@ -555,6 +607,13 @@ export type ApiClient = ReturnType<typeof createApiClient>;
 
 export { ApiError as ApiClientError };
 export type {
+  AdminChannel,
+  AdminChannelList,
+  AssistantChannels,
+  ChannelView,
+  ChannelKind,
+  FormReply,
+  PublicFormInfo,
   AuthResult,
   Health,
   SessionUser,

@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import type { AnswerEscalation, EscalationItem } from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
+import { QueueService } from "../queue/queue.module";
 
 @Injectable()
 export class EscalationsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly queue: QueueService,
   ) {}
 
   /** Le patron répond à une demande remontée ; l'assistant reprend la main (§6). */
@@ -31,9 +33,21 @@ export class EscalationsService {
     });
 
     if (esc.conversationId) {
-      await this.prisma.message.create({
-        data: { conversationId: esc.conversationId, author: "patron", text: dto.answer },
+      // Lot 12 — la réponse du patron repart vers le client par son canal.
+      const conversation = await this.prisma.conversation.findUnique({
+        where: { id: esc.conversationId },
+        select: { endpointId: true, replyToEnc: true },
       });
+      const deliverable = Boolean(conversation?.endpointId && conversation.replyToEnc);
+      const msg = await this.prisma.message.create({
+        data: {
+          conversationId: esc.conversationId,
+          author: "patron",
+          text: dto.answer,
+          delivery: deliverable ? "en_attente" : null,
+        },
+      });
+      if (deliverable) await this.queue.enqueueChannelOut(msg.id);
     }
 
     await this.audit.record({

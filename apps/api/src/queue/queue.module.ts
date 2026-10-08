@@ -16,10 +16,12 @@ export const MAIL_QUEUE = Symbol("MAIL_QUEUE");
 export const QUOTE_QUEUE = Symbol("QUOTE_QUEUE");
 export const BILLING_QUEUE = Symbol("BILLING_QUEUE");
 export const PUSH_QUEUE = Symbol("PUSH_QUEUE");
+export const CHANNEL_QUEUE = Symbol("CHANNEL_QUEUE");
 const MAIL_QUEUE_NAME = "mail";
 export const QUOTE_QUEUE_NAME = "quote-lifecycle";
 export const BILLING_QUEUE_NAME = "billing";
 export const PUSH_QUEUE_NAME = "push";
+export const CHANNEL_QUEUE_NAME = "channel-out";
 
 /** Tâche différée de cycle de vie d'un devis (relance J+7 / J+21, expiration J+30). */
 export interface QuoteJob {
@@ -46,6 +48,11 @@ export interface PushJob {
   data?: Record<string, string>;
 }
 
+/** Remise d'un message au client final par son canal (Lot 12). */
+export interface ChannelOutJob {
+  messageId: string;
+}
+
 /**
  * Files d'attente BullMQ (§9.1 : emails, relances de devis, génération PDF).
  * - `mail` : envoi d'emails (un worker ici).
@@ -58,7 +65,23 @@ export class QueueService {
     @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue<QuoteJob>,
     @Inject(BILLING_QUEUE) private readonly billingQueue: Queue<BillingJob>,
     @Inject(PUSH_QUEUE) private readonly pushQueue: Queue<PushJob>,
+    @Inject(CHANNEL_QUEUE) private readonly channelQueue: Queue<ChannelOutJob>,
   ) {}
+
+  /** Met en file la remise d'un message (déjà marqué `delivery = en_attente`). */
+  async enqueueChannelOut(messageId: string): Promise<void> {
+    await this.channelQueue.add(
+      "deliver",
+      { messageId },
+      {
+        jobId: `deliver_${messageId}`,
+        attempts: 4,
+        backoff: { type: "exponential", delay: 15_000 },
+        removeOnComplete: { age: 86_400, count: 5_000 },
+        removeOnFail: { age: 7 * 86_400 },
+      },
+    );
+  }
 
   async enqueueEmail(mail: OutgoingMail): Promise<void> {
     await this.mailQueue.add("send", mail, {
@@ -145,10 +168,11 @@ const makeQueue = <T>(name: string) => ({
     { provide: QUOTE_QUEUE, ...makeQueue<QuoteJob>(QUOTE_QUEUE_NAME) },
     { provide: BILLING_QUEUE, ...makeQueue<BillingJob>(BILLING_QUEUE_NAME) },
     { provide: PUSH_QUEUE, ...makeQueue<PushJob>(PUSH_QUEUE_NAME) },
+    { provide: CHANNEL_QUEUE, ...makeQueue<ChannelOutJob>(CHANNEL_QUEUE_NAME) },
     QueueService,
     MailWorker,
   ],
-  exports: [QueueService, QUOTE_QUEUE, BILLING_QUEUE, PUSH_QUEUE],
+  exports: [QueueService, QUOTE_QUEUE, BILLING_QUEUE, PUSH_QUEUE, CHANNEL_QUEUE],
 })
 export class QueueModule implements OnApplicationShutdown {
   constructor(
@@ -156,6 +180,7 @@ export class QueueModule implements OnApplicationShutdown {
     @Inject(QUOTE_QUEUE) private readonly quoteQueue: Queue,
     @Inject(BILLING_QUEUE) private readonly billingQueue: Queue,
     @Inject(PUSH_QUEUE) private readonly pushQueue: Queue,
+    @Inject(CHANNEL_QUEUE) private readonly channelQueue: Queue,
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
@@ -164,6 +189,7 @@ export class QueueModule implements OnApplicationShutdown {
       this.quoteQueue.close(),
       this.billingQueue.close(),
       this.pushQueue.close(),
+      this.channelQueue.close(),
     ]);
   }
 }

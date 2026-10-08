@@ -33,6 +33,8 @@ async function bootstrap(): Promise<void> {
   });
 
   app.setGlobalPrefix("api/v1");
+  // Emails reçus (webhook Brevo, Lot 12) : corps HTML inclus, au-delà des 100 Ko par défaut.
+  app.useBodyParser("json", { limit: "2mb" });
   // L'API ne sert que du JSON et ne doit jamais être encadrée.
   app.use(helmet({ frameguard: { action: "deny" } }));
   app.use(compression());

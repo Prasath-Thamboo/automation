@@ -85,6 +85,21 @@ des charges (`prompt-claude-code-tando.md`).
 - `/api/docs` : ouverte hors production, **fermée en production** par défaut
   (`API_DOCS_ENABLED` pour forcer). `env.test.ts` couvre la résolution.
 
+### Canaux de réception (Lot 12)
+
+- Webhooks authentifiés : signature HMAC-SHA1 Twilio (`X-Twilio-Signature`,
+  URL publique + paramètres), HMAC-SHA256 Meta (`X-Hub-Signature-256` sur le
+  corps brut), jeton secret dans l'URL pour Brevo (qui ne signe pas).
+  Comparaisons à temps constant. Sans secret en production : 403.
+- Dédoublonnage des évènements rejoués (`webhook_events`, `<fournisseur>:<id>`).
+- Adresses de réponse des clients finaux (numéro, email, identifiant Meta) et
+  jetons d'accès Meta chiffrés AES-256-GCM (`CHANNEL_SECRET_KEY`) ; la
+  conversation n'est indexée que par un hash. Exclues de l'export RGPD.
+- Formulaire public : débit limité par IP (15 messages / min), piège à robots,
+  seule route du site autorisée en cadre (`frame-ancestors *`).
+- Emails entrants : réponses automatiques, listes, rebonds, indésirables et
+  boucles (nos propres domaines) ignorés. SMS « STOP » jamais traités.
+
 ## Dette suivie / à faire
 
 | Sujet | État | Piste |
@@ -93,6 +108,7 @@ des charges (`prompt-claude-code-tando.md`).
 | **Durées de conservation + purge automatique** (§9.4) | non implémenté | colonnes de rétention configurables + job BullMQ de purge (assessments abandonnés, magic links, sessions expirées, logs anciens) |
 | **Hébergement UE + chiffrement au repos** | responsabilité infra | Postgres/Redis/S3 managés en région UE, chiffrement au repos activé — voir `DEPLOYMENT.md` |
 | **Scan de secrets en CI** | absent | `gitleaks` en job CI |
+| **Rotation de `CHANNEL_SECRET_KEY`** | clé unique | versionner la clé (`v2.`) et re-chiffrer en tâche de fond |
 | **Registre des traitements, DPA type** | hors code | documents juridiques à produire |
 | **Identité légale** | `[À COMPLÉTER]` | `packages/copy/src/legal.ts`, `SELLER_*` — cf. `DEPLOYMENT.md` |
 | **En-têtes sur build EAS mobile** | n/a (app native) | vérifier ATS iOS / `usesCleartextTraffic` Android au build |

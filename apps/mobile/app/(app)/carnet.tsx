@@ -15,6 +15,7 @@ import { styles as s, t } from "@/src/theme";
 
 const CHANNEL: Record<string, string> = {
   telephone: "Au téléphone",
+  sms: "Par SMS",
   whatsapp: "Sur WhatsApp",
   email: "Par email",
   instagram: "Sur Instagram",

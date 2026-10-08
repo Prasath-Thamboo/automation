@@ -89,6 +89,10 @@ export default async function AdminClientPage({ params }: { params: Promise<{ id
             <li key={a.id}>
               {a.name} — {a.role} · {ASSISTANT_LABEL[a.state] ?? a.state}
               {a.onboarding !== "termine" ? " · mise en service en cours" : ""}
+              {" · "}
+              <Link href={`/admin/clients/${client.id}/canaux/${a.id}`} className="text-primary-700">
+                Canaux
+              </Link>
             </li>
           ))}
           {client.assistants.length === 0 ? <li className="text-ink-500">Aucun.</li> : null}

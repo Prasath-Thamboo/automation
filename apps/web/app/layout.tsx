@@ -6,6 +6,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/cookie-consent";
+import { HideWhenEmbedded } from "@/components/hide-when-embedded";
 import { SITE_URL, organizationJsonLd } from "@/lib/site";
 
 // Typographie : pile système (rapide, aucune requête tierce — cohérent avec
@@ -48,12 +49,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           {nav.skipToContent}
         </a>
-        <SiteHeader />
+        <HideWhenEmbedded>
+          <SiteHeader />
+        </HideWhenEmbedded>
         <main id="contenu" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
-        <CookieConsent />
+        <HideWhenEmbedded>
+          <SiteFooter />
+          <CookieConsent />
+        </HideWhenEmbedded>
       </body>
     </html>
   );

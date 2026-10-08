@@ -13,3 +13,4 @@ export * from "./team";
 export * from "./runtime";
 export * from "./notifications";
 export * from "./admin";
+export * from "./channels";

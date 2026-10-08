@@ -64,6 +64,7 @@ export type Simulate = z.infer<typeof simulateSchema>;
 export const inboundSchema = z.object({
   channel: z.enum([
     "telephone",
+    "sms",
     "whatsapp",
     "email",
     "instagram",

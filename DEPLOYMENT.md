@@ -42,12 +42,34 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `BILLING_MANAGE_URL` / `BILLING_MANAGE_HINT` | URL de gestion du contrat côté web |
 | `ASSISTANT_RUNTIME` | `rules` (défaut) |
 | `INBOUND_SECRET` | secret fort (protège `POST /api/v1/inbound/:publicId`) |
+| `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta ; la changer rend illisibles les données déjà chiffrées |
+| `CHANNELS_DELIVERY` | `live` |
+| `INBOUND_EMAIL_DOMAIN` | domaine de réception (ex. `in.tando.fr`), MX pointé vers Brevo |
+| `BREVO_INBOUND_TOKEN` | secret fort, repris dans l'URL du webhook Brevo |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | compte Twilio live |
+| `TWILIO_WEBHOOK_BASE_URL` | URL publique de l'API telle que Twilio l'appelle (signature) |
+| `META_APP_SECRET` / `META_VERIFY_TOKEN` | application Meta (WhatsApp + Instagram) |
 | `PUSH_ENABLED` | `true` |
 | `EXPO_PUSH_URL` / `EXPO_ACCESS_TOKEN` | API Expo Push (jeton d'accès recommandé) |
 | `MOBILE_DEEP_LINK_SCHEME` | `tando` |
 
 `docker-compose.yml` et les variables `*_HOST_PORT` ne servent **qu'au
 développement local**.
+
+### Canaux de réception (Lot 12)
+
+Sans secret configuré en production, le webhook correspondant répond 403.
+
+| Fournisseur | À configurer chez lui |
+|---|---|
+| **Brevo** (email) | Domaine `INBOUND_EMAIL_DOMAIN` en « Inbound parsing », MX vers Brevo ; webhook `POST https://<api>/api/v1/channels/email/brevo?token=<BREVO_INBOUND_TOKEN>`. Réponses envoyées par le SMTP (`SMTP_*` = relais Brevo) depuis l'adresse de l'assistant : le domaine de réception doit être authentifié (SPF / DKIM) pour l'envoi. |
+| **Twilio** (SMS + appels) | Acheter un numéro FR (dossier réglementaire Twilio requis). Sur le numéro : « A message comes in » → `POST …/api/v1/channels/twilio/sms` ; « A call comes in » → `POST …/api/v1/channels/twilio/voice`. Puis back-office → client → Canaux : raccorder le numéro en `sms` et `telephone` (renvoi d'appel facultatif vers le patron). |
+| **Meta** (WhatsApp + Instagram) | Application Meta (entreprise vérifiée, revue d'application pour `whatsapp_business_messaging` / `instagram_manage_messages`). Webhook : `https://<api>/api/v1/channels/meta`, jeton de vérification `META_VERIFY_TOKEN`, abonnement aux champs `messages`. Par client : back-office → Canaux, `phone_number_id` (WhatsApp) ou id du compte pro (Instagram) + jeton d'accès longue durée (system user). |
+
+Limites connues : WhatsApp et Instagram n'autorisent une réponse libre que dans
+les **24 h** suivant le dernier message du client (au-delà, la remise est
+marquée en échec). Les appels ne sont pas encore traités à la voix : renvoi vers
+le patron, sinon message vocal + SMS de reprise par écrit.
 
 ## 3. Build
 

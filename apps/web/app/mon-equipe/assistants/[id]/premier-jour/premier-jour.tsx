@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import type { AssistantDetail } from "@tando/api-client";
 import { activateAssistant, saveOnboardingStep } from "@/app/mon-equipe/team-actions";
 import { AssistantChat } from "@/components/assistant-chat";
+import { channelsCopy } from "@tando/copy";
 
 const field = "mt-1 w-full rounded-md border border-ink-100 px-3 py-2 text-base";
 const STEPS = ["Vos informations", "Vos spécificités", "Comment il vous joint", "Essai en direct"];
@@ -166,6 +167,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               <option value="app">Dans l&apos;application seulement</option>
             </select>
           </label>
+          <p className="text-sm text-ink-500">{channelsCopy.firstDayHint}</p>
           <Nav
             pending={pending}
             onBack={() => setStep(hasSpecifics ? 1 : 0)}

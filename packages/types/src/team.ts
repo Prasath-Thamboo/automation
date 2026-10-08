@@ -15,6 +15,7 @@ export type OnboardingStatus = "en_cours" | "termine";
 export type EscalationStatus = "ouverte" | "repondue";
 export type ConversationChannel =
   | "telephone"
+  | "sms"
   | "whatsapp"
   | "email"
   | "instagram"
@@ -159,6 +160,7 @@ const stateEnum = z.enum(["en_formation", "au_travail", "en_pause"]);
 const onboardingEnum = z.enum(["en_cours", "termine"]);
 const channelEnum = z.enum([
   "telephone",
+  "sms",
   "whatsapp",
   "email",
   "instagram",

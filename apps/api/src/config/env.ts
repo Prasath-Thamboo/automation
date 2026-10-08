@@ -94,6 +94,32 @@ export const envSchema = z.object({
   /** Jeton partagé exigé sur l'endpoint d'arrivée des demandes (`/inbound`). */
   INBOUND_SECRET: z.string().default("dev-inbound-secret"),
 
+  // --- Canaux de réception (Lot 12) ---
+  /**
+   * Clé AES-256 (base64, 32 octets) qui chiffre les adresses de réponse des
+   * clients et les secrets des canaux. Obligatoire en production ; dérivée de
+   * SESSION_SECRET ailleurs.
+   */
+  CHANNEL_SECRET_KEY: z.string().optional(),
+  /** `fake` : les envois SMS / WhatsApp / Instagram sont simulés. Les emails
+   *  partent toujours par SMTP (mailpit en dev). */
+  CHANNELS_DELIVERY: z.enum(["fake", "live"]).default("fake"),
+  /** Domaine des adresses de réception (`<nom>@<domaine>`), routé vers Brevo. */
+  INBOUND_EMAIL_DOMAIN: z.string().default("in.tando.local"),
+  /** Jeton exigé dans l'URL du webhook de réception Brevo (`?token=`). */
+  BREVO_INBOUND_TOKEN: z.string().optional(),
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  /** Signe les webhooks Twilio (HMAC-SHA1) et authentifie l'envoi. */
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  /** URL publique de l'API telle que Twilio l'appelle (sert au calcul de signature). */
+  TWILIO_WEBHOOK_BASE_URL: z.string().url().optional(),
+  TWILIO_API_URL: z.string().url().default("https://api.twilio.com"),
+  /** Secret de l'application Meta (signature `X-Hub-Signature-256`). */
+  META_APP_SECRET: z.string().optional(),
+  /** Jeton de vérification de l'abonnement webhook Meta (`hub.verify_token`). */
+  META_VERIFY_TOKEN: z.string().optional(),
+  META_GRAPH_URL: z.string().url().default("https://graph.facebook.com/v21.0"),
+
   // --- Notifications push (Lot 8, §6bis) ---
   /** Coupe l'envoi réel des notifications (utile en dev/CI). */
   PUSH_ENABLED: booleanish.default("true"),
@@ -109,6 +135,13 @@ const envWithGuards = envSchema.superRefine((env, ctx) => {
       code: z.ZodIssueCode.custom,
       path: ["RATE_LIMIT_DISABLED"],
       message: "Le rate limiting ne peut pas être désactivé en production.",
+    });
+  }
+  if (env.NODE_ENV === "production" && !env.CHANNEL_SECRET_KEY) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["CHANNEL_SECRET_KEY"],
+      message: "Obligatoire en production (openssl rand -base64 32).",
     });
   }
 });
@@ -129,6 +162,26 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
 /** Base d'URL du site web (pour construire les liens magiques web). */
 export function webBaseUrl(env: Env): string {
   return env.NEXT_PUBLIC_SITE_URL ?? env.WEB_ORIGIN[0] ?? "http://localhost:3000";
+}
+
+/**
+ * Secrets des webhooks de canaux. Hors production, des valeurs de dev
+ * permettent de tester sans compte fournisseur ; en production, un secret
+ * absent ferme le webhook correspondant (403).
+ */
+export function channelWebhookSecrets(env: Env): {
+  brevoToken?: string;
+  twilioToken?: string;
+  metaAppSecret?: string;
+  metaVerifyToken?: string;
+} {
+  const dev = env.NODE_ENV !== "production";
+  return {
+    brevoToken: env.BREVO_INBOUND_TOKEN ?? (dev ? "dev-brevo-inbound" : undefined),
+    twilioToken: env.TWILIO_AUTH_TOKEN ?? (dev ? "dev-twilio-token" : undefined),
+    metaAppSecret: env.META_APP_SECRET ?? (dev ? "dev-meta-secret" : undefined),
+    metaVerifyToken: env.META_VERIFY_TOKEN ?? (dev ? "dev-meta-verify" : undefined),
+  };
 }
 
 /** Faut-il exposer la doc OpenAPI ? Fermée par défaut en production. */

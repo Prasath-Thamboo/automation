@@ -86,7 +86,8 @@ export class AccountService {
         this.prisma.assistantInstruction.findMany({
           where: { assistant: { organizationId: orgId } },
         }),
-        this.prisma.conversation.findMany({ where: { organizationId: orgId } }),
+        // Adresse de réponse chiffrée : illisible, sans intérêt dans un export.
+        this.prisma.conversation.findMany({ where: { organizationId: orgId }, omit: { replyToEnc: true } }),
         this.prisma.message.findMany({ where: { conversation: { organizationId: orgId } } }),
         this.prisma.escalation.findMany({ where: { organizationId: orgId } }),
         this.prisma.quote.findMany({ where: { organizationId: orgId } }),

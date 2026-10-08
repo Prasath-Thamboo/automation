@@ -51,6 +51,8 @@ export {
   type MobileNotifications,
 } from "./mobile";
 
+export { channelPlace, channelLabels, channelsCopy, publicForm } from "./channels";
+
 import { glossary } from "./glossary";
 
 /** Libellés généraux réutilisés partout dans l'app cliente. */

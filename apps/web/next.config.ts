@@ -1,14 +1,14 @@
 import type { NextConfig } from "next";
 
 /**
- * En-têtes de sécurité (§9.4). Appliqués à toutes les routes.
+ * En-têtes de sécurité (§9.4). Appliqués à toutes les routes ; seul le
+ * formulaire public (`/formulaire/*`) peut être affiché dans un cadre.
  * HSTS n'a d'effet qu'en HTTPS ; inoffensif en local.
  * Pas de CSP complète ici : elle demande un nonce par requête (dette suivie —
  * voir SECURITY.md).
  */
-const securityHeaders = [
+const commonHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-DNS-Prefetch-Control", value: "off" },
   {
@@ -21,6 +21,18 @@ const securityHeaders = [
   },
 ];
 
+/** Partout : jamais affiché dans un cadre. */
+const securityHeaders = [...commonHeaders, { key: "X-Frame-Options", value: "DENY" }];
+
+/**
+ * Formulaire public (Lot 12) : le patron l'affiche dans son propre site, dont
+ * on ne connaît pas l'adresse — cadrage autorisé, pour cette route seulement.
+ */
+const embeddableHeaders = [
+  ...commonHeaders,
+  { key: "Content-Security-Policy", value: "frame-ancestors *" },
+];
+
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -30,7 +42,10 @@ const config: NextConfig = {
     externalDir: true,
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path((?!formulaire/).*)", headers: securityHeaders },
+      { source: "/formulaire/:path*", headers: embeddableHeaders },
+    ];
   },
 };
 

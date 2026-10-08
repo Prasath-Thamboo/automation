@@ -596,6 +596,7 @@ enum OnboardingStatus {
 
 enum ConversationChannel {
   telephone
+  sms
   whatsapp
   email
   instagram
@@ -647,6 +648,7 @@ model Assistant {
   conversations Conversation[]
   escalations   Escalation[]
   appointments  Appointment[]
+  channels      ChannelEndpoint[]
 
   @@index([organizationId])
   @@map("assistants")
@@ -708,13 +710,21 @@ model Conversation {
   customerLabel  String?
   /// Fil de discussion côté canal / session d'essai. Jamais affiché.
   externalRef    String?
+  /// Lot 12 — canal réel par lequel la demande est arrivée (null : essai / `/inbound`).
+  endpointId     String?             @db.Uuid
+  /// Lot 12 — adresse de réponse du client (numéro, email, identifiant Meta),
+  /// chiffrée AES-256-GCM (`secret-box.ts`). Jamais affichée ni exportée.
+  replyToEnc     String?
+  /// Lot 12 — fil côté canal (email : sujet et Message-ID à reprendre en réponse).
+  threadMeta     Json?
   /// Résumé en langage clair de ce que l'assistant a fait.
   summary        String?
   startedAt      DateTime            @default(now()) @db.Timestamptz(6)
   lastMessageAt  DateTime            @default(now()) @db.Timestamptz(6)
   createdAt      DateTime            @default(now()) @db.Timestamptz(6)
 
-  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+  assistant Assistant        @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+  endpoint  ChannelEndpoint? @relation(fields: [endpointId], references: [id], onDelete: SetNull)
   messages  Message[]
 
   @@index([assistantId, lastMessageAt])
@@ -723,11 +733,16 @@ model Conversation {
 }
 
 model Message {
-  id             String        @id @default(uuid()) @db.Uuid
-  conversationId String        @db.Uuid
+  id             String           @id @default(uuid()) @db.Uuid
+  conversationId String           @db.Uuid
   author         MessageAuthor
   text           String
-  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  /// Lot 12 — remise au client par le canal (null : rien à envoyer).
+  delivery       MessageDelivery?
+  /// Référence du message côté fournisseur (Twilio SID, wamid…).
+  providerRef    String?
+  deliveryError  String?
+  createdAt      DateTime         @default(now()) @db.Timestamptz(6)
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
@@ -753,6 +768,61 @@ model Escalation {
 
   @@index([organizationId, status])
   @@map("escalations")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lot 12 — Canaux de réception (formulaire, email, SMS/appels, WhatsApp, Instagram).
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum ChannelKind {
+  formulaire
+  email
+  sms
+  telephone
+  whatsapp
+  instagram
+}
+
+enum ChannelStatus {
+  /// Raccordement en cours par l'équipe Tando.
+  en_attente
+  actif
+  desactive
+}
+
+enum MessageDelivery {
+  en_attente
+  envoye
+  echec
+}
+
+/// Point d'arrivée d'un canal pour un assistant. Configuration (pas un document
+/// métier) : supprimé physiquement, les conversations gardent `endpointId = null`.
+model ChannelEndpoint {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  assistantId    String        @db.Uuid
+  kind           ChannelKind
+  /// Identifiant côté canal, normalisé : publicId (formulaire), adresse email
+  /// (minuscules), numéro E.164 (SMS / téléphone), phone_number_id (WhatsApp),
+  /// identifiant du compte (Instagram).
+  address        String
+  status         ChannelStatus @default(en_attente)
+  /// Réglages non secrets : `display` (ce que voit le client), `forwardTo`
+  /// (renvoi d'appel E.164)…
+  settings       Json          @default("{}")
+  /// Secret propre au canal (jeton d'accès Meta), chiffré AES-256-GCM.
+  secretEnc      String?
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+
+  assistant     Assistant      @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+
+  @@unique([kind, address])
+  @@index([assistantId])
+  @@index([organizationId])
+  @@map("channel_endpoints")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

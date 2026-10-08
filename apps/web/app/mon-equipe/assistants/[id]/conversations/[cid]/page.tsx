@@ -1,18 +1,16 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ApiError } from "@tando/api-client";
+import { channelPlace } from "@tando/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 const CHANNEL: Record<string, string> = {
-  telephone: "Au téléphone",
-  whatsapp: "Sur WhatsApp",
-  email: "Par email",
-  instagram: "Sur Instagram",
-  formulaire: "Via le formulaire",
-  surplace: "Sur place",
+  ...Object.fromEntries(
+    Object.entries(channelPlace).map(([k, v]) => [k, v.charAt(0).toUpperCase() + v.slice(1)]),
+  ),
   autre: "Échange",
 };
 const AUTHOR: Record<string, string> = { client: "Client", assistant: "Assistant", patron: "Vous" };

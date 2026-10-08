@@ -8,6 +8,11 @@ export interface OutgoingMail {
   subject: string;
   html: string;
   text: string;
+  /** Expéditeur (défaut : MAIL_FROM). Lot 12 : adresse de réception de l'assistant. */
+  from?: string;
+  replyTo?: string;
+  /** En-têtes de fil (`In-Reply-To`, `References`). */
+  headers?: Record<string, string>;
 }
 
 /**
@@ -30,9 +35,18 @@ export class MailService {
     });
   }
 
-  async send(mail: OutgoingMail): Promise<void> {
-    await this.transporter.sendMail({ from: this.from, ...mail });
+  /** Envoie et renvoie l'identifiant `Message-ID` attribué. */
+  async send(mail: OutgoingMail): Promise<string | null> {
+    const info = (await this.transporter.sendMail({ ...mail, from: mail.from ?? this.from })) as {
+      messageId?: string;
+    };
     this.logger.log(`Email « ${mail.subject} » envoyé à ${redact(mail.to)}`);
+    return info.messageId ?? null;
+  }
+
+  /** Adresse nue de l'expéditeur par défaut (`bonjour@…` dans `Tando <bonjour@…>`). */
+  get defaultAddress(): string {
+    return /<([^>]+)>/.exec(this.from)?.[1] ?? this.from;
   }
 }
 

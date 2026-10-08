@@ -370,6 +370,67 @@ pnpm dev                        # api (:3333) + web (:3000)
   - `docker-compose.yml` : ports hôte surchargeables (`${*_HOST_PORT:-…}`) pour
     cohabiter avec d'autres stacks locales.
 
+- **Lot 12 — Canaux de réception : fait.**
+  - Module `ChannelsModule` (`apps/api/src/channels/`). Modèle `ChannelEndpoint`
+    (`channel_endpoints` : `kind` formulaire|email|sms|telephone|whatsapp|instagram,
+    `address` normalisée, unique par `kind`, `status` en_attente|actif|desactive,
+    `settings` JSON `display`/`forwardTo`, `secretEnc`). `Conversation` gagne
+    `endpointId`, `replyToEnc` (adresse de réponse chiffrée AES-256-GCM,
+    `SecretBox`), `threadMeta` (sujet / Message-ID email). `Message` gagne
+    `delivery` (en_attente|envoye|echec), `providerRef`, `deliveryError`. Valeur
+    `sms` ajoutée à `ConversationChannel`.
+  - **Flux** : webhook fournisseur → parseur pur (`providers/*.ts`, testés) →
+    `ChannelsService` (dédoublonnage `webhook_events`) → `RuntimeService.receive()`
+    → réponses marquées `en_attente` → file BullMQ `channel-out` →
+    `ChannelDeliveryService` → `ChannelSender` du canal. La **réponse du patron à
+    une escalade repart vers le client** par le même canal
+    (`EscalationsService.answer`). Assistant en pause : le message est gardé,
+    accusé de réception envoyé, remonté au patron (escalade).
+  - **Formulaire** (créé d'office) : `GET/POST /channels/form/:publicId`
+    (public, 15/min/IP, piège à robots). Page web `/formulaire/[publicId]`,
+    sans habillage (`HideWhenEmbedded`), seule route autorisée en cadre
+    (`next.config.ts`). Réponse immédiate à l'écran ; suite par email si laissé.
+  - **Email / Brevo** (adresse créée d'office : `<nom>-xxxx@INBOUND_EMAIL_DOMAIN`) :
+    `POST /channels/email/brevo?token=`. Filtres : auto-réponses, listes,
+    rebonds, indésirables, boucles. Réponse par SMTP depuis l'adresse de
+    l'assistant, dans le fil (`Re:` + `In-Reply-To`).
+  - **SMS + appels / Twilio** : `POST /channels/twilio/sms|voice|voice/after-dial`
+    (signature `X-Twilio-Signature`, pas de SDK). Appel : renvoi vers le patron si
+    `forwardTo`, sinon message vocal + **SMS de reprise par écrit** (mobile
+    uniquement, même fil que les SMS) ; numéro masqué / pas de SMS → escalade
+    « à rappeler ». « STOP » ignoré.
+  - **WhatsApp + Instagram / Meta** : `GET/POST /channels/meta` (vérification
+    `hub.*`, signature `X-Hub-Signature-256` sur le corps brut). Jeton d'accès par
+    canal, chiffré. Fenêtre de 24 h de Meta → remise en échec au-delà.
+  - Client : `GET /me/assistants/:id/channels` → section « Comment vos clients le
+    joignent » sur la fiche (coordonnées + code du formulaire à copier). Copy :
+    `channelPlace`, `channelLabels`, `channelsCopy`, `publicForm` (`@tando/copy`).
+  - Back-office : `GET/POST /admin/assistants/:id/channels`,
+    `PATCH/DELETE /admin/channels/:id` (audit) ; page
+    `/admin/clients/[id]/canaux/[assistantId]`.
+  - Env : `CHANNEL_SECRET_KEY` (obligatoire en prod), `CHANNELS_DELIVERY`
+    (`fake`|`live`), `INBOUND_EMAIL_DOMAIN`, `BREVO_INBOUND_TOKEN`,
+    `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_WEBHOOK_BASE_URL`,
+    `META_APP_SECRET` / `META_VERIFY_TOKEN` / `META_GRAPH_URL`. Hors prod, des
+    secrets de dev s'appliquent (`channelWebhookSecrets()`). Voir `DEPLOYMENT.md`.
+
+### Notes Lot 12
+
+- Migration `20261008100000_channel_endpoints`. JSON du body parser porté à 2 Mo
+  (emails Brevo) ; le corps brut reste conservé (signatures).
+- Les canaux par défaut (formulaire + email) sont créés **paresseusement**
+  (`ChannelsService.ensureDefaults`) à la première lecture des canaux.
+- e2e `canaux.spec.ts` (3 tests : formulaire + cloisonnement + cadrage, email
+  Brevo + relais de la réponse du patron via Mailpit, Twilio SMS/appel + Meta
+  WhatsApp raccordés par le back-office) — signatures réelles, envois `fake`.
+- **Non testable ici** : vrais comptes Twilio / Brevo / Meta (numéro FR,
+  domaine MX, vérification d'entreprise et revue d'app Meta). Pas de
+  conversation vocale (appel → renvoi ou SMS). Pas de messages modèles
+  WhatsApp (au-delà de 24 h).
+- En `pnpm dev`, Next échoue à compiler `@tando/types` (CommonJS) dans les
+  composants clients qui importent `@tando/api-client` (`/questionnaire`,
+  `/formulaire/*`) — les e2e tournent sur les builds (`start`).
+
 ### Notes Lot 11
 
 - **e2e non exécutés en CI headless pour le mobile** : Maestro exige un

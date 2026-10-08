@@ -1,10 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ApiError } from "@tando/api-client";
-import { glossary } from "@tando/copy";
+import { channelPlace, glossary } from "@tando/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { AssistantChat } from "@/components/assistant-chat";
+import { ChannelsCard } from "./channels-card";
 import {
   EscalationCard,
   InstructionForm,
@@ -14,15 +15,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const CHANNEL: Record<string, string> = {
-  telephone: "au téléphone",
-  whatsapp: "sur WhatsApp",
-  email: "par email",
-  instagram: "sur Instagram",
-  formulaire: "via le formulaire",
-  surplace: "sur place",
-  autre: "",
-};
+const CHANNEL: Record<string, string> = channelPlace;
 const STATE: Record<string, string> = {
   en_formation: glossary.states.training,
   au_travail: glossary.states.working,
@@ -35,8 +28,10 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
 
   let a;
+  let channels;
   try {
-    a = await (await sessionApi()).me.assistant(id);
+    const api = await sessionApi();
+    [a, channels] = await Promise.all([api.me.assistant(id), api.me.channels(id)]);
   } catch (error) {
     if (error instanceof ApiError && error.statusCode === 404) notFound();
     throw error;
@@ -138,6 +133,9 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
           </ul>
         </>
       ) : null}
+
+      {/* Par où ses clients le joignent (Lot 12) */}
+      <ChannelsCard channels={channels} />
 
       {/* Le tester */}
       <h2 className="mt-12 text-xl font-bold text-ink-900">Lui parler</h2>
