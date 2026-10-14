@@ -620,8 +620,10 @@ model Assistant {
   organizationId String           @db.Uuid
   missionId      String?          @unique @db.Uuid
   subscriptionId String?          @unique @db.Uuid
-  /// Renseigné pour un assistant issu du catalogue (prêt à l'emploi).
+  /// Métier du catalogue dont il est issu, s'il y en a un (information).
   professionSlug String?
+  /// Lot 14 — webhook du flux n8n construit pour ce client (null : pas encore prêt).
+  workflowUrl    String?
   /// Identifiant opaque pour l'arrivée des demandes (webhooks de canaux, Lot 7).
   publicId       String?          @unique
   name           String
@@ -648,9 +650,35 @@ model Assistant {
   escalations   Escalation[]
   appointments  Appointment[]
   channels      ChannelEndpoint[]
+  switches      AssistantSwitch[]
 
   @@index([organizationId])
   @@map("assistants")
+}
+
+/// Lot 14 — bouton de pilotage d'un employé. Déclaré par l'équipe Tando dans le
+/// back-office, activé / coupé par le client ; son état est transmis au flux n8n
+/// sous `switches.<key>`.
+model AssistantSwitch {
+  id             String   @id @default(uuid()) @db.Uuid
+  assistantId    String   @db.Uuid
+  organizationId String   @db.Uuid
+  /// Clé lue par le flux n8n (`rendez_vous`, `relance_devis`…).
+  key            String
+  /// Libellé vu par le client (« Il prend les rendez-vous »).
+  label          String
+  /// Précision facultative vue par le client.
+  help           String?
+  enabled        Boolean  @default(false)
+  position       Int      @default(0)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  assistant Assistant @relation(fields: [assistantId], references: [id], onDelete: Cascade)
+
+  @@unique([assistantId, key])
+  @@index([organizationId])
+  @@map("assistant_switches")
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

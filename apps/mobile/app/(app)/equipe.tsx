@@ -5,11 +5,17 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  Switch,
   Text,
   View,
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import { mobileAccount as ax, mobileNotifications as nx, mobileTraining as tx } from "@tando/copy";
+import {
+  mobileAccount as ax,
+  mobileNotifications as nx,
+  mobileTraining as tx,
+  switchesCopy as sx,
+} from "@tando/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";
@@ -46,6 +52,19 @@ export default function EquipeScreen() {
       refetch();
     } catch {
       Alert.alert("Action impossible pour le moment.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  /** Lot 14 — active ou coupe un de ses boutons. */
+  async function setSwitch(id: string, key: string, enabled: boolean) {
+    setBusyId(`${id}:${key}`);
+    try {
+      await api.me.setSwitch(id, key, enabled);
+      refetch();
+    } catch {
+      Alert.alert(sx.error);
     } finally {
       setBusyId(null);
     }
@@ -140,6 +159,30 @@ export default function EquipeScreen() {
                 </Link>
               </View>
             )}
+
+            {a.onboarding === "termine" && a.switches.length > 0 ? (
+              <View style={{ marginTop: t.space[4], gap: t.space[2] }}>
+                <Text style={[s.body, { fontWeight: "600" }]}>{sx.title}</Text>
+                {a.switches.map((sw) => (
+                  <View
+                    key={sw.key}
+                    style={{ flexDirection: "row", alignItems: "center", gap: t.space[3], minHeight: 44 }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={s.body}>{sw.label}</Text>
+                      {sw.help ? <Text style={s.muted}>{sw.help}</Text> : null}
+                    </View>
+                    <Switch
+                      value={sw.enabled}
+                      disabled={busyId === `${a.id}:${sw.key}`}
+                      onValueChange={(v) => void setSwitch(a.id, sw.key, v)}
+                      accessibilityLabel={sw.label}
+                      trackColor={{ true: t.color.primary }}
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : null}
           </View>
         );
       })}

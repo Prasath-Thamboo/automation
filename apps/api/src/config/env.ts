@@ -89,14 +89,20 @@ export const envSchema = z.object({
     .default("Gérez votre contrat depuis votre espace, sur tando.fr."),
 
   // --- Moteur « employé virtuel » (Lot 6) ---
-  /** Implémentation de `AssistantRuntime` : `rules` (défaut) ou `n8n`. */
+  /**
+   * `rules` (défaut) : moteur à règles pour tous. `n8n` : chaque employé dont le
+   * flux est branché (back-office) passe par son flux ; les autres, par les règles.
+   */
   ASSISTANT_RUNTIME: z.enum(["rules", "n8n"]).default("rules"),
   /**
-   * Webhook n8n appelé à chaque message (Lot 13). `{workflow}` est remplacé par
-   * le métier (`dentiste`…, `sur-mesure`), ex. `https://n8n.tando.fr/webhook/tando-{workflow}`.
+   * Instance n8n de Tando (ex. `https://n8n.tando.fr`). Si renseignée, l'adresse
+   * du flux de chaque employé (back-office, Lot 14) doit être sur cette origine.
    */
-  N8N_WEBHOOK_URL: z.string().url().optional(),
-  /** Secret envoyé en en-tête `X-Tando-Token` (Header Auth du nœud Webhook). */
+  N8N_BASE_URL: z.string().url().optional(),
+  /**
+   * Secret partagé avec n8n, dans les deux sens (en-tête `X-Tando-Token`) :
+   * l'API le présente aux flux, les flux le présentent à `/n8n/*`.
+   */
   N8N_TOKEN: z.string().optional(),
   /** Au-delà, le message est transmis au patron (escalade). */
   N8N_TIMEOUT_MS: z.coerce.number().int().positive().default(15000),
@@ -142,13 +148,6 @@ const envWithGuards = envSchema.superRefine((env, ctx) => {
       code: z.ZodIssueCode.custom,
       path: ["RATE_LIMIT_DISABLED"],
       message: "Le rate limiting ne peut pas être désactivé en production.",
-    });
-  }
-  if (env.ASSISTANT_RUNTIME === "n8n" && !env.N8N_WEBHOOK_URL) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["N8N_WEBHOOK_URL"],
-      message: "Obligatoire avec ASSISTANT_RUNTIME=n8n.",
     });
   }
   if (env.NODE_ENV === "production" && env.ASSISTANT_RUNTIME === "n8n" && !env.N8N_TOKEN) {
@@ -203,6 +202,15 @@ export function channelWebhookSecrets(env: Env): {
     metaAppSecret: env.META_APP_SECRET ?? (dev ? "dev-meta-secret" : undefined),
     metaVerifyToken: env.META_VERIFY_TOKEN ?? (dev ? "dev-meta-verify" : undefined),
   };
+}
+
+/**
+ * Secret partagé avec n8n (Lot 14). Hors production, une valeur de dev permet
+ * de tester sans configuration ; en production, absent = `/n8n/*` fermé (403)
+ * (et `N8N_TOKEN` est exigé au démarrage si `ASSISTANT_RUNTIME=n8n`).
+ */
+export function n8nToken(env: Env): string | undefined {
+  return env.N8N_TOKEN ?? (env.NODE_ENV !== "production" ? "dev-n8n-token" : undefined);
 }
 
 /** Faut-il exposer la doc OpenAPI ? Fermée par défaut en production. */

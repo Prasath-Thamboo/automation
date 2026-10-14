@@ -175,6 +175,27 @@ export class RuntimeService {
     }
   }
 
+  /**
+   * Lot 14 — un flux planifié (relances, rappels…) rend compte de ce qu'il a
+   * fait (carnet de bord) ou transmet une question au patron (escalade notifiée).
+   */
+  async reportFromWorkflow(
+    assistant: Assistant,
+    reply: Extract<RuntimeReply, { kind: "reply" | "escalate" }>,
+  ): Promise<string> {
+    const run: RunInput = {
+      assistant,
+      channel: "autre",
+      externalRef: `flux:${randomBytes(6).toString("hex")}`,
+      customerLabel: "Travail planifié",
+      text: "",
+      notify: true,
+    };
+    const conversation = await this.conversationFor(run);
+    await this.persist(run, conversation.id, reply);
+    return conversation.id;
+  }
+
   // ── Cœur ────────────────────────────────────────────────────────────────
 
   /** Retrouve le fil en cours (moins de 2 h) ou en ouvre un. */
@@ -244,10 +265,13 @@ export class RuntimeService {
       data: { conversationId: conversation.id, author: "client", text: input.text },
     });
 
-    const instructions = await this.prisma.assistantInstruction.findMany({
-      where: { assistantId: assistant.id, active: true },
-      orderBy: { version: "asc" },
-    });
+    const [instructions, switches] = await Promise.all([
+      this.prisma.assistantInstruction.findMany({
+        where: { assistantId: assistant.id, active: true },
+        orderBy: { version: "asc" },
+      }),
+      this.prisma.assistantSwitch.findMany({ where: { assistantId: assistant.id } }),
+    ]);
 
     const ctx: RuntimeContext = {
       assistant: {
@@ -255,11 +279,13 @@ export class RuntimeService {
         name: assistant.name,
         role: assistant.role,
         professionSlug: assistant.professionSlug,
+        workflowUrl: assistant.workflowUrl,
         jobDescription: (assistant.jobDescription as RuntimeContext["assistant"]["jobDescription"]) ?? {},
         establishment: (assistant.establishment as RuntimeContext["assistant"]["establishment"]) ?? {},
         specifics: (assistant.specifics as Record<string, string>) ?? {},
       },
       instructions: instructions.map((i) => i.text),
+      switches: Object.fromEntries(switches.map((s) => [s.key, s.enabled])),
       history: priorMessages.map((m) => ({
         author: m.author as "client" | "assistant" | "patron",
         text: m.text,

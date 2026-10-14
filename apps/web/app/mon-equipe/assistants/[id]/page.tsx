@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ApiError } from "@tando/api-client";
-import { channelPlace, glossary } from "@tando/copy";
+import { channelPlace, glossary, switchesCopy } from "@tando/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { AssistantChat } from "@/components/assistant-chat";
@@ -11,6 +11,7 @@ import {
   InstructionForm,
   InstructionList,
   PauseControl,
+  SwitchList,
 } from "./controls";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,11 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
         </div>
         <PauseControl id={id} paused={a.state === "en_pause"} />
       </div>
+
+      {/* Ce qu'il fait pour vous (Lot 14) */}
+      <h2 className="mt-12 text-xl font-bold text-ink-900">{switchesCopy.title}</h2>
+      {a.switches.length > 0 ? <p className="mt-1 text-base text-ink-700">{switchesCopy.intro}</p> : null}
+      <SwitchList id={id} switches={a.switches} />
 
       {/* Son carnet de bord */}
       <h2 className="mt-12 text-xl font-bold text-ink-900">{glossary.artifacts.logbook}</h2>

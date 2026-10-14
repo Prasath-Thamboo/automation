@@ -41,8 +41,8 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `BILLING_PROVIDER` | `out-of-app` (Stripe hors application, décision Lot 9) |
 | `BILLING_MANAGE_URL` / `BILLING_MANAGE_HINT` | URL de gestion du contrat côté web |
 | `ASSISTANT_RUNTIME` | `rules` (défaut) ou `n8n` |
-| `N8N_WEBHOOK_URL` | si `n8n` : URL du webhook, `{workflow}` = métier (ex. `https://n8n.tando.fr/webhook/tando-{workflow}`). Instance n8n **hébergée dans l'UE** (messages des clients finaux) |
-| `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort vérifié par le nœud Webhook (Header Auth `X-Tando-Token`) |
+| `N8N_BASE_URL` | origine de l'instance n8n (ex. `https://n8n.tando.fr`) : l'adresse du flux de chaque employé (back-office → Pilotage) doit s'y trouver. Instance **hébergée dans l'UE** (messages des clients finaux) |
+| `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort partagé dans les deux sens (en-tête `X-Tando-Token`) : vérifié par les nœuds Webhook, présenté par les flux à `/api/v1/n8n/*` |
 | `N8N_TIMEOUT_MS` | délai max d'un tour (défaut 15000) ; au-delà → escalade |
 | `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta ; la changer rend illisibles les données déjà chiffrées |
 | `CHANNELS_DELIVERY` | `live` |

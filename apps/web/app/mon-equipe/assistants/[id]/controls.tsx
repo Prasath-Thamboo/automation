@@ -4,10 +4,12 @@ import { useActionState, useState, useTransition } from "react";
 import {
   addInstruction,
   answerEscalation,
+  setSwitch,
   togglePause,
   type FormState,
 } from "@/app/mon-equipe/team-actions";
-import type { EscalationItem, Instruction } from "@tando/api-client";
+import type { AssistantSwitch, EscalationItem, Instruction } from "@tando/api-client";
+import { switchesCopy as sx } from "@tando/copy";
 
 export function PauseControl({ id, paused }: { id: string; paused: boolean }) {
   const [pending, start] = useTransition();
@@ -29,6 +31,50 @@ export function PauseControl({ id, paused }: { id: string; paused: boolean }) {
       </button>
       {error ? <span className="text-xs text-danger">{error}</span> : null}
     </span>
+  );
+}
+
+/** Lot 14 — ses boutons de pilotage. */
+export function SwitchList({ id, switches }: { id: string; switches: AssistantSwitch[] }) {
+  if (switches.length === 0) return <p className="mt-3 text-sm text-ink-500">{sx.empty}</p>;
+  return (
+    <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+      {switches.map((s) => (
+        <SwitchRow key={s.key} id={id} sw={s} />
+      ))}
+    </ul>
+  );
+}
+
+function SwitchRow({ id, sw }: { id: string; sw: AssistantSwitch }) {
+  const [pending, start] = useTransition();
+  const [error, setError] = useState<string>();
+  return (
+    <li className="flex items-center justify-between gap-4 p-4">
+      <div>
+        <p className="text-base text-ink-900">{sw.label}</p>
+        {sw.help ? <p className="text-sm text-ink-500">{sw.help}</p> : null}
+        {error ? <p className="text-sm text-danger">{sx.error}</p> : null}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={sw.enabled}
+        aria-label={sw.label}
+        disabled={pending}
+        onClick={() =>
+          start(async () => {
+            const r = await setSwitch(id, sw.key, !sw.enabled);
+            setError(r.error);
+          })
+        }
+        className={`min-h-touch min-w-[96px] shrink-0 rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60 ${
+          sw.enabled ? "bg-primary-600 text-white" : "border border-ink-300 text-ink-700"
+        }`}
+      >
+        {pending ? "…" : sw.enabled ? sx.on : sx.off}
+      </button>
+    </li>
   );
 }
 

@@ -126,6 +126,17 @@ export async function togglePause(assistantId: string, pause: boolean): Promise<
   return { ok: true };
 }
 
+/** Lot 14 — active ou coupe un bouton de pilotage. */
+export async function setSwitch(assistantId: string, key: string, enabled: boolean): Promise<FormState> {
+  try {
+    await (await api()).setSwitch(assistantId, key, enabled);
+  } catch (e) {
+    return { error: msg(e) };
+  }
+  revalidatePath(`/mon-equipe/assistants/${assistantId}`);
+  return { ok: true };
+}
+
 export async function renameAccount(_prev: FormState, form: FormData): Promise<FormState> {
   const fullName = String(form.get("fullName") ?? "").trim();
   if (fullName.length < 1) return { error: "Indiquez votre nom." };

@@ -3,6 +3,8 @@ import type { SubscriptionSummary } from "./billing";
 import { subscriptionSummarySchema } from "./billing";
 import type { AppointmentRow, AppointmentStatus } from "./runtime";
 import { appointmentRowSchema } from "./runtime";
+import type { AssistantSwitch } from "./switches";
+import { assistantSwitchSchema } from "./switches";
 
 /**
  * Espace client « Mon équipe » (§6) et mise en service « premier jour » (§5.2).
@@ -44,6 +46,8 @@ export interface AssistantCard {
   professionSlug: string | null;
   onboarding: OnboardingStatus;
   onboardingStep: number;
+  /** Lot 14 — ses boutons de pilotage (vide tant que l'équipe Tando n'en a pas déclaré). */
+  switches: AssistantSwitch[];
 }
 
 export interface Instruction {
@@ -218,6 +222,7 @@ const assistantCardShape = {
   professionSlug: z.string().nullable(),
   onboarding: onboardingEnum,
   onboardingStep: z.number().int(),
+  switches: z.array(assistantSwitchSchema),
 };
 
 export const assistantCardSchema: z.ZodType<AssistantCard> = z.object(assistantCardShape);

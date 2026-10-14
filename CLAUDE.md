@@ -411,8 +411,8 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Lot 13 — Moteur n8n : fait.**
   - `N8nRuntime` (`apps/api/src/assistants/runtime/n8n.runtime.ts`), 3e
     implémentation d'`AssistantRuntime`, choisie par `ASSISTANT_RUNTIME=n8n`.
-    `POST` JSON vers `N8N_WEBHOOK_URL` (`{workflow}` = `professionSlug` ou
-    `sur-mesure`), en-tête `X-Tando-Token` (`N8N_TOKEN`), délai `N8N_TIMEOUT_MS`.
+    `POST` JSON vers le flux de l'employé (Lot 14), en-tête `X-Tando-Token`
+    (`N8N_TOKEN`), délai `N8N_TIMEOUT_MS`.
     Réponse validée par Zod (`n8nReplySchema` : reply | appointment | escalate).
   - Garde-fous gardés côté API : prix / urgence / humain → moteur à règles, sans
     appel n8n ; réponse invalide, erreur ou délai dépassé → escalade.
@@ -420,8 +420,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     n'est envoyée à n8n.
   - Contrat + structure de workflow : `docs/n8n/README.md`. Local :
     `pnpm n8n:up` (service `n8n`, profil docker `n8n`, port 5678).
-  - Env : `N8N_WEBHOOK_URL` (obligatoire si `n8n`), `N8N_TOKEN` (obligatoire en
-    prod si `n8n`), `N8N_TIMEOUT_MS`. Pas de migration Prisma.
+  - Env : `N8N_TOKEN` (obligatoire en prod si `n8n`), `N8N_TIMEOUT_MS`.
 
 - **Lot 13 bis — Nettoyage : fait.** Modèle retenu : le client décrit son besoin,
   l'équipe Tando construit **son** flux n8n, le client le pilote avec des boutons
@@ -438,6 +437,38 @@ pnpm dev                        # api (:3333) + web (:3000)
     l'emploi » de `/tarifs` (`offers.ts`), bloc « deux voies » de la landing
     (`landing.ts`), FAQ (délai « quelques minutes », « 14 jours d'essai »), CGV
     (« souscription en ligne », `legal.ts`).
+
+- **Lot 14 — Un flux n8n par client, piloté par boutons : fait.**
+  - Modèle : `Assistant.workflowUrl` (webhook du flux de ce client) +
+    `AssistantSwitch` (`assistant_switches` : `key` lue par le flux, `label` /
+    `help` vus par le client, `enabled`, `position` ; unique par
+    (`assistantId`, `key`)). Migration `20261014120000_assistant_switches`.
+  - Moteur : `N8nRuntime` appelle `assistant.workflowUrl` (corps `version: 2`
+    avec `switches: { clé: bool }`) ; sans flux branché → moteur à règles.
+    `ASSISTANT_RUNTIME=n8n` reste l'interrupteur global (dev/CI : `rules`).
+  - Back-office : `GET/PATCH /admin/assistants/:id/setup` (URL du flux, vérifiée
+    par `assertAllowedUrl` : https en prod, origine `N8N_BASE_URL` si
+    renseignée), `POST /admin/assistants/:id/switches`,
+    `PATCH/DELETE /admin/switches/:id` (audit). Page
+    `/admin/clients/[id]/pilotage/[assistantId]` ; les libellés passent le
+    filtre anti-jargon (`findJargon`) dans l'action serveur.
+  - Client : `switches` dans `AssistantCard` (donc équipe + fiche) ;
+    `POST /me/assistants/:id/switches/:key { enabled }` (audit
+    `assistant.switch_changed`). Web : section « Ce qu'il fait pour vous » de la
+    fiche (`SwitchList`, `role="switch"`). Mobile : interrupteurs sous chaque
+    employé dans « Mon équipe ». Copy : `switchesCopy`.
+  - Flux planifiés : `N8nController` (`/n8n/assistants/:id/state | activity |
+    escalations`), jeton `X-Tando-Token` (`n8nToken()` : `N8N_TOKEN`, ou
+    `dev-n8n-token` hors prod). `RuntimeService.reportFromWorkflow()` →
+    carnet de bord « Travail planifié » / escalade notifiée.
+  - Env : `N8N_WEBHOOK_URL` supprimée → `N8N_BASE_URL` (facultative).
+  - e2e `pilotage.spec.ts`. Contrat complet : `docs/n8n/README.md`.
+
+### Notes Lot 14
+
+- La validation anti-jargon des libellés de boutons est faite côté web
+  (l'API ne dépend pas de `@tando/copy`, consommé en source).
+- e2e `pilotage.spec.ts` **non exécuté** (Docker Desktop éteint lors du lot).
 
 ### Notes Lot 13
 

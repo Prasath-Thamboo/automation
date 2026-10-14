@@ -10,8 +10,10 @@ export interface RuntimeAssistant {
   id: string;
   name: string;
   role: string;
-  /** Métier du catalogue (null : sur mesure). Choisit le workflow n8n. */
+  /** Métier du catalogue dont il est issu (information). */
   professionSlug: string | null;
+  /** Lot 14 — webhook du flux n8n de ce client (null : pas encore branché). */
+  workflowUrl: string | null;
   jobDescription: {
     summary?: string;
     tasks?: string[];
@@ -27,6 +29,8 @@ export interface RuntimeContext {
   assistant: RuntimeAssistant;
   /** Consignes ajoutées par le client (« le former »). */
   instructions: string[];
+  /** Lot 14 — état des boutons de pilotage, par clé. */
+  switches: Record<string, boolean>;
   /** Historique de la conversation, du plus ancien au plus récent. */
   history: Array<{ author: "client" | "assistant" | "patron"; text: string }>;
 }

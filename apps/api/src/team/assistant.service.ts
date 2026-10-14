@@ -28,6 +28,11 @@ import { newPublicId } from "./public-id";
 
 type JD = { summary?: string; tasks?: string[]; hours?: string };
 
+/** Lot 14 — boutons de pilotage, dans l'ordre choisi par l'équipe Tando. */
+const WITH_SWITCHES = {
+  switches: { orderBy: [{ position: "asc" as const }, { createdAt: "asc" as const }] },
+};
+
 @Injectable()
 export class AssistantService {
   constructor(
@@ -65,6 +70,7 @@ export class AssistantService {
     const rows = await this.prisma.assistant.findMany({
       where: { organizationId, deletedAt: null },
       orderBy: { createdAt: "asc" },
+      include: WITH_SWITCHES,
     });
     for (const row of rows) {
       if (!row.publicId) {
@@ -83,6 +89,7 @@ export class AssistantService {
     const assistants = await this.prisma.assistant.findMany({
       where: { organizationId, deletedAt: null },
       orderBy: { createdAt: "asc" },
+      include: WITH_SWITCHES,
     });
     const nameById = new Map(assistants.map((a) => [a.id, a.name]));
 
@@ -308,6 +315,30 @@ export class AssistantService {
     return this.detail(organizationId, id);
   }
 
+  /** Lot 14 — le client active ou coupe un de ses boutons. */
+  async setSwitch(
+    organizationId: string,
+    id: string,
+    key: string,
+    enabled: boolean,
+    userId: string,
+  ): Promise<AssistantDetail> {
+    const a = await this.getOwned(organizationId, id);
+    const sw = a.switches.find((s) => s.key === key);
+    if (!sw) throw new NotFoundException("Ce réglage n'existe pas.");
+    if (sw.enabled !== enabled) {
+      await this.prisma.assistantSwitch.update({ where: { id: sw.id }, data: { enabled } });
+      await this.audit.record({
+        organizationId,
+        actorUserId: userId,
+        action: "assistant.switch_changed",
+        target: `assistant:${id}`,
+        metadata: { key, enabled },
+      });
+    }
+    return this.detail(organizationId, id);
+  }
+
   // ── internes ────────────────────────────────────────────────────────────
 
   private async setState(organizationId: string, id: string, state: "au_travail" | "en_pause") {
@@ -326,6 +357,7 @@ export class AssistantService {
   private async getOwned(organizationId: string, id: string) {
     const a = await this.prisma.assistant.findFirst({
       where: { id, organizationId, deletedAt: null },
+      include: WITH_SWITCHES,
     });
     if (!a) throw new NotFoundException("Cet assistant n'existe pas.");
     return a;
@@ -368,6 +400,7 @@ function toCard(a: {
   professionSlug: string | null;
   onboarding: string;
   onboardingStep: number;
+  switches: Array<{ key: string; label: string; help: string | null; enabled: boolean }>;
 }): AssistantCard {
   return {
     id: a.id,
@@ -377,6 +410,7 @@ function toCard(a: {
     professionSlug: a.professionSlug,
     onboarding: a.onboarding as AssistantCard["onboarding"],
     onboardingStep: a.onboardingStep,
+    switches: a.switches.map((s) => ({ key: s.key, label: s.label, help: s.help, enabled: s.enabled })),
   };
 }
 

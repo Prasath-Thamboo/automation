@@ -16,6 +16,7 @@ import {
   addInstructionSchema,
   answerEscalationSchema,
   onboardingStepSchema,
+  setSwitchSchema,
   simulateSchema,
   updateAccountSchema,
   type AccountInfo,
@@ -26,6 +27,7 @@ import {
   type EscalationItem,
   type MobileBillingView,
   type OnboardingStep,
+  type SetSwitch,
   type RuntimeTurn,
   type SessionUser,
   type Simulate,
@@ -131,6 +133,16 @@ export class TeamController {
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<AssistantDetail> {
     return this.assistants.resume(user.organizationId, id);
+  }
+
+  @Post("assistants/:id/switches/:key")
+  setSwitch(
+    @CurrentUser() user: SessionUser,
+    @Param("id", ParseUUIDPipe) id: string,
+    @Param("key") key: string,
+    @Body(new ZodValidationPipe(setSwitchSchema)) body: SetSwitch,
+  ): Promise<AssistantDetail> {
+    return this.assistants.setSwitch(user.organizationId, id, key, body.enabled, user.id);
   }
 
   @Post("escalations/:id/answer")

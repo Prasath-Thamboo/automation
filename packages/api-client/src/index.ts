@@ -4,6 +4,11 @@
  * et valider. Les réponses sont vérifiées avec les schémas de `@tando/types`.
  */
 import {
+  adminAssistantSetupSchema,
+  type AdminAssistantSetup,
+  type CreateSwitch,
+  type UpdateSwitch,
+  type UpdateWorkflow,
   assistantChannelsSchema,
   adminChannelSchema,
   adminChannelListSchema,
@@ -391,6 +396,14 @@ export function createApiClient(options: ApiClientOptions) {
       resumeAssistant(id: string): Promise<AssistantDetail> {
         return request(`/me/assistants/${id}/resume`, assistantDetailSchema, { method: "POST" });
       },
+      /** Lot 14 — active ou coupe un de ses boutons. */
+      setSwitch(id: string, key: string, enabled: boolean): Promise<AssistantDetail> {
+        return request(
+          `/me/assistants/${id}/switches/${encodeURIComponent(key)}`,
+          assistantDetailSchema,
+          { method: "POST", body: JSON.stringify({ enabled }) },
+        );
+      },
       answerEscalation(id: string, body: AnswerEscalation): Promise<EscalationItem> {
         return request(`/me/escalations/${id}/answer`, escalationItemSchema, {
           method: "POST",
@@ -584,6 +597,34 @@ export function createApiClient(options: ApiClientOptions) {
         },
       },
 
+      /** Flux n8n et boutons de pilotage d'un employé (Lot 14). */
+      setup: {
+        get(assistantId: string): Promise<AdminAssistantSetup> {
+          return request(`/admin/assistants/${assistantId}/setup`, adminAssistantSetupSchema);
+        },
+        setWorkflow(assistantId: string, body: UpdateWorkflow): Promise<AdminAssistantSetup> {
+          return request(`/admin/assistants/${assistantId}/setup`, adminAssistantSetupSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        createSwitch(assistantId: string, body: CreateSwitch): Promise<AdminAssistantSetup> {
+          return request(`/admin/assistants/${assistantId}/switches`, adminAssistantSetupSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        updateSwitch(id: string, body: UpdateSwitch): Promise<AdminAssistantSetup> {
+          return request(`/admin/switches/${id}`, adminAssistantSetupSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        removeSwitch(id: string): Promise<AdminAssistantSetup> {
+          return request(`/admin/switches/${id}`, adminAssistantSetupSchema, { method: "DELETE" });
+        },
+      },
+
       clients: {
         list(): Promise<AdminClientList> {
           return request("/admin/clients", adminClientListSchema);
@@ -600,6 +641,9 @@ export type ApiClient = ReturnType<typeof createApiClient>;
 
 export { ApiError as ApiClientError };
 export type {
+  AdminAssistantSetup,
+  AdminSwitch,
+  AssistantSwitch,
   AdminChannel,
   AdminChannelList,
   AssistantChannels,

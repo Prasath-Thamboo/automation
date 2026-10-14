@@ -52,6 +52,7 @@ export {
 } from "./mobile";
 
 export { channelPlace, channelLabels, channelsCopy, publicForm } from "./channels";
+export { switchesCopy } from "./switches";
 
 import { glossary } from "./glossary";
 
