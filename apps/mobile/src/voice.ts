@@ -1,9 +1,21 @@
 import { useCallback, useState } from "react";
-import {
-  ExpoSpeechRecognitionModule,
-  isRecognitionAvailable,
-  useSpeechRecognitionEvent,
-} from "expo-speech-recognition";
+import type * as SpeechRecognition from "expo-speech-recognition";
+
+type SpeechRecognitionExports = typeof SpeechRecognition;
+
+// Chargement paresseux : `expo-speech-recognition` appelle son module natif dès
+// l'import (absent dans Expo Go / sans dev build), donc un `try/catch` autour
+// de l'appel seul ne suffit pas — il faut intercepter l'échec du `require` lui-même.
+let speech: SpeechRecognitionExports | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  speech = require("expo-speech-recognition") as SpeechRecognitionExports;
+} catch {
+  speech = null;
+}
+
+const useSpeechRecognitionEvent: SpeechRecognitionExports["useSpeechRecognitionEvent"] =
+  speech?.useSpeechRecognitionEvent ?? (() => {});
 
 export type DictationError = "permission" | "generic" | null;
 
@@ -19,8 +31,9 @@ export interface Dictation {
 }
 
 function available(): boolean {
+  if (!speech) return false;
   try {
-    return isRecognitionAvailable();
+    return speech.isRecognitionAvailable();
   } catch {
     return false;
   }
@@ -53,16 +66,17 @@ export function useDictation(opts: { contextualStrings?: string[] } = {}): Dicta
 
   const start = useCallback(async () => {
     if (!supported) return;
+    if (!speech) return;
     setError(null);
     setTranscript("");
     try {
-      const perm = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      const perm = await speech.ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!perm.granted) {
         setError("permission");
         return;
       }
       setListening(true);
-      ExpoSpeechRecognitionModule.start({
+      speech.ExpoSpeechRecognitionModule.start({
         lang: "fr-FR",
         interimResults: true,
         continuous: false,
@@ -77,7 +91,7 @@ export function useDictation(opts: { contextualStrings?: string[] } = {}): Dicta
 
   const stop = useCallback(() => {
     try {
-      ExpoSpeechRecognitionModule.stop();
+      speech?.ExpoSpeechRecognitionModule.stop();
     } catch {
       /* ignore */
     }
