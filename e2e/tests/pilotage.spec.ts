@@ -7,6 +7,7 @@ import {
   uniqueEmail,
   webLogin,
   API_URL,
+  staffLogin,
 } from "../fixtures/tando";
 
 const API = `${API_URL}/api/v1`;
@@ -23,7 +24,7 @@ test("back-office déclare un bouton → le client le bascule → le flux le lit
   await activateAssistant(api, session, assistantId);
 
   // 1. Back-office : flux branché + bouton déclaré
-  const staff = await apiLogin(api, "staff@tando.fr");
+  const staff = await staffLogin(api);
   const wf = await api.patch(`${API}/admin/assistants/${assistantId}/setup`, {
     headers: staff.headers,
     data: { workflowUrl: "http://localhost:5678/webhook/e2e-pilotage" },

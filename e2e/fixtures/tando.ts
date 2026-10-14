@@ -12,14 +12,26 @@ export function uniqueEmail(prefix = "e2e"): string {
 
 interface MailpitMessage {
   ID: string;
+  Subject?: string;
   To: Array<{ Address: string }>;
 }
 
-async function messageIdsFor(api: APIRequestContext, email: string): Promise<string[]> {
+/** Objet du mail de lien magique (`apps/api/src/mail/templates.ts`). */
+const MAGIC_LINK_SUBJECT = "Votre lien pour entrer dans votre espace Tando";
+
+/**
+ * Liens magiques reçus par `email`. Filtre sur l'objet : après une acceptation de
+ * devis, d'autres mails (facture, bienvenue…) arrivent à la même adresse.
+ */
+async function magicLinkIdsFor(api: APIRequestContext, email: string): Promise<string[]> {
   const list = await api.get(`${MAILPIT_URL}/api/v1/messages?limit=50`);
   const { messages = [] } = (await list.json()) as { messages: MailpitMessage[] };
   return messages
-    .filter((m) => (m.To ?? []).some((t) => t.Address.toLowerCase() === email.toLowerCase()))
+    .filter(
+      (m) =>
+        m.Subject === MAGIC_LINK_SUBJECT &&
+        (m.To ?? []).some((t) => t.Address.toLowerCase() === email.toLowerCase()),
+    )
     .map((m) => m.ID);
 }
 
@@ -40,13 +52,13 @@ export async function requestMagicToken(
   email: string,
   { channel = "web", timeoutMs = 15_000 }: { channel?: "web" | "mobile"; timeoutMs?: number } = {},
 ): Promise<string> {
-  const before = new Set(await messageIdsFor(api, email));
+  const before = new Set(await magicLinkIdsFor(api, email));
   const req = await api.post(`${API}/auth/magic-link`, { data: { email, channel } });
   expect(req.ok(), `magic-link ${email}`).toBeTruthy();
 
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    const fresh = (await messageIdsFor(api, email)).find((id) => !before.has(id));
+    const fresh = (await magicLinkIdsFor(api, email)).find((id) => !before.has(id));
     if (fresh) return tokenFromMessage(api, fresh);
     await new Promise((r) => setTimeout(r, 400));
   }
@@ -60,10 +72,21 @@ export interface ApiSession {
   headers: { Authorization: string };
 }
 
-/** Connexion niveau API : renvoie un jeton Bearer (mobile / appels directs). */
+/**
+ * Connexion niveau API : renvoie un jeton Bearer (mobile / appels directs).
+ * Réessaie si le jeton a déjà été consommé : une adresse partagée entre tests
+ * parallèles (`staff@tando.fr`) peut voir passer le lien d'un autre worker.
+ */
 export async function apiLogin(api: APIRequestContext, email: string): Promise<ApiSession> {
-  const token = await requestMagicToken(api, email);
-  const res = await api.post(`${API}/auth/verify`, { data: { token } });
+  let res = await api.post(`${API}/auth/verify`, {
+    data: { token: await requestMagicToken(api, email) },
+  });
+  for (let attempt = 1; !res.ok() && attempt < 5; attempt++) {
+    await new Promise((r) => setTimeout(r, 200 + Math.random() * 800));
+    res = await api.post(`${API}/auth/verify`, {
+      data: { token: await requestMagicToken(api, email) },
+    });
+  }
   expect(res.ok(), `verify ${email}`).toBeTruthy();
 
   const body = (await res.json()) as { token: string; user: ApiSession["user"] };
@@ -72,6 +95,20 @@ export async function apiLogin(api: APIRequestContext, email: string): Promise<A
     user: body.user,
     headers: { Authorization: `Bearer ${body.token}` },
   };
+}
+
+let staffSession: Promise<ApiSession> | null = null;
+
+/**
+ * Session du personnel Tando, ouverte une fois par worker : les tests parallèles
+ * ne se disputent plus les liens magiques de `staff@tando.fr`.
+ */
+export function staffLogin(api: APIRequestContext): Promise<ApiSession> {
+  staffSession ??= apiLogin(api, "staff@tando.fr").catch((err: unknown) => {
+    staffSession = null;
+    throw err;
+  });
+  return staffSession;
 }
 
 /** Connexion niveau navigateur : pose le cookie de session httpOnly du site. */
@@ -139,7 +176,7 @@ export async function submitAssessment(api: APIRequestContext, email: string): P
 
 /** Le back-office relit puis envoie le devis (jamais automatique). */
 export async function staffSendsQuote(api: APIRequestContext, quoteNumber: string): Promise<void> {
-  const staff = await apiLogin(api, "staff@tando.fr");
+  const staff = await staffLogin(api);
   const quotes = await api.get(`${API}/admin/quotes`, { headers: staff.headers });
   const list = (await quotes.json()).quotes as Array<{ id: string; number: string }>;
   const quote = list.find((q) => q.number === quoteNumber);

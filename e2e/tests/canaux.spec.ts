@@ -9,6 +9,7 @@ import {
   MAILPIT_URL,
   API_URL,
   type ApiSession,
+  staffLogin,
 } from "../fixtures/tando";
 
 const API = `${API_URL}/api/v1`;
@@ -183,7 +184,7 @@ test.describe("canaux de réception", () => {
 
   test("SMS et appels manqués (Twilio), WhatsApp (Meta) — raccordés par le back-office", async ({ api }) => {
     const { s, assistantId } = await workingAssistant(api, uniqueEmail("canaux-tel"));
-    const staff = await apiLogin(api, "staff@tando.fr");
+    const staff = await staffLogin(api);
     const number = `+331${digits(8)}`;
     const phoneNumberId = digits(15);
 

@@ -6,6 +6,7 @@ import {
   staffSendsQuote,
   submitAssessment,
   uniqueEmail,
+  staffLogin,
 } from "../fixtures/tando";
 
 const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
@@ -31,7 +32,7 @@ test("questionnaire → devis envoyé → acceptation horodatée → mission + f
 
   // 3. Back-office : le devis est relu puis ENVOYÉ (jamais automatique)
   await staffSendsQuote(api, quoteNumber);
-  const staff = await apiLogin(api, "staff@tando.fr");
+  const staff = await staffLogin(api);
 
   // 4. Le client ouvre son devis (lien reçu par email) et l'accepte EN LIGNE
   const token = await quoteTokenFromMail(api, email, quoteNumber);
