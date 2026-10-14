@@ -33,6 +33,28 @@ describe("detectIntent", () => {
     expect(detectIntent("Je peux parler à un humain ?")).toBe("humain");
     expect(detectIntent("Est-ce que le chat est noir")).toBe("inconnu");
   });
+
+  it("repère toutes les façons de demander un humain", () => {
+    for (const text of [
+      "Je veux parler au patron",
+      "Passez-moi le patron",
+      "Je voudrais parler à quelqu'un",
+      "Je voudrais parler à quelqu’un",
+      "Je peux joindre quelqu'un de l'équipe ?",
+      "Je voudrais parler à la gérante",
+      "Votre responsable est là ?",
+      "Je préfère une vraie personne",
+      "Vous êtes un robot ? Je veux un humain",
+    ]) {
+      expect(detectIntent(text), text).toBe("humain");
+    }
+  });
+
+  it("ne confond pas une question courante avec une demande d'humain", () => {
+    expect(detectIntent("Je voudrais réserver une table pour une personne")).toBe("rdv");
+    expect(detectIntent("C'est quoi le plat du chef ?")).toBe("inconnu");
+    expect(detectIntent("Le propriétaire accepte les chiens ?")).toBe("inconnu");
+  });
 });
 
 describe("parseSlot", () => {

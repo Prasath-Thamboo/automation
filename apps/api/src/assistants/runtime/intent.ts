@@ -16,9 +16,17 @@ const norm = (s: string): string =>
   s
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+    .replace(/[̀-ͯ]/g, "")
+    // Apostrophes (droite ou typographique) et traits d'union → espace :
+    // « quelqu'un » et « quelqu’un » deviennent « quelqu un ».
+    .replace(/['’-]/g, " ")
+    .replace(/\s+/g, " ");
 
 const has = (t: string, words: string[]): boolean => words.some((w) => t.includes(w));
+
+/** « le patron », « au patron », « à la gérante », « votre responsable »… */
+const ASK_FOR_PERSON =
+  /\b(le|la|au|a la|du|de la|votre|vos|un|une) (patron|patronne|responsable|gerant|gerante|directeur|directrice|conseiller|conseillere|humain|vrai humain|vraie personne|personne reelle)\b/;
 
 export function detectIntent(text: string): Intent {
   const t = norm(text);
@@ -29,14 +37,14 @@ export function detectIntent(text: string): Intent {
   if (
     has(t, [
       "parler a quelqu un",
-      "parler a un humain",
-      "un humain",
-      "une personne",
-      "le responsable",
-      "le patron",
-      "le gerant",
+      "joindre quelqu un",
+      "avoir quelqu un",
       "quelqu un de l equipe",
-    ])
+      "parler a une personne",
+      "pas un robot",
+      "etes vous un robot",
+    ]) ||
+    ASK_FOR_PERSON.test(t)
   ) {
     return "humain";
   }
