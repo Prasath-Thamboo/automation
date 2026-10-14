@@ -67,7 +67,6 @@ export async function updateProfession(
       slug: String(form.get("slug") ?? "").trim(),
       monthlyPriceEur: Number(form.get("monthlyPriceEur") ?? 89),
       setupPriceEur: Number(form.get("setupPriceEur") ?? 0),
-      trialDays: Number(form.get("trialDays") ?? 14),
       needs: String(form.get("needs") ?? "")
         .split(",")
         .map((s) => s.trim())

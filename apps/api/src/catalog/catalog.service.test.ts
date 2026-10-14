@@ -45,7 +45,6 @@ describe("CatalogService.list", () => {
             benefit: "…",
             needs: ["Prendre les rendez-vous", "Répondre au téléphone"],
             monthlyPriceEur: 89,
-            trialDays: 14,
             template: { versions: [{ content: validContent }] },
           },
           {
@@ -55,7 +54,6 @@ describe("CatalogService.list", () => {
             benefit: "…",
             needs: ["Prendre les rendez-vous"],
             monthlyPriceEur: 89,
-            trialDays: 14,
             template: { versions: [{ content: validContent }] },
           },
         ]),

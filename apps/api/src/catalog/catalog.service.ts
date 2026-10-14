@@ -39,7 +39,6 @@ export class CatalogService {
         needs: row.needs,
         assistantName: content?.assistantName ?? "",
         monthlyPriceEur: row.monthlyPriceEur,
-        trialDays: row.trialDays,
       };
     });
 
@@ -78,7 +77,6 @@ export class CatalogService {
       assistantName: content.assistantName,
       monthlyPriceEur: row.monthlyPriceEur,
       setupPriceEur: row.setupPriceEur,
-      trialDays: row.trialDays,
       content,
     };
   }

@@ -397,13 +397,6 @@ export function createApiClient(options: ApiClientOptions) {
           body: JSON.stringify(body),
         });
       },
-      subscribeCatalog(slug: string): Promise<{ assistantId: string }> {
-        return request(
-          "/me/catalog/subscribe",
-          z.object({ assistantId: z.string() }),
-          { method: "POST", body: JSON.stringify({ slug }) },
-        );
-      },
 
       // ── Mon compte ──────────────────────────────────────────────────────
       account(): Promise<AccountInfo> {
@@ -674,8 +667,6 @@ export type {
   UpdateAccount,
   RuntimeTurn,
   AppointmentRow,
-  Inbound,
-  InboundResult,
   NotificationPrefs,
   RegisterPushToken,
   UpdateNotificationPrefs,

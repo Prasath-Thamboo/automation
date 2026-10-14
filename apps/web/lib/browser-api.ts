@@ -22,14 +22,6 @@ export function setAssessmentToken(token: string): void {
   }
 }
 
-export function clearAssessmentToken(): void {
-  try {
-    localStorage.removeItem(ASSESSMENT_TOKEN_KEY);
-  } catch {
-    /* ignore */
-  }
-}
-
 /** Client API côté navigateur, avec le jeton de reprise si présent. */
 export function browserApi() {
   return createApiClient({ baseUrl: API_BASE, getToken: getAssessmentToken });

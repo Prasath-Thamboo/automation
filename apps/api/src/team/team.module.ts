@@ -5,13 +5,12 @@ import { BillingModule } from "../billing/billing.module";
 import { AssistantsModule } from "../assistants/assistants.module";
 import { AssistantService } from "./assistant.service";
 import { EscalationsService } from "./escalations.service";
-import { CatalogSubscribeService } from "./catalog-subscribe.service";
 import { AccountService } from "./account.service";
 import { TeamController } from "./team.controller";
 
 @Module({
   imports: [AuthModule, QueueModule, BillingModule, AssistantsModule],
   controllers: [TeamController],
-  providers: [AssistantService, EscalationsService, CatalogSubscribeService, AccountService],
+  providers: [AssistantService, EscalationsService, AccountService],
 })
 export class TeamModule {}

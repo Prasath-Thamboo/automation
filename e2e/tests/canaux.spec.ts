@@ -4,6 +4,7 @@ import {
   test,
   expect,
   apiLogin,
+  hireViaQuote,
   uniqueEmail,
   MAILPIT_URL,
   API_URL,
@@ -27,10 +28,7 @@ const META_VERIFY = process.env.META_VERIFY_TOKEN ?? "dev-meta-verify";
 const digits = (n: number) => Array.from({ length: n }, () => Math.floor(Math.random() * 10)).join("");
 
 async function workingAssistant(api: APIRequestContext, email: string) {
-  const s = await apiLogin(api, email);
-  const sub = await api.post(`${API}/me/catalog/subscribe`, { headers: s.headers, data: { slug: "dentiste" } });
-  expect(sub.ok(), "subscribe").toBeTruthy();
-  const { assistantId } = (await sub.json()) as { assistantId: string };
+  const { session: s, assistantId } = await hireViaQuote(api, email);
   await api.post(`${API}/me/assistants/${assistantId}/onboarding`, {
     headers: s.headers,
     data: {

@@ -141,12 +141,7 @@ export default async function ProfessionPage({ params }: { params: Promise<Param
 
       {/* 8. Appels à l'action */}
       <div className="mt-14 flex flex-col gap-3 sm:flex-row">
-        <Cta href={`/employes-virtuels/${slug}/souscrire`}>
-          Mettre {content.assistantName} au travail
-        </Cta>
-        <Cta href="/questionnaire" variant="secondary">
-          Je veux quelque chose de plus précis
-        </Cta>
+        <Cta href="/questionnaire">Décrire mon besoin</Cta>
       </div>
     </article>
   );

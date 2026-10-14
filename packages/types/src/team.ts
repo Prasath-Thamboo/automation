@@ -325,10 +325,6 @@ export const answerEscalationSchema = z.object({
 });
 export type AnswerEscalation = z.infer<typeof answerEscalationSchema>;
 
-export const subscribeCatalogSchema = z.object({
-  slug: z.string().trim().min(1).max(80),
-});
-export type SubscribeCatalog = z.infer<typeof subscribeCatalogSchema>;
 
 export const updateAccountSchema = z.object({
   fullName: z.string().trim().min(1).max(120),

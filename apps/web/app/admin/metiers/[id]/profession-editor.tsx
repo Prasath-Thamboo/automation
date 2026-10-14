@@ -105,7 +105,6 @@ export function ProfessionEditor({ profession }: { profession: AdminProfession }
         <Text name="sector" label="Secteur" defaultValue={profession.sector} />
         <Text name="monthlyPriceEur" label="Prix mensuel (€)" type="number" defaultValue={profession.monthlyPriceEur} />
         <Text name="setupPriceEur" label="Mise en service (€)" type="number" defaultValue={profession.setupPriceEur} />
-        <Text name="trialDays" label="Essai (jours)" type="number" defaultValue={profession.trialDays} />
         <Text name="benefit" label="Phrase de bénéfice" defaultValue={profession.benefit} full />
         <Text name="needs" label="Besoins (virgules)" defaultValue={profession.needs.join(", ")} full />
         <div className="sm:col-span-2">

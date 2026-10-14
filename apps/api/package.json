@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.5",
-    "@nestjs/testing": "^11.0.11",
     "@tando/config": "workspace:*",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.8",

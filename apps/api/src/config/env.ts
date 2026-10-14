@@ -89,8 +89,8 @@ export const envSchema = z.object({
     .default("Gérez votre contrat depuis votre espace, sur tando.fr."),
 
   // --- Moteur « employé virtuel » (Lot 6) ---
-  /** Implémentation de `AssistantRuntime` : `rules` (défaut), `n8n` ou `fake`. */
-  ASSISTANT_RUNTIME: z.enum(["rules", "n8n", "fake"]).default("rules"),
+  /** Implémentation de `AssistantRuntime` : `rules` (défaut) ou `n8n`. */
+  ASSISTANT_RUNTIME: z.enum(["rules", "n8n"]).default("rules"),
   /**
    * Webhook n8n appelé à chaque message (Lot 13). `{workflow}` est remplacé par
    * le métier (`dentiste`…, `sur-mesure`), ex. `https://n8n.tando.fr/webhook/tando-{workflow}`.
@@ -100,8 +100,6 @@ export const envSchema = z.object({
   N8N_TOKEN: z.string().optional(),
   /** Au-delà, le message est transmis au patron (escalade). */
   N8N_TIMEOUT_MS: z.coerce.number().int().positive().default(15000),
-  /** Jeton partagé exigé sur l'endpoint d'arrivée des demandes (`/inbound`). */
-  INBOUND_SECRET: z.string().default("dev-inbound-secret"),
 
   // --- Canaux de réception (Lot 12) ---
   /**

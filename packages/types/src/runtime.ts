@@ -60,31 +60,3 @@ export const simulateSchema = z.object({
   sessionId: z.string().trim().max(80).optional(),
 });
 export type Simulate = z.infer<typeof simulateSchema>;
-
-export const inboundSchema = z.object({
-  channel: z.enum([
-    "telephone",
-    "sms",
-    "whatsapp",
-    "email",
-    "instagram",
-    "formulaire",
-    "surplace",
-    "autre",
-  ]),
-  /** Identifiant du client côté canal (numéro, pseudo…) — non affiché en clair. */
-  from: z.string().trim().min(1).max(200),
-  text: z.string().trim().min(1).max(4000),
-});
-export type Inbound = z.infer<typeof inboundSchema>;
-
-export interface InboundResult {
-  status: "handled" | "paused" | "not_found";
-  kind: RuntimeReplyKind | null;
-  reply: string | null;
-}
-export const inboundResultSchema: z.ZodType<InboundResult> = z.object({
-  status: z.enum(["handled", "paused", "not_found"]),
-  kind: z.enum(["reply", "escalate", "appointment"]).nullable(),
-  reply: z.string().nullable(),
-});

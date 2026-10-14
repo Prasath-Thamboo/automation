@@ -219,7 +219,6 @@ function toAdminProfession(row: ProfessionRow): AdminProfession {
     needs: row.needs,
     monthlyPriceEur: row.monthlyPriceEur,
     setupPriceEur: row.setupPriceEur,
-    trialDays: row.trialDays,
     position: row.position,
     published: row.published,
     hasDraft: Boolean(draft),

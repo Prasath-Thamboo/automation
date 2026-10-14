@@ -21,19 +21,6 @@ async function api() {
 
 const msg = (e: unknown) => (e instanceof ApiError ? e.message : "L'opération a échoué. Réessayez.");
 
-export async function subscribeToProfession(slug: string): Promise<void> {
-  const user = await getCurrentUser();
-  if (!user) redirect(`/connexion?suite=${encodeURIComponent(`/employes-virtuels/${slug}/souscrire`)}`);
-  let assistantId: string;
-  try {
-    ({ assistantId } = await (await sessionApi()).me.subscribeCatalog(slug));
-  } catch {
-    redirect("/mon-equipe");
-  }
-  revalidatePath("/mon-equipe");
-  redirect(`/mon-equipe/assistants/${assistantId}/premier-jour`);
-}
-
 export async function saveOnboardingStep(
   assistantId: string,
   step: number,

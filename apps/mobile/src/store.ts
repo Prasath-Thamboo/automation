@@ -19,13 +19,5 @@ export async function writeJson(key: string, value: unknown): Promise<void> {
   }
 }
 
-export async function remove(key: string): Promise<void> {
-  try {
-    await AsyncStorage.removeItem(key);
-  } catch {
-    /* ignore */
-  }
-}
-
 /** Cache d'écran : la dernière réponse reçue, relue hors connexion. */
 export const cacheKey = (name: string) => `tando:cache:${name}`;

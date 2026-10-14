@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma, type Assistant } from "@prisma/client";
-import type { InboundResult, RuntimeTurn } from "@tando/types";
+import type { RuntimeTurn } from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { QueueService } from "../queue/queue.module";
@@ -22,7 +22,7 @@ interface RunInput {
   customerLabel: string;
   text: string;
   notify: boolean;
-  /** Lot 12 — canal réel d'arrivée (null : essai, `/inbound`). */
+  /** Lot 12 — canal réel d'arrivée (null : essai). */
   endpointId?: string | null;
   /** Adresse de réponse en clair ; chiffrée avant stockage. */
   replyTo?: string | null;
@@ -173,30 +173,6 @@ export class RuntimeService {
         summary: "Appel manqué d'un numéro masqué.",
       });
     }
-  }
-
-  /** Point d'entrée technique historique (jeton partagé, sans canal réel). */
-  async inbound(
-    publicId: string,
-    channel: string,
-    from: string,
-    text: string,
-  ): Promise<InboundResult> {
-    const assistant = await this.prisma.assistant.findFirst({
-      where: { publicId, deletedAt: null },
-    });
-    if (!assistant) return { status: "not_found", kind: null, reply: null };
-    if (assistant.state !== "au_travail") return { status: "paused", kind: null, reply: null };
-
-    const turn = await this.run({
-      assistant,
-      channel,
-      externalRef: `${channel}:${sha(from)}`,
-      customerLabel: "Un client",
-      text,
-      notify: true,
-    });
-    return { status: "handled", kind: turn.kind, reply: turn.reply };
   }
 
   // ── Cœur ────────────────────────────────────────────────────────────────
@@ -388,32 +364,6 @@ export class RuntimeService {
       escalated,
       appointment,
     };
-  }
-
-  /** Fait passer quelques premières demandes dans le moteur, à l'activation. */
-  async seedInitialActivity(assistantId: string): Promise<void> {
-    const assistant = await this.prisma.assistant.findUnique({ where: { id: assistantId } });
-    if (!assistant) return;
-    const existing = await this.prisma.conversation.count({
-      where: { assistantId, NOT: { externalRef: { startsWith: "essai:" } } },
-    });
-    if (existing > 0) return;
-
-    const scripts: Array<{ channel: string; from: string; text: string }> = [
-      { channel: "telephone", from: "client-1", text: "Bonjour, je voudrais prendre rendez-vous jeudi à 14h." },
-      { channel: "email", from: "client-2", text: "Bonjour, quels sont vos horaires le samedi ?" },
-      { channel: "instagram", from: "client-3", text: "Vous pouvez me donner un prix pour une prestation ?" },
-    ];
-    for (const s of scripts) {
-      await this.run({
-        assistant,
-        channel: s.channel,
-        externalRef: `${s.channel}:${sha(s.from)}`,
-        customerLabel: "Un client",
-        text: s.text,
-        notify: false,
-      });
-    }
   }
 
   private async orgOwnerEmail(organizationId: string): Promise<string | null> {

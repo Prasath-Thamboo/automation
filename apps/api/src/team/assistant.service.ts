@@ -251,7 +251,6 @@ export class AssistantService {
       where: { id },
       data: { state: "au_travail", onboarding: "termine", startedAt: new Date(), pausedAt: null },
     });
-    await this.runtime.seedInitialActivity(id);
 
     if (a.missionId) {
       await this.prisma.mission.update({ where: { id: a.missionId }, data: { status: "en_service" } });

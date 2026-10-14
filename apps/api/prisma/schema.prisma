@@ -179,7 +179,6 @@ model Profession {
   needs           String[]
   monthlyPriceEur Int       @default(89)
   setupPriceEur   Int       @default(0)
-  trialDays       Int       @default(14)
   /// Ordre d'affichage dans la grille.
   position        Int       @default(0)
   published       Boolean   @default(false)

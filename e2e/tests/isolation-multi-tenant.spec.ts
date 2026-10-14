@@ -1,4 +1,4 @@
-import { test, expect, apiLogin, uniqueEmail } from "../fixtures/tando";
+import { test, expect, apiLogin, hireViaQuote, uniqueEmail } from "../fixtures/tando";
 
 const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
 
@@ -7,23 +7,15 @@ const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
  * « Aucune donnée d'une organisation n'est accessible depuis une autre —
  *   prouvé par un test. »
  *
- * Deux utilisateurs = deux organisations (créées à la connexion). L'un souscrit
- * un employé virtuel ; l'autre ne doit jamais pouvoir le lire ni agir dessus.
+ * Deux clients = deux organisations. L'un a embauché un employé virtuel (devis
+ * accepté) ; l'autre ne doit jamais pouvoir le lire ni agir dessus.
  */
 test("un client ne peut pas accéder à l'employé virtuel d'un autre client", async ({ api }) => {
-  const alice = await apiLogin(api, uniqueEmail("alice"));
+  // Alice embauche (devis accepté) → un assistant dans SON organisation
+  const { session: alice, assistantId } = await hireViaQuote(api, uniqueEmail("alice"));
   const bob = await apiLogin(api, uniqueEmail("bob"));
 
   expect(alice.user.organizationId).not.toBe(bob.user.organizationId);
-
-  // Alice souscrit → un assistant dans SON organisation
-  const sub = await api.post(`${API}/me/catalog/subscribe`, {
-    headers: alice.headers,
-    data: { slug: "dentiste" },
-  });
-  expect(sub.ok(), "souscription d'Alice").toBeTruthy();
-  const { assistantId } = (await sub.json()) as { assistantId: string };
-  expect(assistantId).toBeTruthy();
 
   // Alice y a accès (sanité)
   const aliceRead = await api.get(`${API}/me/assistants/${assistantId}`, { headers: alice.headers });

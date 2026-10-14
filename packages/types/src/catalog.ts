@@ -72,7 +72,6 @@ export interface ProfessionCard {
   needs: string[];
   assistantName: string;
   monthlyPriceEur: number;
-  trialDays: number;
 }
 
 export interface CatalogList {
@@ -95,7 +94,6 @@ export interface AdminProfession {
   needs: string[];
   monthlyPriceEur: number;
   setupPriceEur: number;
-  trialDays: number;
   position: number;
   published: boolean;
   hasDraft: boolean;
@@ -170,7 +168,6 @@ export const professionCardSchema: z.ZodType<ProfessionCard> = z.object({
   needs: z.array(z.string()),
   assistantName: z.string(),
   monthlyPriceEur: z.number().int(),
-  trialDays: z.number().int(),
 });
 
 export const catalogListSchema: z.ZodType<CatalogList> = z.object({
@@ -187,7 +184,6 @@ export const professionDetailSchema: z.ZodType<ProfessionDetail> = z.object({
   needs: z.array(z.string()),
   assistantName: z.string(),
   monthlyPriceEur: z.number().int(),
-  trialDays: z.number().int(),
   setupPriceEur: z.number().int(),
   content: templateContentSchema,
 });
@@ -206,7 +202,6 @@ export const createProfessionSchema = z.object({
   needs: z.array(z.string().trim().min(1).max(80)).max(12).default([]),
   monthlyPriceEur: z.number().int().min(0).max(100_000).default(89),
   setupPriceEur: z.number().int().min(0).max(1_000_000).default(0),
-  trialDays: z.number().int().min(0).max(365).default(14),
   position: z.number().int().min(0).default(0),
 });
 export type CreateProfession = z.infer<typeof createProfessionSchema>;
@@ -219,7 +214,6 @@ export const updateProfessionSchema = z.object({
   needs: z.array(z.string().trim().min(1).max(80)).max(12).optional(),
   monthlyPriceEur: z.number().int().min(0).max(100_000).optional(),
   setupPriceEur: z.number().int().min(0).max(1_000_000).optional(),
-  trialDays: z.number().int().min(0).max(365).optional(),
   position: z.number().int().min(0).optional(),
   published: z.boolean().optional(),
 });
@@ -234,7 +228,6 @@ export const adminProfessionSchema: z.ZodType<AdminProfession> = z.object({
   needs: z.array(z.string()),
   monthlyPriceEur: z.number().int(),
   setupPriceEur: z.number().int(),
-  trialDays: z.number().int(),
   position: z.number().int(),
   published: z.boolean(),
   hasDraft: z.boolean(),

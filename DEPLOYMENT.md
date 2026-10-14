@@ -44,7 +44,6 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `N8N_WEBHOOK_URL` | si `n8n` : URL du webhook, `{workflow}` = métier (ex. `https://n8n.tando.fr/webhook/tando-{workflow}`). Instance n8n **hébergée dans l'UE** (messages des clients finaux) |
 | `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort vérifié par le nœud Webhook (Header Auth `X-Tando-Token`) |
 | `N8N_TIMEOUT_MS` | délai max d'un tour (défaut 15000) ; au-delà → escalade |
-| `INBOUND_SECRET` | secret fort (protège `POST /api/v1/inbound/:publicId`) |
 | `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta ; la changer rend illisibles les données déjà chiffrées |
 | `CHANNELS_DELIVERY` | `live` |
 | `INBOUND_EMAIL_DOMAIN` | domaine de réception (ex. `in.tando.fr`), MX pointé vers Brevo |

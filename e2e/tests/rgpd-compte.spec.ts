@@ -1,4 +1,4 @@
-import { test, expect, apiLogin, webLogin, uniqueEmail } from "../fixtures/tando";
+import { test, expect, apiLogin, hireViaQuote, webLogin, uniqueEmail } from "../fixtures/tando";
 
 const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
 
@@ -11,11 +11,10 @@ const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
 
 test("export RGPD : télécharge toutes les données du compte en JSON", async ({ page, api }) => {
   const email = uniqueEmail("rgpd-export");
-  await webLogin(page, api, email);
 
-  // Un peu de données à exporter
-  const s = await apiLogin(api, email);
-  await api.post(`${API}/me/catalog/subscribe`, { headers: s.headers, data: { slug: "dentiste" } });
+  // Un client avec des données à exporter (devis accepté, employé, facture)
+  await hireViaQuote(api, email);
+  await webLogin(page, api, email);
 
   await page.goto("/mon-equipe/compte");
   await expect(page.getByRole("heading", { level: 1, name: "Mon compte" })).toBeVisible();

@@ -17,7 +17,6 @@ import {
   answerEscalationSchema,
   onboardingStepSchema,
   simulateSchema,
-  subscribeCatalogSchema,
   updateAccountSchema,
   type AccountInfo,
   type AddInstruction,
@@ -30,7 +29,6 @@ import {
   type RuntimeTurn,
   type SessionUser,
   type Simulate,
-  type SubscribeCatalog,
   type TeamList,
   type TodaySummary,
   type UpdateAccount,
@@ -41,7 +39,6 @@ import { CurrentUser } from "../auth/current-user.decorator";
 import { RuntimeService } from "../assistants/runtime.service";
 import { AssistantService } from "./assistant.service";
 import { EscalationsService } from "./escalations.service";
-import { CatalogSubscribeService } from "./catalog-subscribe.service";
 import { AccountService } from "./account.service";
 
 @ApiTags("team")
@@ -51,7 +48,6 @@ export class TeamController {
   constructor(
     private readonly assistants: AssistantService,
     private readonly escalations: EscalationsService,
-    private readonly catalog: CatalogSubscribeService,
     private readonly account: AccountService,
     private readonly runtime: RuntimeService,
   ) {}
@@ -144,14 +140,6 @@ export class TeamController {
     @Body(new ZodValidationPipe(answerEscalationSchema)) body: AnswerEscalation,
   ): Promise<EscalationItem> {
     return this.escalations.answer(user.organizationId, id, body, user.id);
-  }
-
-  @Post("catalog/subscribe")
-  subscribe(
-    @CurrentUser() user: SessionUser,
-    @Body(new ZodValidationPipe(subscribeCatalogSchema)) body: SubscribeCatalog,
-  ): Promise<{ assistantId: string }> {
-    return this.catalog.subscribe(user.organizationId, body.slug);
   }
 
   @Get("account")

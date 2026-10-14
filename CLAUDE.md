@@ -177,23 +177,20 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Lot 5 — Espace client et mise en service : fait.**
   - Modèle : `assistants`, `assistant_instructions` (versionnées), `conversations`,
     `messages`, `escalations`.
-  - **Prêt à l'emploi** : `/employes-virtuels/[slug]/souscrire` (connexion requise ;
-    `?suite=` ramène le client après login) → `Subscription` (essai gratuit, sans frais de
-    mise en service) + `Assistant`.
-  - **Sur mesure** : l'assistant est créé à la volée depuis la mission acceptée (Lot 3)
+  - **Embauche** (seul chemin depuis le Lot 13 bis) : l'assistant est créé à la volée depuis la mission acceptée (Lot 3)
     à la première visite de « Mon équipe ».
   - **Premier jour (§5.2)** : `/mon-equipe/assistants/[id]/premier-jour`, 4 écrans
     (informations · spécificités du métier depuis le schéma du modèle · comment il vous
     joint · essai) → « Il peut commencer » → assistant `au_travail`, mission `en_service`,
-    email, activité de démonstration générée (remplacée par le moteur au Lot 6).
+    email.
   - **Fiche assistant** : carnet de bord (conversations résumées), à valider (escalades
     répondues en ligne), le former (consignes versionnées), ses horaires, pause / reprise.
   - **Mon compte** : coordonnées, membres, contrat, résiliation, **export RGPD** et
     **suppression de compte** depuis le produit (§9.4).
 - **Lot 6 — Runtime : fait.**
   - `AssistantRuntime` (interface) dans `apps/api/src/assistants/runtime/`. Le produit ne
-    dépend jamais d'un fournisseur de modèle. Deux implémentations : `rules` (défaut, à
-    base de règles, sans LLM) et `fake` (tests) — choix par `ASSISTANT_RUNTIME`.
+    dépend jamais d'un fournisseur de modèle. Implémentations : `rules` (défaut, à
+    base de règles, sans LLM) et `n8n` (Lot 13) — choix par `ASSISTANT_RUNTIME`.
   - Capacités MVP : **répondre aux questions courantes** (horaires, adresse, accueil, +
     consignes du patron par recouvrement de mots-clés) et **prendre un rendez-vous**
     (détection d'intention + résolution de créneau → `appointments`). Le reste est stubbé
@@ -202,10 +199,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     cadrée → **escalade** (l'assistant n'invente pas). Chaque tour est journalisé
     (`runtime.replied` / `runtime.escalated`).
   - `POST /me/assistants/:id/simulate` : essai depuis l'espace client (fenêtre de chat,
-    premier jour + fiche). `POST /inbound/:publicId` (jeton `INBOUND_SECRET`) : arrivée
-    des demandes — les vrais canaux seront branchés au Lot 7.
-  - L'activation d'un assistant fait passer quelques premières demandes dans le moteur
-    (remplace l'ancienne activité de démonstration figée).
+    premier jour + fiche). Les vraies demandes arrivent par les canaux (Lot 12).
 - **Lot 7 — Application mobile, socle : fait.**
   - `apps/mobile` (Expo SDK 52, Expo Router 4). Session : jeton d'API dans
     `expo-secure-store` ; `AuthProvider` (`src/auth.tsx`) expose
@@ -334,8 +328,8 @@ pnpm dev                        # api (:3333) + web (:3000)
     démarre api+web (reuseExistingServer hors CI), `globalSetup` vérifie
     API+Mailpit. Fixtures (`fixtures/tando.ts`) : `requestMagicToken` (lien
     magique via l'API Mailpit), `apiLogin` (Bearer), `webLogin` (cookie
-    httpOnly). Specs : `parcours-mvp` (landing → dentiste → connexion →
-    souscription → « au travail »), `parcours-sur-mesure` (questionnaire →
+    httpOnly). Specs : `parcours-mvp` (landing → fiche dentiste →
+    questionnaire → devis accepté → « au travail »), `parcours-sur-mesure` (questionnaire →
     devis relu et **envoyé** par le back-office → acceptation en ligne
     horodatée → **mission + facture** auto), `isolation-multi-tenant` (2 orgs
     cloisonnées + accès anonyme refusé), `rgpd-compte` (export JSON +
@@ -428,6 +422,22 @@ pnpm dev                        # api (:3333) + web (:3000)
     `pnpm n8n:up` (service `n8n`, profil docker `n8n`, port 5678).
   - Env : `N8N_WEBHOOK_URL` (obligatoire si `n8n`), `N8N_TOKEN` (obligatoire en
     prod si `n8n`), `N8N_TIMEOUT_MS`. Pas de migration Prisma.
+
+- **Lot 13 bis — Nettoyage : fait.** Modèle retenu : le client décrit son besoin,
+  l'équipe Tando construit **son** flux n8n, le client le pilote avec des boutons
+  (Lot 14). Supprimé : souscription en libre-service (`/employes-virtuels/[slug]/souscrire`,
+  `POST /me/catalog/subscribe`, `CatalogSubscribeService`,
+  `BillingService.startCatalogSubscription`), colonne `professions.trialDays`
+  (migration `20261014100000_drop_trial_days`), ancien point d'entrée
+  `POST /inbound/:publicId` + `INBOUND_SECRET`, moteur `fake`, activité de
+  démonstration à l'activation (`seedInitialActivity`), dépendances
+  `@nestjs/testing` / `axe-core` (e2e) inutilisées. Le catalogue reste une
+  **vitrine** : son appel à l'action mène au questionnaire. Fixtures e2e
+  `submitAssessment` / `staffSendsQuote` / `hireViaQuote` / `activateAssistant`.
+  - **Textes à revoir** (non modifiés, choix commerciaux) : offre « Prêt à
+    l'emploi » de `/tarifs` (`offers.ts`), bloc « deux voies » de la landing
+    (`landing.ts`), FAQ (délai « quelques minutes », « 14 jours d'essai »), CGV
+    (« souscription en ligne », `legal.ts`).
 
 ### Notes Lot 13
 
