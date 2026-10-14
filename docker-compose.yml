@@ -79,7 +79,21 @@ services:
     environment:
       MP_MAX_MESSAGES: 500
 
+  # Moteur n8n (Lot 13), facultatif : `pnpm n8n:up` (profil n8n).
+  n8n:
+    image: n8nio/n8n:1.80.0
+    profiles: ["n8n"]
+    restart: unless-stopped
+    ports:
+      - "${N8N_HOST_PORT:-5678}:5678"
+    environment:
+      GENERIC_TIMEZONE: Europe/Paris
+      N8N_DIAGNOSTICS_ENABLED: "false"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
 volumes:
+  n8n_data:
   postgres_data:
   redis_data:
   minio_data:

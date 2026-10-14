@@ -89,8 +89,17 @@ export const envSchema = z.object({
     .default("Gérez votre contrat depuis votre espace, sur tando.fr."),
 
   // --- Moteur « employé virtuel » (Lot 6) ---
-  /** Implémentation de `AssistantRuntime` : `rules` (défaut) ou `fake`. */
-  ASSISTANT_RUNTIME: z.enum(["rules", "fake"]).default("rules"),
+  /** Implémentation de `AssistantRuntime` : `rules` (défaut), `n8n` ou `fake`. */
+  ASSISTANT_RUNTIME: z.enum(["rules", "n8n", "fake"]).default("rules"),
+  /**
+   * Webhook n8n appelé à chaque message (Lot 13). `{workflow}` est remplacé par
+   * le métier (`dentiste`…, `sur-mesure`), ex. `https://n8n.tando.fr/webhook/tando-{workflow}`.
+   */
+  N8N_WEBHOOK_URL: z.string().url().optional(),
+  /** Secret envoyé en en-tête `X-Tando-Token` (Header Auth du nœud Webhook). */
+  N8N_TOKEN: z.string().optional(),
+  /** Au-delà, le message est transmis au patron (escalade). */
+  N8N_TIMEOUT_MS: z.coerce.number().int().positive().default(15000),
   /** Jeton partagé exigé sur l'endpoint d'arrivée des demandes (`/inbound`). */
   INBOUND_SECRET: z.string().default("dev-inbound-secret"),
 
@@ -135,6 +144,20 @@ const envWithGuards = envSchema.superRefine((env, ctx) => {
       code: z.ZodIssueCode.custom,
       path: ["RATE_LIMIT_DISABLED"],
       message: "Le rate limiting ne peut pas être désactivé en production.",
+    });
+  }
+  if (env.ASSISTANT_RUNTIME === "n8n" && !env.N8N_WEBHOOK_URL) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["N8N_WEBHOOK_URL"],
+      message: "Obligatoire avec ASSISTANT_RUNTIME=n8n.",
+    });
+  }
+  if (env.NODE_ENV === "production" && env.ASSISTANT_RUNTIME === "n8n" && !env.N8N_TOKEN) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["N8N_TOKEN"],
+      message: "Obligatoire en production avec ASSISTANT_RUNTIME=n8n.",
     });
   }
   if (env.NODE_ENV === "production" && !env.CHANNEL_SECRET_KEY) {

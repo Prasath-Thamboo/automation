@@ -10,6 +10,8 @@ export interface RuntimeAssistant {
   id: string;
   name: string;
   role: string;
+  /** Métier du catalogue (null : sur mesure). Choisit le workflow n8n. */
+  professionSlug: string | null;
   jobDescription: {
     summary?: string;
     tasks?: string[];

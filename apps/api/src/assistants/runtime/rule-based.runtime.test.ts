@@ -11,6 +11,7 @@ function ctx(overrides: Partial<RuntimeContext> = {}): RuntimeContext {
       id: "a1",
       name: "Léa",
       role: "votre assistante",
+      professionSlug: null,
       jobDescription: { limits: ["Ne jamais donner un prix"], hours: "" },
       establishment: { openingHours: "Lun-Ven 9h-18h", address: "12 rue Centrale" },
       specifics: { parking: "Un parking se trouve derrière le bâtiment." },

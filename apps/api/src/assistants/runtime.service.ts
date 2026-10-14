@@ -278,6 +278,7 @@ export class RuntimeService {
         id: assistant.id,
         name: assistant.name,
         role: assistant.role,
+        professionSlug: assistant.professionSlug,
         jobDescription: (assistant.jobDescription as RuntimeContext["assistant"]["jobDescription"]) ?? {},
         establishment: (assistant.establishment as RuntimeContext["assistant"]["establishment"]) ?? {},
         specifics: (assistant.specifics as Record<string, string>) ?? {},

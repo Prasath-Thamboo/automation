@@ -414,6 +414,28 @@ pnpm dev                        # api (:3333) + web (:3000)
     `META_APP_SECRET` / `META_VERIFY_TOKEN` / `META_GRAPH_URL`. Hors prod, des
     secrets de dev s'appliquent (`channelWebhookSecrets()`). Voir `DEPLOYMENT.md`.
 
+- **Lot 13 — Moteur n8n : fait.**
+  - `N8nRuntime` (`apps/api/src/assistants/runtime/n8n.runtime.ts`), 3e
+    implémentation d'`AssistantRuntime`, choisie par `ASSISTANT_RUNTIME=n8n`.
+    `POST` JSON vers `N8N_WEBHOOK_URL` (`{workflow}` = `professionSlug` ou
+    `sur-mesure`), en-tête `X-Tando-Token` (`N8N_TOKEN`), délai `N8N_TIMEOUT_MS`.
+    Réponse validée par Zod (`n8nReplySchema` : reply | appointment | escalate).
+  - Garde-fous gardés côté API : prix / urgence / humain → moteur à règles, sans
+    appel n8n ; réponse invalide, erreur ou délai dépassé → escalade.
+  - `RuntimeAssistant` gagne `professionSlug`. Aucune coordonnée du client final
+    n'est envoyée à n8n.
+  - Contrat + structure de workflow : `docs/n8n/README.md`. Local :
+    `pnpm n8n:up` (service `n8n`, profil docker `n8n`, port 5678).
+  - Env : `N8N_WEBHOOK_URL` (obligatoire si `n8n`), `N8N_TOKEN` (obligatoire en
+    prod si `n8n`), `N8N_TIMEOUT_MS`. Pas de migration Prisma.
+
+### Notes Lot 13
+
+- **Workflows n8n pas encore construits** : le contrat est prêt côté API ; il
+  reste à créer un workflow par métier (6 + `sur-mesure`) dans n8n.
+- Pas d'e2e contre un vrai n8n : les tests unitaires (`n8n.runtime.test.ts`)
+  simulent `fetch`.
+
 ### Notes Lot 12
 
 - Migration `20261008100000_channel_endpoints`. JSON du body parser porté à 2 Mo
