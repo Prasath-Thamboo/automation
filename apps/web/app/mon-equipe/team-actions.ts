@@ -169,3 +169,17 @@ export async function deleteAccount(): Promise<void> {
   (await cookies()).delete(SESSION_COOKIE);
   redirect("/?compte=supprime");
 }
+
+/** Lot 16 — embauche « prêt à l'emploi » en libre-service, puis premier jour. */
+export async function subscribeToProfession(slug: string): Promise<FormState> {
+  const user = await getCurrentUser();
+  if (!user) redirect(`/connexion?suite=${encodeURIComponent(`/employes-virtuels/${slug}/souscrire`)}`);
+  let assistantId: string;
+  try {
+    ({ assistantId } = await (await sessionApi()).me.subscribeCatalog(slug));
+  } catch (e) {
+    return { error: msg(e) };
+  }
+  revalidatePath("/mon-equipe");
+  redirect(`/mon-equipe/assistants/${assistantId}/premier-jour`);
+}

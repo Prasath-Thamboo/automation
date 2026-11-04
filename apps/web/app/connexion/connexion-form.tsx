@@ -17,7 +17,7 @@ export function ConnexionForm() {
   }
 
   return (
-    <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <form action={formAction} className="flex flex-col gap-5">
       <input type="hidden" name="suite" value={suite} />
       <Field
         label={authCopy.emailLabel}
@@ -32,7 +32,7 @@ export function ConnexionForm() {
       <Button type="submit" size="lg" loading={pending}>
         {pending ? authCopy.submitting : authCopy.submit}
       </Button>
-      <p style={{ fontSize: 14, color: "var(--tnd-ink-500)", margin: 0 }}>{common.talkToHuman}</p>
+      <p className="text-base text-ink-500">{common.talkToHuman}</p>
     </form>
   );
 }

@@ -187,7 +187,7 @@ export function QuestionnaireClient() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+              className="mt-1 min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
               placeholder="vous@votre-entreprise.fr"
             />
           </label>
@@ -195,7 +195,7 @@ export function QuestionnaireClient() {
           <button
             type="submit"
             disabled={busy}
-            className="min-h-touch self-start rounded-md bg-primary-600 px-6 py-3 text-base font-semibold text-white disabled:opacity-60"
+            className="min-h-touch self-start rounded-full bg-primary-600 px-6 py-3 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
           >
             {busy ? "…" : C.start.cta}
           </button>
@@ -240,7 +240,7 @@ export function QuestionnaireClient() {
           <button
             type="button"
             onClick={back}
-            className="min-h-touch rounded-md border border-primary-600 px-5 py-2 text-base font-semibold text-primary-700"
+            className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
           >
             {C.back}
           </button>
@@ -248,7 +248,7 @@ export function QuestionnaireClient() {
             type="button"
             onClick={() => void submit()}
             disabled={busy}
-            className="min-h-touch rounded-md bg-primary-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60"
+            className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
           >
             {busy ? "Envoi…" : C.review.submitCta}
           </button>
@@ -294,7 +294,7 @@ export function QuestionnaireClient() {
           type="button"
           onClick={() => void next()}
           disabled={busy}
-          className="min-h-touch rounded-md bg-primary-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60"
+          className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
         >
           {stepIndex === total - 1 ? "Voir la fiche de poste" : C.next}
         </button>
@@ -321,7 +321,7 @@ function Editable({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className="mt-1 w-full rounded-md border border-ink-100 px-3 py-2 text-base font-normal"
+        className="mt-1 w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base font-normal bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
       />
     </label>
   );
@@ -342,7 +342,7 @@ function QuestionControl({
         value={asString(answers[q.id])}
         onChange={(e) => setAnswer(q.id, e.target.value)}
         rows={4}
-        className="w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+        className="w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
       />
     );
   }
@@ -352,7 +352,7 @@ function QuestionControl({
       <input
         value={asString(answers[q.id])}
         onChange={(e) => setAnswer(q.id, e.target.value)}
-        className="min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+        className="min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
       />
     );
   }
@@ -367,7 +367,7 @@ function QuestionControl({
               type={f.type}
               value={asString(answers[f.key])}
               onChange={(e) => setAnswer(f.key, e.target.value)}
-              className="mt-1 min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base font-normal"
+              className="mt-1 min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base font-normal bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
             />
           </label>
         ))}
@@ -386,8 +386,7 @@ function QuestionControl({
         {choices.map((c) => (
           <label
             key={c.value}
-            className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 text-base ${
-              value === c.value ? "border-primary-600 bg-primary-50" : "border-ink-100 bg-white"
+            className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 text-base ${ value === c.value ? "border-primary-600 bg-primary-50" : "border-ink-100 bg-white"
             }`}
           >
             <input
@@ -408,7 +407,7 @@ function QuestionControl({
             placeholder="Précisez"
             value={asString(answers[`${q.id}Autre`])}
             onChange={(e) => setAnswer(`${q.id}Autre`, e.target.value)}
-            className="min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+            className="min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
           />
         ) : null}
       </fieldset>
@@ -424,8 +423,7 @@ function QuestionControl({
       {choices.map((c) => (
         <label
           key={c.value}
-          className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 text-base ${
-            selected.includes(c.value) ? "border-primary-600 bg-primary-50" : "border-ink-100 bg-white"
+          className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 text-base ${ selected.includes(c.value) ? "border-primary-600 bg-primary-50" : "border-ink-100 bg-white"
           }`}
         >
           <input
@@ -442,7 +440,7 @@ function QuestionControl({
           placeholder={q.freeText.label}
           value={asString(answers[q.freeText.key])}
           onChange={(e) => setAnswer(q.freeText!.key, e.target.value)}
-          className="min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+          className="min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
         />
       ) : null}
     </div>

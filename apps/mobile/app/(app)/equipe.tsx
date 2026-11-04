@@ -15,6 +15,7 @@ import {
   mobileNotifications as nx,
   mobileTraining as tx,
   switchesCopy as sx,
+  helpCopy,
 } from "@tando/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
@@ -191,6 +192,14 @@ export default function EquipeScreen() {
         <Pressable style={{ padding: t.space[4], alignItems: "center" }}>
           <Text style={{ color: t.color.primaryStrong, fontSize: 15, fontWeight: "600" }}>
             {nx.title}
+          </Text>
+        </Pressable>
+      </Link>
+
+      <Link href="/(app)/aide" asChild>
+        <Pressable style={{ padding: t.space[4], alignItems: "center" }}>
+          <Text style={{ color: t.color.primaryStrong, fontSize: 15, fontWeight: "600" }}>
+            {helpCopy.title}
           </Text>
         </Pressable>
       </Link>

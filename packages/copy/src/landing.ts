@@ -14,6 +14,29 @@ export const landing = {
     primaryCta: "Découvrir mon futur employé",
     secondaryCta: "Voir un exemple en 2 minutes",
     note: "Mis au travail en 5 minutes. Sans engagement.",
+    eyebrow: "Disponible 24h/24, 7j/7",
+  },
+
+  /** Illustration du hero : un exemple de journée, à titre indicatif. */
+  heroVisual: {
+    label: "Exemple de journée",
+    title: "Ce qu'il a fait aujourd'hui",
+    status: "Au travail",
+    items: [
+      { time: "07:58", text: "A répondu à une question sur vos horaires" },
+      { time: "10:42", text: "A pris un rendez-vous pour jeudi, 14h" },
+      { time: "22:15", text: "A noté une demande de devis arrivée le soir" },
+    ],
+    footer: "Vous n'avez rien eu à faire.",
+  },
+
+  /** Surtitres des sections de la page d'accueil. */
+  eyebrows: {
+    problem: "Le constat",
+    solution: "Comment ça se passe",
+    pocket: "Depuis votre poche",
+    twoPaths: "Deux façons de commencer",
+    reassurance: "Vos questions",
   },
 
   problem: {
@@ -51,6 +74,14 @@ export const landing = {
     body: "Quand il ne sait pas répondre, vous recevez une notification. Vous lisez, vous répondez d'un mot, il reprend le travail. Le reste du temps, il ne vous dérange pas.",
     note: "Application gratuite, incluse. iPhone et Android.",
     storesPublished: false,
+    /** Illustration : une notification et la réponse du patron. */
+    visual: {
+      from: "Votre employé virtuel",
+      when: "à l'instant",
+      question: "Un client demande si vous pouvez passer vendredi matin. Je lui réponds quoi ?",
+      reply: "Oui, à 9h.",
+      done: "C'est noté, je lui confirme.",
+    },
   },
 
   twoPaths: {

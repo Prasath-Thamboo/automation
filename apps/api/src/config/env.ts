@@ -58,6 +58,8 @@ export const envSchema = z.object({
   SMTP_PORT: z.coerce.number().int().positive().default(1025),
   SMTP_SECURE: booleanish.default("false"),
   MAIL_FROM: z.string().default("Tando <bonjour@tando.local>"),
+  /** Lot 15 — boîte de l'équipe Tando qui reçoit les questions transmises (défaut : MAIL_FROM). */
+  HELP_DESK_EMAIL: z.string().email().optional(),
 
   /** Base des liens magiques web. Premier élément de WEB_ORIGIN si absent. */
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
@@ -94,6 +96,8 @@ export const envSchema = z.object({
    * flux est branché (back-office) passe par son flux ; les autres, par les règles.
    */
   ASSISTANT_RUNTIME: z.enum(["rules", "n8n"]).default("rules"),
+  /** Lot 16 — jours d'essai gratuit de l'offre prêt à l'emploi (0 = pas d'essai). */
+  CATALOG_TRIAL_DAYS: z.coerce.number().int().min(0).max(90).default(14),
   /**
    * Instance n8n de Tando (ex. `https://n8n.tando.fr`). Si renseignée, l'adresse
    * du flux de chaque employé (back-office, Lot 14) doit être sur cette origine.

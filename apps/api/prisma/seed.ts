@@ -7,6 +7,7 @@
  */
 import { PrismaClient, type Prisma } from "@prisma/client";
 import { catalogSeed } from "./seed-data/catalog";
+import { helpSeed } from "./seed-data/help";
 import { pricingRuleSeeds } from "../src/quotes/pricing/default-rules";
 
 const prisma = new PrismaClient();
@@ -121,10 +122,22 @@ async function seedPricing() {
   console.warn(`Barème de chiffrage : ${pricingRuleSeeds.length} règles.`);
 }
 
+async function seedHelp() {
+  for (const { slug, ...article } of helpSeed) {
+    await prisma.helpArticle.upsert({
+      where: { slug },
+      update: article,
+      create: { slug, ...article },
+    });
+  }
+  console.warn(`Aide « Une question ? » : ${helpSeed.length} réponses.`);
+}
+
 async function main() {
   await seedAccounts();
   await seedCatalog();
   await seedPricing();
+  await seedHelp();
 }
 
 main()

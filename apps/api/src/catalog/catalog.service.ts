@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import {
   templateContentSchema,
   type CatalogList,
@@ -7,12 +7,17 @@ import {
   type TemplateContent,
 } from "@tando/types";
 import { PrismaService } from "../prisma/prisma.service";
+import { ENV } from "../config/config.module";
+import type { Env } from "../config/env";
 
 /** Lecture du catalogue public (§5). Ne renvoie que les métiers publiés
  *  ayant une version de fiche publiée. */
 @Injectable()
 export class CatalogService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(ENV) private readonly env: Pick<Env, "CATALOG_TRIAL_DAYS">,
+  ) {}
 
   async list(): Promise<CatalogList> {
     const rows = await this.prisma.profession.findMany({
@@ -77,6 +82,7 @@ export class CatalogService {
       assistantName: content.assistantName,
       monthlyPriceEur: row.monthlyPriceEur,
       setupPriceEur: row.setupPriceEur,
+      trialDays: this.env.CATALOG_TRIAL_DAYS,
       content,
     };
   }

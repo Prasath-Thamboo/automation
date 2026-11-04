@@ -6,15 +6,15 @@ const columns = [footer.columns.product, footer.columns.legal];
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t border-ink-100 bg-white">
-      <div className="mx-auto grid max-w-content gap-10 px-4 py-12 sm:grid-cols-3 sm:px-6">
+    <footer className="mt-auto bg-primary-900 text-primary-100">
+      <div className="mx-auto grid max-w-content gap-12 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
         <div>
           {/* Une des trois seules occurrences autorisées du nom (§8). */}
-          <p className="font-heading text-lg font-bold text-primary-700">{common.appName}</p>
-          <p className="mt-1 max-w-xs text-base text-ink-500">{footer.baseline}</p>
+          <p className="font-heading text-2xl font-bold text-white">{common.appName}</p>
+          <p className="mt-2 max-w-xs text-lg text-primary-100">{footer.baseline}</p>
           <Link
             href="/contact"
-            className="mt-4 inline-flex min-h-touch items-center rounded-md border border-primary-600 px-4 py-2 text-base font-semibold text-primary-700 no-underline hover:bg-primary-50"
+            className="mt-6 inline-flex min-h-[52px] items-center rounded-full bg-white px-6 text-base font-bold text-primary-800 no-underline transition-colors hover:bg-primary-50"
           >
             {glossary.actions.talkToHuman}
           </Link>
@@ -22,11 +22,14 @@ export function SiteFooter() {
 
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <p className="text-base font-semibold text-ink-900">{col.title}</p>
-            <ul className="mt-3 space-y-2">
+            <p className="text-lg font-bold text-white">{col.title}</p>
+            <ul className="mt-4 space-y-1">
               {col.links.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="text-base text-ink-700 no-underline hover:text-primary-700">
+                  <Link
+                    href={l.href}
+                    className="inline-flex min-h-touch items-center text-base text-primary-100 underline-offset-4 hover:text-white hover:underline"
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -35,8 +38,8 @@ export function SiteFooter() {
           </nav>
         ))}
       </div>
-      <div className="border-t border-ink-100">
-        <p className="mx-auto max-w-content px-4 py-6 text-sm text-ink-500 sm:px-6">
+      <div className="border-t border-white/15">
+        <p className="mx-auto max-w-content px-4 py-6 text-sm text-primary-200 sm:px-6 lg:px-8">
           © {year} {site.name}. {footer.rights}
         </p>
       </div>

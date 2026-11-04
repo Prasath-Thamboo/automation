@@ -70,7 +70,7 @@ export function FormChat({ publicId, establishment }: { publicId: string; establ
         <div
           ref={listRef}
           aria-live="polite"
-          className="flex max-h-80 flex-col gap-3 overflow-y-auto rounded-lg border border-ink-100 bg-white p-4"
+          className="flex max-h-80 flex-col gap-3 overflow-y-auto rounded-lg border border-ink-100 bg-white p-4 shadow-soft"
         >
           {lines.map((line, i) => (
             <div
@@ -144,7 +144,7 @@ export function FormChat({ publicId, establishment }: { publicId: string; establ
       <button
         type="submit"
         disabled={pending || !draft.trim()}
-        className="min-h-11 rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60"
+        className="min-h-11 rounded-full bg-primary-600 px-5 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
       >
         {pending ? publicForm.sending : publicForm.send}
       </button>

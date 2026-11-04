@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { site, nav } from "@tando/copy";
+import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
+import "@fontsource-variable/bricolage-grotesque/wght.css";
 import "@tando/ui/styles.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
@@ -9,9 +11,10 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { HideWhenEmbedded } from "@/components/hide-when-embedded";
 import { SITE_URL, organizationJsonLd } from "@/lib/site";
 
-// Typographie : pile système (rapide, aucune requête tierce — cohérent avec
-// « données en France »). Une police de marque auto-hébergée (next/font/local +
-// woff2 versionnés) pourra être ajoutée sans toucher au reste.
+// Typographie auto-hébergée (paquets @fontsource, servis par notre propre
+// serveur : aucune requête tierce, build sans réseau). Corps : Atkinson
+// Hyperlegible Next, dessinée pour les lecteurs malvoyants. Titres : Bricolage
+// Grotesque.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,7 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <a
           href="#contenu"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-ink-900 focus:shadow"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-5 focus:py-3 focus:text-lg focus:font-bold focus:text-ink-900 focus:shadow-lift"
         >
           {nav.skipToContent}
         </a>

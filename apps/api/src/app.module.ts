@@ -17,6 +17,7 @@ import { AssistantsModule } from "./assistants/assistants.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { TeamModule } from "./team/team.module";
 import { AdminModule } from "./admin/admin.module";
+import { HelpModule } from "./help/help.module";
 import { ChannelsModule } from "./channels/channels.module";
 
 @Module({
@@ -42,6 +43,7 @@ import { ChannelsModule } from "./channels/channels.module";
     NotificationsModule,
     TeamModule,
     AdminModule,
+    HelpModule,
     ChannelsModule,
   ],
   providers: [

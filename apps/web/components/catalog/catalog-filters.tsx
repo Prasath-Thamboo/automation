@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Check } from "@/components/icons";
 
 type Params = { secteur?: string; besoin?: string };
 
@@ -32,12 +33,13 @@ function FilterChip({
     <Link
       href={href}
       aria-current={selected ? "true" : undefined}
-      className={`inline-flex min-h-touch items-center rounded-full border px-4 py-1.5 text-sm no-underline ${
+      className={`inline-flex min-h-touch items-center gap-1.5 rounded-full border-2 px-4 py-1.5 text-base font-semibold no-underline transition-colors ${
         selected
-          ? "border-primary-600 bg-primary-600 text-white"
-          : "border-ink-100 bg-white text-ink-700 hover:border-primary-600"
+          ? "border-primary-600 bg-primary-600 text-white shadow-soft"
+          : "border-ink-200 bg-white text-ink-700 hover:border-primary-600 hover:text-primary-700"
       }`}
     >
+      {selected ? <Check className="h-4 w-4" /> : null}
       {children}
     </Link>
   );
@@ -57,8 +59,8 @@ function FilterGroup({
   const active = current[param];
   return (
     <div>
-      <p className="text-sm font-semibold text-ink-500">{title}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <p className="text-lg font-bold text-ink-900">{title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
         <FilterChip href={hrefFor(current, param)} selected={!active}>
           Tous
         </FilterChip>
@@ -82,7 +84,7 @@ export function CatalogFilters({
   current: Params;
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="card flex flex-col gap-7 lg:sticky lg:top-28">
       <FilterGroup title="Par secteur" param="secteur" options={sectors} current={current} />
       <FilterGroup title="Par besoin" param="besoin" options={needs} current={current} />
     </div>

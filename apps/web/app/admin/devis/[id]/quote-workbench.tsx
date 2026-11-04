@@ -22,7 +22,7 @@ export function QuoteWorkbench({ quote }: { quote: AdminQuote }) {
   return (
     <div className="space-y-8">
       <div>
-        <Link href="/admin/devis" className="text-sm text-primary-700">← Tous les devis</Link>
+        <Link href="/admin/devis" className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">← Tous les devis</Link>
         <h1 className="mt-2 text-2xl font-bold text-ink-900">{quote.number}</h1>
         <p className="text-sm text-ink-500">
           {quote.company} · {quote.email} · statut : {quote.status}
@@ -111,7 +111,7 @@ export function QuoteWorkbench({ quote }: { quote: AdminQuote }) {
             <textarea name="complexityNote" defaultValue={quote.complexityNote ?? ""} rows={2} className={field} />
           </label>
           {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
-          {state.ok ? <p className="text-sm text-primary-700">Recalculé.</p> : null}
+          {state.ok ? <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">Recalculé.</p> : null}
           <button type="submit" disabled={saving} className="min-h-touch rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60">
             {saving ? "…" : "Recalculer le devis"}
           </button>

@@ -7,10 +7,11 @@ import { AssistantService } from "./assistant.service";
 import { EscalationsService } from "./escalations.service";
 import { AccountService } from "./account.service";
 import { TeamController } from "./team.controller";
+import { CatalogSubscribeService } from "./catalog-subscribe.service";
 
 @Module({
   imports: [AuthModule, QueueModule, BillingModule, AssistantsModule],
   controllers: [TeamController],
-  providers: [AssistantService, EscalationsService, AccountService],
+  providers: [AssistantService, EscalationsService, AccountService, CatalogSubscribeService],
 })
 export class TeamModule {}

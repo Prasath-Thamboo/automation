@@ -100,6 +100,20 @@ export class PushService {
     });
   }
 
+  /** Lot 15 — l'équipe Tando a répondu à une question posée par cette personne.
+   *  Réponse à sa propre demande : pas de préférence dédiée, heures de silence respectées. */
+  async notifyHelpAnswered(input: { userId: string; question: string }): Promise<void> {
+    const p = await this.prefs.get(input.userId);
+    if (isWithinQuietHours(new Date(), p.timezone, p.quietStart, p.quietEnd)) return;
+    await this.queue.enqueuePush({
+      type: "send",
+      userIds: [input.userId],
+      title: "L'équipe Tando vous a répondu",
+      body: trim(input.question, 140),
+      data: { screen: "help" },
+    });
+  }
+
   private async notifyOrgOwners(notice: OutgoingNotice): Promise<void> {
     const owners = await this.prisma.membership.findMany({
       where: { organizationId: notice.organizationId, role: "owner", deletedAt: null },

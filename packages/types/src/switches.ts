@@ -89,3 +89,47 @@ export const updateSwitchSchema = z
   })
   .partial();
 export type UpdateSwitch = z.infer<typeof updateSwitchSchema>;
+
+// ── Lot 16 — employé générique « prêt à l'emploi » ──────────────────────────
+
+/** Bouton créé pour chaque nouvel employé d'un métier du catalogue. */
+export const defaultSwitchSchema = z.object({
+  key: createSwitchSchema.shape.key,
+  label,
+  help: help.default(null),
+  enabled: z.boolean().default(false),
+});
+export type DefaultSwitch = z.infer<typeof defaultSwitchSchema>;
+
+export interface AdminProfessionWorkflow {
+  professionId: string;
+  slug: string;
+  /** Webhook du flux n8n générique du métier (null : moteur à règles). */
+  workflowUrl: string | null;
+  defaultSwitches: DefaultSwitch[];
+  /** Employés de ce métier qui passent par ce flux (sans flux propre). */
+  assistantsOnFlow: number;
+}
+
+export const adminProfessionWorkflowSchema: z.ZodType<AdminProfessionWorkflow> = z.object({
+  professionId: z.string().uuid(),
+  slug: z.string(),
+  workflowUrl: z.string().nullable(),
+  defaultSwitches: z.array(
+    z.object({ key: z.string(), label: z.string(), help: z.string().nullable(), enabled: z.boolean() }),
+  ),
+  assistantsOnFlow: z.number().int(),
+});
+
+export const updateProfessionWorkflowSchema = z.object({
+  workflowUrl: z.string().trim().url().max(500).nullable(),
+  defaultSwitches: z
+    .array(defaultSwitchSchema)
+    .max(20)
+    .refine((list) => new Set(list.map((s) => s.key)).size === list.length, "Clés de boutons en double."),
+});
+export type UpdateProfessionWorkflow = z.infer<typeof updateProfessionWorkflowSchema>;
+
+/** Corps de `POST /me/catalog/subscribe`. */
+export const subscribeCatalogSchema = z.object({ slug: z.string().trim().min(1).max(80) });
+export type SubscribeCatalog = z.infer<typeof subscribeCatalogSchema>;

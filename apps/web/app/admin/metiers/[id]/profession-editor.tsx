@@ -18,7 +18,7 @@ const area = `${field} font-mono text-sm`;
 
 function Feedback({ state }: { state: ActionState }) {
   if (state.error) return <p role="alert" className="text-sm text-danger">{state.error}</p>;
-  if (state.ok) return <p className="text-sm text-primary-700">Enregistré.</p>;
+  if (state.ok) return <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">Enregistré.</p>;
   return null;
 }
 
@@ -49,7 +49,7 @@ export function ProfessionEditor({ profession }: { profession: AdminProfession }
   return (
     <div className="space-y-10">
       <div>
-        <Link href="/admin/metiers" className="text-sm text-primary-700">
+        <Link href="/admin/metiers" className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">
           ← Tous les métiers
         </Link>
         <h1 className="mt-2 text-2xl font-bold text-ink-900">{profession.name}</h1>

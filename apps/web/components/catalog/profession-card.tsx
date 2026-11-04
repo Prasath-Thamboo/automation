@@ -1,25 +1,37 @@
 import Link from "next/link";
 import type { ProfessionCard as Card } from "@tando/api-client";
+import { ArrowRight } from "@/components/icons";
 
 export function ProfessionCard({ profession }: { profession: Card }) {
   return (
     <Link
       href={`/employes-virtuels/${profession.slug}`}
-      className="flex flex-col rounded-lg border border-ink-100 bg-white p-6 no-underline transition-colors hover:border-primary-600"
+      className="card-link group flex h-full flex-col"
     >
-      <span className="text-sm font-semibold uppercase tracking-wide text-ink-500">
+      <span className="self-start rounded-full bg-accent-50 px-3 py-0.5 text-sm font-bold text-accent-700">
         {profession.sector}
       </span>
-      <h2 className="mt-1 text-xl font-bold text-ink-900">{profession.name}</h2>
+      <h2 className="mt-4 text-2xl text-ink-900">{profession.name}</h2>
       {profession.assistantName ? (
-        <p className="mt-1 text-base text-primary-700">Avec {profession.assistantName}</p>
+        <p className="mt-1 text-base font-semibold text-primary-700">Avec {profession.assistantName}</p>
       ) : null}
       <p className="mt-3 flex-1 text-base text-ink-700">{profession.benefit}</p>
-      <p className="mt-4 text-base text-ink-900">
-        À partir de{" "}
-        <span className="font-heading text-lg font-bold">{profession.monthlyPriceEur} €</span>
-        <span className="text-ink-500">/mois</span>
-      </p>
+      <div className="mt-6 flex items-end justify-between gap-3 border-t border-ink-100 pt-5">
+        <p className="text-base text-ink-700">
+          À partir de
+          <br />
+          <span className="font-heading text-2xl font-bold text-ink-950">
+            {profession.monthlyPriceEur} €
+          </span>
+          <span className="text-ink-500">/mois</span>
+        </p>
+        <span
+          aria-hidden
+          className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary-600 text-white transition-transform duration-200 group-hover:translate-x-1"
+        >
+          <ArrowRight className="h-5 w-5" />
+        </span>
+      </div>
     </Link>
   );
 }

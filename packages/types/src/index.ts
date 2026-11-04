@@ -15,3 +15,4 @@ export * from "./notifications";
 export * from "./admin";
 export * from "./channels";
 export * from "./switches";
+export * from "./help";

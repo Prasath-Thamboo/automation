@@ -76,7 +76,7 @@ export function QuotePublicView({
       </Section>
 
       <Section title="Le prix">
-        <div className="rounded-lg border border-ink-100 bg-white p-5">
+        <div className="rounded-lg border border-ink-100 bg-white p-5 shadow-soft">
           <p className="text-lg text-ink-900">
             Mise en service : <strong className="font-heading">{euro(quote.setupEur)}</strong>
           </p>
@@ -128,7 +128,7 @@ export function QuotePublicView({
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 min-h-touch w-full rounded-md border border-ink-100 px-3 py-2 text-base font-normal"
+              className="mt-1 min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base font-normal bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
             />
           </label>
           <label className="mt-3 flex items-start gap-2 text-base text-ink-700">
@@ -147,7 +147,7 @@ export function QuotePublicView({
               type="button"
               disabled={busy || decided || name.trim().length < 2}
               onClick={() => void accept()}
-              className="min-h-touch rounded-md bg-primary-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-50"
+              className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-primary-700"
             >
               {busy ? "…" : "J'accepte"}
             </button>

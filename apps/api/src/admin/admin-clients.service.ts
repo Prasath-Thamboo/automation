@@ -17,6 +17,7 @@ function toSubSummary(sub: Subscription): SubscriptionSummary {
     setupEur: sub.setupCents / 100,
     currentPeriodEnd: sub.currentPeriodEnd ? sub.currentPeriodEnd.toISOString() : null,
     canceledAt: sub.canceledAt ? sub.canceledAt.toISOString() : null,
+    trialEndsAt: sub.trialEndsAt ? sub.trialEndsAt.toISOString() : null,
   };
 }
 

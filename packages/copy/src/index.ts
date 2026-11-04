@@ -53,6 +53,8 @@ export {
 
 export { channelPlace, channelLabels, channelsCopy, publicForm } from "./channels";
 export { switchesCopy } from "./switches";
+export { helpCopy } from "./help";
+export { subscribeCopy } from "./subscribe";
 
 import { glossary } from "./glossary";
 
@@ -97,6 +99,15 @@ export const nav = {
   account: "Mon espace",
   talkToHuman: glossary.actions.talkToHuman,
   skipToContent: "Aller au contenu",
+} as const;
+
+/** Onglets de l'espace client (web). */
+export const clientNav = {
+  label: "Votre espace",
+  team: glossary.assistant.teamPage,
+  documents: "Mes documents",
+  account: "Mon compte",
+  help: "Une question ?",
 } as const;
 
 export const footer = {

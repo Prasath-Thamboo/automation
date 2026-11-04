@@ -19,6 +19,8 @@ const roots = [
   resolve(repoRoot, "apps/web/app"),
   resolve(repoRoot, "apps/web/components"),
   resolve(repoRoot, "apps/web/lib"),
+  // Contenus semés lus tels quels par le client (catalogue, réponses d'aide).
+  resolve(repoRoot, "apps/api/prisma/seed-data"),
 ];
 
 /**

@@ -179,6 +179,12 @@ model Profession {
   needs           String[]
   monthlyPriceEur Int       @default(89)
   setupPriceEur   Int       @default(0)
+  /// Lot 16 — webhook du flux n8n générique du métier, partagé par tous les
+  /// clients « prêt à l'emploi » (chaque appel porte les données du client).
+  workflowUrl     String?
+  /// Lot 16 — boutons créés pour chaque nouvel employé de ce métier :
+  /// [{ key, label, help, enabled }].
+  defaultSwitches Json      @default("[]")
   /// Ordre d'affichage dans la grille.
   position        Int       @default(0)
   published       Boolean   @default(false)
@@ -461,6 +467,8 @@ model Subscription {
   startedAt        DateTime?          @db.Timestamptz(6)
   canceledAt       DateTime?          @db.Timestamptz(6)
   currentPeriodEnd DateTime?          @db.Timestamptz(6)
+  /// Lot 16 — fin de l'essai gratuit (offre prêt à l'emploi), null sinon.
+  trialEndsAt      DateTime?          @db.Timestamptz(6)
   createdAt        DateTime           @default(now()) @db.Timestamptz(6)
   updatedAt        DateTime           @updatedAt @db.Timestamptz(6)
 
@@ -905,4 +913,72 @@ model NotificationPreference {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_preferences")
+}
+
+// ─── Lot 15 — Aide au patron (« Une question ? ») ─────────────────────────────
+
+/// Où renvoyer le patron après la réponse (chaque application la traduit en écran).
+enum HelpAction {
+  aucune
+  equipe
+  documents
+  compte
+  reglages
+  carnet
+}
+
+/// Réponse écrite à l'avance par l'équipe Tando, éditable dans le back-office.
+/// Contenu global (pas d'`organizationId`), comme le catalogue.
+model HelpArticle {
+  id        String     @id @default(uuid()) @db.Uuid
+  /// Identifiant stable (seed idempotent).
+  slug      String     @unique
+  /// La question telle que le patron la lirait.
+  question  String
+  /// Mots ou expressions qui déclenchent cette réponse (en plus de la question).
+  keywords  String[]
+  answer    String
+  action    HelpAction @default(aucune)
+  published Boolean    @default(true)
+  position  Int        @default(0)
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(6)
+
+  requests HelpRequest[]
+
+  @@map("help_articles")
+}
+
+enum HelpRequestStatus {
+  /// Une réponse de la base a été donnée.
+  repondue
+  /// Aucune réponse trouvée, pas (encore) transmise.
+  sans_reponse
+  /// Transmise à l'équipe Tando, en attente.
+  transmise
+  /// L'équipe Tando a répondu.
+  traitee
+}
+
+/// Chaque question posée par un membre d'une organisation cliente.
+model HelpRequest {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @db.Uuid
+  userId         String            @db.Uuid
+  question       String
+  articleId      String?           @db.Uuid
+  status         HelpRequestStatus
+  /// Le patron a-t-il trouvé la réponse utile ? (null : pas d'avis)
+  helpful        Boolean?
+  staffAnswer    String?
+  transmittedAt  DateTime?         @db.Timestamptz(6)
+  answeredAt     DateTime?         @db.Timestamptz(6)
+  createdAt      DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime          @updatedAt @db.Timestamptz(6)
+
+  article HelpArticle? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([status, createdAt])
+  @@map("help_requests")
 }

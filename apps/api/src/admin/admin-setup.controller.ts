@@ -11,6 +11,9 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import {
+  updateProfessionWorkflowSchema,
+  type AdminProfessionWorkflow,
+  type UpdateProfessionWorkflow,
   createSwitchSchema,
   updateSwitchSchema,
   updateWorkflowSchema,
@@ -35,6 +38,21 @@ export class AdminSetupController {
   @Get("assistants/:id/setup")
   get(@Param("id", ParseUUIDPipe) id: string): Promise<AdminAssistantSetup> {
     return this.setup.get(id);
+  }
+
+  /** Lot 16 — flux n8n générique d'un métier + boutons par défaut. */
+  @Get("professions/:id/workflow")
+  professionWorkflow(@Param("id", ParseUUIDPipe) id: string): Promise<AdminProfessionWorkflow> {
+    return this.setup.getProfessionWorkflow(id);
+  }
+
+  @Patch("professions/:id/workflow")
+  setProfessionWorkflow(
+    @CurrentUser() user: SessionUser,
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body(new ZodValidationPipe(updateProfessionWorkflowSchema)) body: UpdateProfessionWorkflow,
+  ): Promise<AdminProfessionWorkflow> {
+    return this.setup.setProfessionWorkflow(id, body, user.id);
   }
 
   @Patch("assistants/:id/setup")

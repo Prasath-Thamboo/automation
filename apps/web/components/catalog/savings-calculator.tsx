@@ -18,7 +18,7 @@ export function SavingsCalculator({ savings }: { savings: Savings }) {
   const hoursPerMonth = Math.round((minutesPerDay * savings.daysPerMonth) / 60);
 
   return (
-    <div className="rounded-lg border border-ink-100 bg-white p-5">
+    <div className="rounded-lg bg-paper p-5 sm:p-6">
       <Slider
         label={savings.sliderA.label}
         min={savings.sliderA.min}
@@ -43,7 +43,7 @@ export function SavingsCalculator({ savings }: { savings: Savings }) {
         </span>{" "}
         gagnées par mois.
       </p>
-      <p className="mt-2 text-sm text-ink-500">{savings.note}</p>
+      <p className="mt-2 text-base text-ink-500">{savings.note}</p>
     </div>
   );
 }
@@ -64,9 +64,9 @@ function Slider({
   const id = useId();
   return (
     <div>
-      <label htmlFor={id} className="flex items-center justify-between text-base font-medium text-ink-900">
+      <label htmlFor={id} className="flex items-center justify-between gap-4 text-base font-semibold text-ink-900">
         <span>{label}</span>
-        <span className="font-heading font-bold">{value}</span>
+        <span className="grid h-10 min-w-10 place-items-center rounded-full bg-white px-3 font-heading text-lg font-bold text-primary-700 shadow-soft">{value}</span>
       </label>
       <input
         id={id}

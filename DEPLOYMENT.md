@@ -33,6 +33,7 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `RATE_LIMIT_DISABLED` | **non défini / `false`** (le démarrage échoue si `true` en prod) |
 | `RATE_LIMIT_MAX` / `RATE_LIMIT_TTL_SECONDS` | ajuster selon la charge (défaut 120 / 60 s) |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `MAIL_FROM` | SMTP réel (`SMTP_SECURE=true` si port 465) |
+| `HELP_DESK_EMAIL` | Boîte de l'équipe qui reçoit les questions « Une question ? » transmises (défaut : `MAIL_FROM`) |
 | `S3_ENDPOINT` / `S3_REGION` / `S3_BUCKET` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` / `S3_FORCE_PATH_STYLE` | stockage objet UE |
 | `PAYMENT_PROVIDER` | `stripe` |
 | `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | clés live ; endpoint webhook = `POST /api/v1/webhooks/payments` |
@@ -41,6 +42,7 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `BILLING_PROVIDER` | `out-of-app` (Stripe hors application, décision Lot 9) |
 | `BILLING_MANAGE_URL` / `BILLING_MANAGE_HINT` | URL de gestion du contrat côté web |
 | `ASSISTANT_RUNTIME` | `rules` (défaut) ou `n8n` |
+| `CATALOG_TRIAL_DAYS` | Jours d'essai gratuit de l'offre prêt à l'emploi (défaut 14, 0 = aucun) |
 | `N8N_BASE_URL` | origine de l'instance n8n (ex. `https://n8n.tando.fr`) : l'adresse du flux de chaque employé (back-office → Pilotage) doit s'y trouver. Instance **hébergée dans l'UE** (messages des clients finaux) |
 | `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort partagé dans les deux sens (en-tête `X-Tando-Token`) : vérifié par les nœuds Webhook, présenté par les flux à `/api/v1/n8n/*` |
 | `N8N_TIMEOUT_MS` | délai max d'un tour (défaut 15000) ; au-delà → escalade |

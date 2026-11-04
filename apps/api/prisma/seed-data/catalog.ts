@@ -320,7 +320,7 @@ export const catalogSeed: CatalogSeed[] = [
         "Proposer et confirmer des créneaux de visite",
         "Relancer les visiteurs pour obtenir leur retour",
         "Répondre aux questions publiques sur un bien (surface, étage, charges affichées)",
-        "Noter les demandes d'estimation pour un agent",
+        "Noter les demandes d'estimation pour un conseiller de l'agence",
       ],
       cannotDo: [
         "Communiquer l'adresse exacte d'un bien avant qualification",

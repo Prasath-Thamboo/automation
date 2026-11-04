@@ -4,31 +4,41 @@
 
 /*
  * Variables consommées par les composants @tando/ui (préfixe --tnd-).
- * Valeurs alignées sur packages/config/src/tokens.ts.
+ * Valeurs alignées sur apps/web/tailwind.config.ts (surcharges web).
  */
 :root {
-  --tnd-ink-900: #1c1a17;
-  --tnd-ink-700: #3d3a34;
-  --tnd-ink-500: #6b665c;
-  --tnd-ink-100: #e7e3da;
-  --tnd-paper: #fbf9f4;
-  --tnd-primary-700: #1f5c3d;
-  --tnd-primary-600: #26714b;
-  --tnd-primary-500: #2f8a5b;
-  --tnd-primary-50: #eef6f1;
-  --tnd-accent-600: #b4531f;
-  --tnd-accent-500: #d06a30;
-  --tnd-info: #2c5f8a;
-  --tnd-danger: #b23b3b;
+  --tnd-ink-900: #171c22;
+  --tnd-ink-700: #363e48;
+  --tnd-ink-500: #56606d;
+  --tnd-ink-400: #7d8692;
+  --tnd-ink-300: #a5adb8;
+  --tnd-ink-100: #e6e9ee;
+  --tnd-paper: #f8f6f1;
+  --tnd-primary-800: #104a33;
+  --tnd-primary-700: #145c3f;
+  --tnd-primary-600: #18744f;
+  --tnd-primary-500: #1f9163;
+  --tnd-primary-100: #d8f2e4;
+  --tnd-primary-50: #edf9f2;
+  --tnd-accent-600: #b4461a;
+  --tnd-accent-500: #e36a2e;
+  --tnd-accent-50: #fff5ee;
+  --tnd-info: #1f5f99;
+  --tnd-danger: #b3261e;
+  --tnd-focus: #1f5f99;
+
+  --tnd-font: "Atkinson Hyperlegible Next Variable", "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+  --tnd-font-heading: "Bricolage Grotesque Variable", "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 html {
   color-scheme: light;
   scroll-behavior: smooth;
-}
-
-:root {
-  --tnd-font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  /* Respecte la taille de texte choisie dans le navigateur (zoom senior). */
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -37,8 +47,8 @@ body {
   background: var(--tnd-paper);
   color: var(--tnd-ink-900);
   font-family: var(--tnd-font);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 1.125rem;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -47,24 +57,72 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--tnd-font);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-family: var(--tnd-font-heading);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+p,
+li,
+dd {
+  text-wrap: pretty;
 }
 
 a {
   color: var(--tnd-primary-700);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+a:hover {
+  text-decoration-thickness: 2px;
 }
 
+::selection {
+  background: var(--tnd-primary-100);
+  color: var(--tnd-ink-900);
+}
+
+/* Focus clavier très visible : double anneau, lisible sur fond clair ou foncé. */
 :focus-visible {
-  outline: 3px solid var(--tnd-info);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline: 3px solid var(--tnd-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@layer components {
+  /* Surtitre de section : petit, mais jamais sous 16px. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700;
+  }
+
+  /* Carte standard de l'espace client et du site. */
+  .card {
+    @apply rounded-lg border border-ink-100 bg-white p-6 shadow-soft;
+  }
+  .card-link {
+    @apply rounded-lg border border-ink-100 bg-white p-6 no-underline shadow-soft transition duration-200 hover:-translate-y-0.5 hover:border-primary-300 hover:shadow-card;
+  }
+
+  /* Fond décoratif doux (dégradés) pour les zones d'accroche. */
+  .bg-glow {
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, rgba(31, 145, 99, 0.16), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 20%, rgba(227, 106, 46, 0.12), transparent 60%),
+      var(--tnd-paper);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

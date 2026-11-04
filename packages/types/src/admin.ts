@@ -260,6 +260,7 @@ const subSummarySchemaRef: z.ZodType<SubscriptionSummary> = z.object({
   setupEur: z.number(),
   currentPeriodEnd: z.string().nullable(),
   canceledAt: z.string().nullable(),
+  trialEndsAt: z.string().nullable(),
 });
 
 const adminClientListItemSchema: z.ZodType<AdminClientListItem> = z.object({

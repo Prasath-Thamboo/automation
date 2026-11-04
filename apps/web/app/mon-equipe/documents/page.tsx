@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { InvoiceDoc } from "@tando/api-client";
+import { subscribeCopy } from "@tando/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { PayButton } from "./pay-button";
@@ -38,11 +39,11 @@ export default async function DocumentsPage() {
   const { subscription, invoices, creditNotes } = await (await sessionApi()).me.documents();
 
   return (
-    <section className="mx-auto max-w-content px-4 py-14 sm:px-6 sm:py-20">
+    <section className="mx-auto max-w-content px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <h1 className="text-3xl font-bold text-ink-900">Mes documents</h1>
 
       {subscription ? (
-        <div className="mt-6 rounded-lg border border-ink-100 bg-white p-5">
+        <div className="mt-6 rounded-lg border border-ink-100 bg-white p-5 shadow-soft">
           <p className="text-base text-ink-900">
             Contrat : <strong>{SUB_STATUS[subscription.status] ?? subscription.status}</strong>
           </p>
@@ -52,6 +53,11 @@ export default async function DocumentsPage() {
               ? ` · prochaine échéance le ${frDate(subscription.currentPeriodEnd)}`
               : ""}
           </p>
+          {subscription.trialEndsAt && new Date(subscription.trialEndsAt) > new Date() ? (
+            <p className="mt-2 inline-block rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700">
+              {subscribeCopy.trialUntil(frDate(subscription.trialEndsAt))}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -59,7 +65,7 @@ export default async function DocumentsPage() {
       {invoices.length === 0 ? (
         <p className="mt-3 text-base text-ink-500">Aucune facture pour l&apos;instant.</p>
       ) : (
-        <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+        <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
           {invoices.map((inv) => (
             <li key={inv.number} className="flex flex-wrap items-center justify-between gap-3 p-4">
               <div>
@@ -90,7 +96,7 @@ export default async function DocumentsPage() {
       {creditNotes.length > 0 ? (
         <>
           <h2 className="mt-10 text-xl font-bold text-ink-900">Avoirs</h2>
-          <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+          <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
             {creditNotes.map((cn) => (
               <li key={cn.number} className="p-4">
                 <p className="text-base font-semibold text-ink-900">

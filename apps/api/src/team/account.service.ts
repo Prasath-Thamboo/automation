@@ -78,7 +78,7 @@ export class AccountService {
   /** Export complet des données de l'organisation (§9.4 — droit RGPD, dans le produit). */
   async exportData(user: SessionUser): Promise<Record<string, unknown>> {
     const orgId = user.organizationId;
-    const [org, memberships, assistants, instructions, conversations, messages, escalations, quotes, invoices, creditNotes, payments, subscription] =
+    const [org, memberships, assistants, instructions, conversations, messages, escalations, quotes, invoices, creditNotes, payments, subscription, helpRequests] =
       await Promise.all([
         this.prisma.organization.findUnique({ where: { id: orgId } }),
         this.prisma.membership.findMany({ where: { organizationId: orgId }, include: { user: true } }),
@@ -95,6 +95,7 @@ export class AccountService {
         this.prisma.creditNote.findMany({ where: { organizationId: orgId } }),
         this.prisma.payment.findMany({ where: { organizationId: orgId } }),
         this.prisma.subscription.findMany({ where: { organizationId: orgId } }),
+        this.prisma.helpRequest.findMany({ where: { organizationId: orgId } }),
       ]);
 
     await this.audit.record({
@@ -117,6 +118,7 @@ export class AccountService {
       creditNotes,
       payments,
       subscription,
+      helpRequests,
     };
   }
 

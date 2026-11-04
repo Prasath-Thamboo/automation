@@ -49,8 +49,8 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
     s ? new Date(s).toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : null;
 
   return (
-    <section className="mx-auto max-w-content px-4 py-14 sm:px-6 sm:py-20">
-      <Link href="/mon-equipe" className="text-sm text-primary-700">
+    <section className="mx-auto max-w-content px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <Link href="/mon-equipe" className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">
         ← {glossary.assistant.teamPage}
       </Link>
 
@@ -77,7 +77,7 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
       {a.logbook.length === 0 ? (
         <p className="mt-3 text-sm text-ink-500">Rien à afficher pour le moment.</p>
       ) : (
-        <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+        <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
           {a.logbook.map((entry) => (
             <li key={entry.id} className="p-4">
               <Link
@@ -123,7 +123,7 @@ export default async function AssistantPage({ params }: { params: Promise<{ id: 
       {upcomingAppointments.length > 0 ? (
         <>
           <h2 className="mt-12 text-xl font-bold text-ink-900">Les rendez-vous qu&apos;il a pris</h2>
-          <ul className="mt-3 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+          <ul className="mt-3 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
             {upcomingAppointments.map((ap) => (
               <li key={ap.id} className="p-4">
                 <p className="text-base text-ink-900">

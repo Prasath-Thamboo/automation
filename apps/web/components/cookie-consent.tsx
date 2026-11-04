@@ -51,14 +51,14 @@ export function CookieConsent() {
           <button
             type="button"
             onClick={() => choose("necessary")}
-            className="min-h-touch rounded-md border border-primary-600 px-4 py-2 text-base font-semibold text-primary-700 hover:bg-primary-50"
+            className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 hover:bg-primary-50 bg-white transition-colors"
           >
             {cookiesCopy.banner.reject}
           </button>
           <button
             type="button"
             onClick={() => choose("all")}
-            className="min-h-touch rounded-md bg-primary-600 px-4 py-2 text-base font-semibold text-white hover:bg-primary-700"
+            className="min-h-touch rounded-full bg-primary-600 px-5 py-2 text-base font-bold text-white hover:bg-primary-700 shadow-soft transition-colors"
           >
             {cookiesCopy.banner.accept}
           </button>

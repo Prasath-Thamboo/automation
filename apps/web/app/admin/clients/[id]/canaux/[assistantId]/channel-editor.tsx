@@ -30,7 +30,7 @@ const input = "rounded-md border border-ink-100 px-2 py-1 text-sm";
 
 function Feedback({ state }: { state: ChannelActionState }) {
   if (state.error) return <p className="text-sm text-red-700">{state.error}</p>;
-  if (state.ok) return <p className="text-sm text-primary-700">{state.ok}</p>;
+  if (state.ok) return <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">{state.ok}</p>;
   return null;
 }
 

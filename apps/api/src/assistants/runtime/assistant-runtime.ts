@@ -12,8 +12,11 @@ export interface RuntimeAssistant {
   role: string;
   /** Métier du catalogue dont il est issu (information). */
   professionSlug: string | null;
-  /** Lot 14 — webhook du flux n8n de ce client (null : pas encore branché). */
+  /** Webhook du flux n8n à appeler : celui du client (Lot 14), sinon le flux
+   *  générique de son métier (Lot 16). null : moteur à règles. */
   workflowUrl: string | null;
+  /** D'où vient `workflowUrl` : flux propre au client, ou flux partagé du métier. */
+  workflowScope: "client" | "metier" | null;
   jobDescription: {
     summary?: string;
     tasks?: string[];

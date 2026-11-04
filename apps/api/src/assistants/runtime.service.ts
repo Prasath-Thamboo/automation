@@ -265,12 +265,19 @@ export class RuntimeService {
       data: { conversationId: conversation.id, author: "client", text: input.text },
     });
 
-    const [instructions, switches] = await Promise.all([
+    const [instructions, switches, profession] = await Promise.all([
       this.prisma.assistantInstruction.findMany({
         where: { assistantId: assistant.id, active: true },
         orderBy: { version: "asc" },
       }),
       this.prisma.assistantSwitch.findMany({ where: { assistantId: assistant.id } }),
+      // Lot 16 — sans flux propre, l'employé passe par le flux générique de son métier.
+      !assistant.workflowUrl && assistant.professionSlug
+        ? this.prisma.profession.findUnique({
+            where: { slug: assistant.professionSlug },
+            select: { workflowUrl: true },
+          })
+        : null,
     ]);
 
     const ctx: RuntimeContext = {
@@ -279,7 +286,8 @@ export class RuntimeService {
         name: assistant.name,
         role: assistant.role,
         professionSlug: assistant.professionSlug,
-        workflowUrl: assistant.workflowUrl,
+        workflowUrl: assistant.workflowUrl ?? profession?.workflowUrl ?? null,
+        workflowScope: assistant.workflowUrl ? "client" : profession?.workflowUrl ? "metier" : null,
         jobDescription: (assistant.jobDescription as RuntimeContext["assistant"]["jobDescription"]) ?? {},
         establishment: (assistant.establishment as RuntimeContext["assistant"]["establishment"]) ?? {},
         specifics: (assistant.specifics as Record<string, string>) ?? {},

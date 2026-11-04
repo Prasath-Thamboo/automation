@@ -1,6 +1,18 @@
-# Flux n8n (Lots 13-14)
+# Flux n8n (Lots 13-16)
 
-Modèle : **un flux n8n par client**. Le client décrit son besoin, l'équipe Tando
+Deux modèles coexistent :
+
+- **Prêt à l'emploi (Lot 16)** : **un flux générique par métier**, partagé par
+  tous les clients de ce métier. Chaque appel porte les données du client
+  (établissement, spécificités, consignes, boutons, historique) : le flux ne
+  stocke rien et sert des dizaines de clients en parallèle, chacun avec ses
+  propres données. Voir « Flux générique d'un métier » plus bas.
+- **Sur mesure (Lot 14)** : **un flux n8n par client**.
+
+Ordre de résolution à chaque message : flux propre de l'employé → flux
+générique de son métier → moteur à règles.
+
+Sur mesure : Le client décrit son besoin, l'équipe Tando
 construit son flux, le branche dans le back-office, puis déclare les **boutons**
 que le client pourra actionner. Le client ne voit jamais le flux (§2) : sur le
 web et dans l'app, il voit « Ce qu'il fait pour vous » et des interrupteurs.
@@ -33,6 +45,32 @@ Flux planifié (relances, rappels…)
 Tant qu'aucun flux n'est branché, l'employé répond avec le moteur à règles.
 Les flux ne sont appelés que si `ASSISTANT_RUNTIME=n8n`.
 
+## Flux générique d'un métier (prêt à l'emploi)
+
+1. Construis un flux par métier (`dentiste`, `restaurant`…). Il doit lire
+   **tout** ce qui est propre au client dans la requête (`assistant.establishment`,
+   `assistant.specifics`, `instructions`, `switches`) — jamais de donnée client
+   en dur dans le flux.
+2. Back-office → Métiers → le métier → **Flux n8n générique** : colle l'URL du
+   webhook et déclare les **boutons par défaut** (`clé | libellé | aide | on`),
+   créés pour chaque nouvel employé de ce métier.
+3. Le client souscrit seul depuis la fiche (essai gratuit `CATALOG_TRIAL_DAYS`),
+   fait son « premier jour » : son employé passe aussitôt par ce flux.
+
+`assistant.workflowScope` vaut `"metier"` (flux partagé) ou `"client"` (flux
+propre). `assistant.id` identifie le client pour les rappels vers l'API.
+
+**Flux planifiés partagés** : liste les employés servis, puis traite chacun.
+
+```
+GET /api/v1/n8n/professions/:slug/assistants   (X-Tando-Token)
+→ { "assistants": [{ "assistantId", "name", "working", "state", "switches", "establishment" }] }
+```
+
+Ne traite que ceux où `working` est vrai, en respectant leurs `switches`, puis
+rends compte par `/n8n/assistants/:id/activity|escalations`. Un employé qui a
+reçu un flux propre n'apparaît plus dans cette liste.
+
 ## 1. Messages entrants (API → flux)
 
 `POST` sur l'URL branchée, en-tête `X-Tando-Token: <N8N_TOKEN>` (à vérifier par
@@ -49,6 +87,7 @@ le nœud Webhook, authentification « Header Auth »).
     "role": "votre assistante",
     "professionSlug": "dentiste",
     "workflowUrl": "https://n8n.tando.fr/webhook/…",
+    "workflowScope": "metier",
     "jobDescription": { "summary": "…", "tasks": ["…"], "hours": "…", "limits": ["…"], "tone": "…" },
     "establishment": { "name": "…", "address": "…", "openingHours": "…" },
     "specifics": {}

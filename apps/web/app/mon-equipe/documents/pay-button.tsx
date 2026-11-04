@@ -18,7 +18,7 @@ export function PayButton({ invoiceNumber, amountLabel }: { invoiceNumber: strin
             setError(r.error);
           })
         }
-        className="min-h-touch rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+        className="min-h-touch rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
       >
         {pending ? "Paiement…" : `Payer ${amountLabel}`}
       </button>

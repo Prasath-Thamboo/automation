@@ -6,6 +6,11 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { Prisma, type AssistantSwitch } from "@prisma/client";
+import {
+  defaultSwitchSchema,
+  type AdminProfessionWorkflow,
+  type UpdateProfessionWorkflow,
+} from "@tando/types";
 import type {
   AdminAssistantSetup,
   AdminSwitch,
@@ -30,6 +35,49 @@ export class AdminSetupService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
   ) {}
+
+  // ── Lot 16 — flux générique d'un métier (offre prêt à l'emploi) ─────────
+
+  async getProfessionWorkflow(professionId: string): Promise<AdminProfessionWorkflow> {
+    const p = await this.prisma.profession.findFirst({ where: { id: professionId, deletedAt: null } });
+    if (!p) throw new NotFoundException("Métier introuvable.");
+    const assistantsOnFlow = await this.prisma.assistant.count({
+      where: { professionSlug: p.slug, workflowUrl: null, deletedAt: null },
+    });
+    const switches = defaultSwitchSchema.array().safeParse(p.defaultSwitches);
+    return {
+      professionId: p.id,
+      slug: p.slug,
+      workflowUrl: p.workflowUrl,
+      defaultSwitches: switches.success ? switches.data : [],
+      assistantsOnFlow,
+    };
+  }
+
+  /** Les boutons par défaut ne s'appliquent qu'aux employés embauchés ensuite. */
+  async setProfessionWorkflow(
+    professionId: string,
+    dto: UpdateProfessionWorkflow,
+    actorUserId: string,
+  ): Promise<AdminProfessionWorkflow> {
+    const p = await this.prisma.profession.findFirst({ where: { id: professionId, deletedAt: null } });
+    if (!p) throw new NotFoundException("Métier introuvable.");
+    if (dto.workflowUrl) assertAllowedUrl(dto.workflowUrl, this.env);
+    await this.prisma.profession.update({
+      where: { id: p.id },
+      data: {
+        workflowUrl: dto.workflowUrl,
+        defaultSwitches: dto.defaultSwitches as Prisma.InputJsonValue,
+      },
+    });
+    await this.audit.record({
+      actorUserId,
+      action: "admin.profession_workflow_updated",
+      target: `profession:${p.id}`,
+      metadata: { slug: p.slug, connected: Boolean(dto.workflowUrl), switches: dto.defaultSwitches.length },
+    });
+    return this.getProfessionWorkflow(p.id);
+  }
 
   async get(assistantId: string): Promise<AdminAssistantSetup> {
     const a = await this.prisma.assistant.findFirst({

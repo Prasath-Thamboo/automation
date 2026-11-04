@@ -71,6 +71,8 @@ export interface SubscriptionSummary {
   setupEur: number;
   currentPeriodEnd: string | null;
   canceledAt: string | null;
+  /** Lot 16 — fin de l'essai gratuit (prêt à l'emploi), null sinon. */
+  trialEndsAt: string | null;
 }
 
 export interface DocumentsBundle {
@@ -190,6 +192,7 @@ export const subscriptionSummarySchema: z.ZodType<SubscriptionSummary> = z.objec
   monthlyEur: z.number(),
   setupEur: z.number(),
   currentPeriodEnd: z.string().nullable(),
+  trialEndsAt: z.string().nullable(),
   canceledAt: z.string().nullable(),
 });
 

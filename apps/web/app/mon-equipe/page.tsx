@@ -6,6 +6,8 @@ import type { AssistantCard } from "@tando/api-client";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { SignOutButton } from "@/components/sign-out-button";
+import { Cta } from "@/components/cta";
+import { ArrowRight } from "@/components/icons";
 
 export const metadata: Metadata = { title: "Mon équipe", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -16,9 +18,14 @@ const STATE_LABEL: Record<AssistantCard["state"], string> = {
   en_pause: glossary.states.paused,
 };
 const STATE_STYLE: Record<AssistantCard["state"], string> = {
-  en_formation: "bg-accent-100 text-accent-600",
+  en_formation: "bg-accent-100 text-accent-700",
   au_travail: "bg-primary-50 text-primary-700",
   en_pause: "bg-ink-100 text-ink-700",
+};
+const STATE_DOT: Record<AssistantCard["state"], string> = {
+  en_formation: "bg-accent-500",
+  au_travail: "bg-primary-500",
+  en_pause: "bg-ink-400",
 };
 
 export default async function MonEquipePage() {
@@ -28,47 +35,34 @@ export default async function MonEquipePage() {
   const { assistants } = await (await sessionApi()).me.team();
 
   return (
-    <section className="mx-auto flex max-w-content flex-col gap-6 px-4 py-14 sm:px-6 sm:py-20">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold text-ink-900">{glossary.assistant.teamPage}</h1>
-        <div className="flex items-center gap-3 text-sm">
-          <Link href="/mon-equipe/documents" className="font-semibold text-primary-700 no-underline">
-            Mes documents
-          </Link>
-          <Link href="/mon-equipe/compte" className="font-semibold text-primary-700 no-underline">
-            Mon compte
-          </Link>
-          <SignOutButton />
+    <section className="mx-auto flex max-w-content flex-col gap-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-lg text-ink-700">
+            Bonjour {user.fullName ?? user.email} — {user.organizationName}.
+          </p>
+          <h1 className="mt-1 text-3xl text-ink-950 sm:text-4xl">{glossary.assistant.teamPage}</h1>
         </div>
+        <SignOutButton />
       </div>
 
-      <p className="text-base text-ink-700">
-        Bonjour {user.fullName ?? user.email} — {user.organizationName}.
-      </p>
-
       {assistants.length === 0 ? (
-        <div className="rounded-lg border border-ink-100 bg-white p-6">
-          <p className="text-lg font-semibold text-ink-900">Votre équipe est encore vide.</p>
-          <p className="mt-2 text-base text-ink-700">
+        <div className="card sm:p-10">
+          <p className="font-heading text-2xl font-bold text-ink-900">Votre équipe est encore vide.</p>
+          <p className="mt-3 max-w-2xl text-base text-ink-700">
             Choisissez un employé déjà formé à votre métier, ou décrivez votre besoin sur mesure.
           </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href="/employes-virtuels"
-              className="inline-flex min-h-touch items-center rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white no-underline"
-            >
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Cta href="/employes-virtuels" arrow>
               Voir les employés disponibles
-            </Link>
-            <Link
-              href="/questionnaire"
-              className="inline-flex min-h-touch items-center rounded-md border border-primary-600 px-5 py-2 text-base font-semibold text-primary-700 no-underline"
-            >
+            </Cta>
+            <Cta href="/questionnaire" variant="secondary">
               Décrire mon besoin
-            </Link>
+            </Cta>
           </div>
         </div>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {assistants.map((a) => (
             <li key={a.id}>
               <Link
@@ -77,30 +71,45 @@ export default async function MonEquipePage() {
                     ? `/mon-equipe/assistants/${a.id}`
                     : `/mon-equipe/assistants/${a.id}/premier-jour`
                 }
-                className="flex h-full flex-col rounded-lg border border-ink-100 bg-white p-5 no-underline transition-colors hover:border-primary-600"
+                className="card-link group flex h-full flex-col"
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-ink-900">{a.name}</span>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${STATE_STYLE[a.state]}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <span
+                    aria-hidden
+                    className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 font-heading text-2xl font-bold text-white shadow-glow"
+                  >
+                    {a.name.slice(0, 1).toUpperCase()}
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-bold ${STATE_STYLE[a.state]}`}
+                  >
+                    <span aria-hidden className={`h-2.5 w-2.5 rounded-full ${STATE_DOT[a.state]}`} />
                     {STATE_LABEL[a.state]}
                   </span>
                 </div>
-                <span className="mt-1 text-base text-ink-700">{a.role}</span>
+                <span className="mt-5 font-heading text-2xl font-bold text-ink-900">{a.name}</span>
+                <span className="mt-1 flex-1 text-base text-ink-700">{a.role}</span>
                 {a.onboarding !== "termine" ? (
-                  <span className="mt-3 text-sm font-semibold text-accent-600">
-                    Terminer sa mise en service →
+                  <span className="mt-5 inline-flex items-center gap-2 rounded-md bg-accent-50 px-4 py-3 text-base font-bold text-accent-700">
+                    Terminer sa mise en service
+                    <ArrowRight className="h-5 w-5" />
                   </span>
-                ) : null}
+                ) : (
+                  <span className="mt-5 inline-flex items-center gap-2 text-base font-bold text-primary-700">
+                    Voir sa fiche
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                )}
               </Link>
             </li>
           ))}
         </ul>
       )}
 
-      <p className="text-sm text-ink-500">
+      <p className="text-base text-ink-700">
         Une question ?{" "}
-        <Link href="/contact" className="font-semibold text-primary-700">
-          {glossary.actions.talkToHuman}
+        <Link href="/mon-equipe/aide" className="font-semibold text-primary-700 underline">
+          Posez-la ici
         </Link>
       </p>
     </section>

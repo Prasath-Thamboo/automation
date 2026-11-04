@@ -25,6 +25,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             ["/admin/prix", "Prix"],
             ["/admin/clients", "Clients"],
             ["/admin/factures", "Factures"],
+            ["/admin/aide", "Aide"],
           ] as const
         ).map(([href, label]) => (
           <Link

@@ -59,7 +59,7 @@ describe("CatalogService.list", () => {
         ]),
       },
     };
-    const svc = new CatalogService(prisma as never);
+    const svc = new CatalogService(prisma as never, { CATALOG_TRIAL_DAYS: 14 });
     const res = await svc.list();
 
     expect(res.professions.map((p) => p.slug)).toEqual(["dentiste", "coiffure"]);

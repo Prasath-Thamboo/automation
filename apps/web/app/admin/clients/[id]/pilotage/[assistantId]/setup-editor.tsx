@@ -16,7 +16,7 @@ const button =
 
 function Feedback({ state }: { state: SetupActionState }) {
   if (state.error) return <p className="text-sm text-red-700">{state.error}</p>;
-  if (state.ok) return <p className="text-sm text-primary-700">{state.ok}</p>;
+  if (state.ok) return <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">{state.ok}</p>;
   return null;
 }
 

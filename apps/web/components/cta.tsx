@@ -1,23 +1,39 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
+import { ArrowRight } from "./icons";
 
-type Variant = "primary" | "secondary";
+type Variant = "primary" | "secondary" | "light";
+type Size = "md" | "lg";
 
 const styles: Record<Variant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700",
-  secondary: "border border-primary-600 bg-white text-primary-700 hover:bg-primary-50",
+  primary: "bg-primary-600 text-white shadow-glow hover:bg-primary-700",
+  secondary:
+    "border-2 border-primary-600 bg-white text-primary-700 hover:bg-primary-50",
+  light: "bg-white text-primary-800 shadow-lift hover:bg-primary-50",
 };
 
-/** Lien d'appel à l'action. Cible tactile 44px minimum, texte 16px minimum (§9.5). */
+const sizes: Record<Size, string> = {
+  md: "min-h-[52px] px-6 py-3 text-base",
+  lg: "min-h-[60px] px-8 py-4 text-lg",
+};
+
+/**
+ * Lien d'appel à l'action. Bouton « pilule », texte 18px minimum, cible 52px
+ * minimum (§9.5). `arrow` ajoute une flèche décorative pour guider l'œil.
+ */
 export function Cta({
   href,
   variant = "primary",
+  size = "md",
+  arrow = false,
   children,
   className = "",
   ...rest
 }: {
   href: string;
   variant?: Variant;
+  size?: Size;
+  arrow?: boolean;
   children: ReactNode;
   className?: string;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">) {
@@ -25,9 +41,12 @@ export function Cta({
     <Link
       href={href}
       {...rest}
-      className={`inline-flex min-h-touch items-center justify-center rounded-md px-6 py-3 text-base font-semibold no-underline transition-colors ${styles[variant]} ${className}`}
+      className={`group inline-flex items-center justify-center gap-2 rounded-full text-center font-bold no-underline transition duration-200 hover:-translate-y-0.5 ${sizes[size]} ${styles[variant]} ${className}`}
     >
       {children}
+      {arrow ? (
+        <ArrowRight className="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+      ) : null}
     </Link>
   );
 }

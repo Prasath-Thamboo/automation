@@ -21,7 +21,7 @@ export function CreditNoteForm({ invoiceId }: { invoiceId: string }) {
       </button>
     );
   }
-  if (state.ok) return <span className="text-sm text-primary-700">{state.ok}</span>;
+  if (state.ok) return <span className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">{state.ok}</span>;
 
   return (
     <form action={action} className="flex flex-wrap items-end gap-2">

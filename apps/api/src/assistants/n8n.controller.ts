@@ -113,3 +113,41 @@ export class N8nController {
     return a;
   }
 }
+
+/**
+ * Lot 16 — flux génériques d'un métier (offre prêt à l'emploi). Un flux
+ * planifié partagé liste les employés qu'il sert, puis agit pour chacun avec
+ * ses propres données et rend compte via `/n8n/assistants/:id/*`.
+ */
+@ApiTags("n8n")
+@Controller("n8n/professions")
+export class N8nProfessionsController {
+  constructor(
+    @Inject(ENV) private readonly env: Env,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  @Get(":slug/assistants")
+  async assistants(
+    @Headers("x-tando-token") token: string | undefined,
+    @Param("slug") slug: string,
+  ): Promise<{ assistants: WorkflowState[] }> {
+    if (!safeEqual(token, n8nToken(this.env))) throw new ForbiddenException("Accès refusé.");
+    // Seuls ceux qui passent par le flux du métier (pas de flux propre).
+    const rows = await this.prisma.assistant.findMany({
+      where: { professionSlug: slug, workflowUrl: null, deletedAt: null },
+      include: { switches: true },
+      orderBy: { createdAt: "asc" },
+    });
+    return {
+      assistants: rows.map((a) => ({
+        assistantId: a.id,
+        name: a.name,
+        working: a.state === "au_travail",
+        state: a.state,
+        switches: Object.fromEntries(a.switches.map((s) => [s.key, s.enabled])),
+        establishment: (a.establishment as Record<string, unknown>) ?? {},
+      })),
+    };
+  }
+}

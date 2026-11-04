@@ -13,6 +13,7 @@ function ctx(overrides: Partial<RuntimeContext> = {}): RuntimeContext {
       role: "votre assistante",
       professionSlug: null,
       workflowUrl: null,
+      workflowScope: null,
       jobDescription: { limits: ["Ne jamais donner un prix"], hours: "" },
       establishment: { openingHours: "Lun-Ven 9h-18h", address: "12 rue Centrale" },
       specifics: { parking: "Un parking se trouve derrière le bâtiment." },

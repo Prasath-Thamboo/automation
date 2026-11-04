@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 /**
@@ -40,6 +41,20 @@ const config: NextConfig = {
   experimental: {
     // Les packages de l'atelier sont en TS non transpilé.
     externalDir: true,
+  },
+  /**
+   * `@tando/types` est publié compilé en CommonJS (`dist/`, pour l'API Nest).
+   * Lien pnpm hors de `node_modules` : `next dev` y injecte le rechargement à
+   * chaud (`import.meta.webpackHot`), invalide en CommonJS → « Cannot use
+   * 'import.meta' outside a module ». Le web le compile donc depuis ses
+   * sources TypeScript, comme `@tando/copy` et `@tando/api-client`.
+   */
+  webpack(webpackConfig: { resolve: { alias?: Record<string, string | false | string[]> } }) {
+    webpackConfig.resolve.alias = {
+      ...webpackConfig.resolve.alias,
+      "@tando/types$": path.resolve(__dirname, "../../packages/types/src/index.ts"),
+    };
+    return webpackConfig;
   },
   async headers() {
     return [

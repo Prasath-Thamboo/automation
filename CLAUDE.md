@@ -177,7 +177,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Lot 5 — Espace client et mise en service : fait.**
   - Modèle : `assistants`, `assistant_instructions` (versionnées), `conversations`,
     `messages`, `escalations`.
-  - **Embauche** (seul chemin depuis le Lot 13 bis) : l'assistant est créé à la volée depuis la mission acceptée (Lot 3)
+  - **Embauche** : sur mesure, l'assistant est créé à la volée depuis la mission acceptée (Lot 3) ; prêt à l'emploi, par souscription en libre-service (Lot 16)
     à la première visite de « Mon équipe ».
   - **Premier jour (§5.2)** : `/mon-equipe/assistants/[id]/premier-jour`, 4 écrans
     (informations · spécificités du métier depuis le schéma du modèle · comment il vous
@@ -464,6 +464,87 @@ pnpm dev                        # api (:3333) + web (:3000)
   - Env : `N8N_WEBHOOK_URL` supprimée → `N8N_BASE_URL` (facultative).
   - e2e `pilotage.spec.ts`. Contrat complet : `docs/n8n/README.md`.
 
+- **Lot 15 — Aide au patron « Une question ? » : fait.**
+  - Modèle : `HelpArticle` (`help_articles` : `slug` unique, `question`,
+    `keywords[]`, `answer`, `action` = renvoi aucune|equipe|documents|compte|reglages|carnet,
+    `published`, `position` — contenu global, éditable sans redéploiement) et
+    `HelpRequest` (`help_requests`, par organisation : `status`
+    repondue|sans_reponse|transmise|traitee, `helpful`, `staffAnswer`).
+    Migration `20261016100000_help_desk`. 19 réponses semées
+    (`prisma/seed-data/help.ts`).
+  - Moteur : `help-matcher.ts` (pur, testé, sans fournisseur de modèle) —
+    recouvrement de racines (question ×1, mot-clé ×2, expression-clé +3).
+    Répond si score ≥ 3 (ou question courte entièrement couverte) **et** fiche
+    seule en tête ; sinon pistes (« Vous cherchez peut-être… ») et bouton
+    « Transmettre à l'équipe Tando ». Jamais de réponse inventée.
+  - API : `GET /me/help`, `POST /me/help/ask` (`articleId` facultatif = question
+    proposée choisie), `POST /me/help/requests/:id/feedback|transmit` (email
+    interne vers `HELP_DESK_EMAIL`, défaut `MAIL_FROM`). Back-office
+    `/admin/help/articles` (CRUD) et `/admin/help/requests[?status=]`,
+    `POST /admin/help/requests/:id/answer` → email au client + push
+    (`PushService.notifyHelpAnswered`, `data.screen = "help"`). Audit sur
+    transmission, réponse et mutations. Export RGPD : `helpRequests`.
+  - Web : onglet « Une question ? » (`/mon-equipe/aide`), lien depuis « Mon
+    équipe » ; back-office `/admin/aide` (à traiter · trous dans la base · base
+    de réponses avec compteurs servie / jugée inutile · déjà répondues), textes
+    passés au filtre anti-jargon. Mobile : écran `aide` (lien depuis « Mon
+    équipe », notification → écran). Copy : `helpCopy`, `clientNav.help`.
+  - Le test anti-jargon scanne désormais aussi `apps/api/prisma/seed-data`
+    (catalogue corrigé : « pour un agent » → « pour un conseiller de l'agence »).
+
+- **Lot 16 — Prêt à l'emploi générique (89 €) : fait.** Revient en partie sur
+  le Lot 13 bis : le catalogue redevient souscriptible en libre-service.
+  - Modèle : `Profession.workflowUrl` (flux n8n **générique du métier**, partagé
+    par tous ses clients) + `Profession.defaultSwitches` (JSON
+    `[{key,label,help,enabled}]`, boutons créés à chaque embauche) ;
+    `Subscription.trialEndsAt`. Migration `20261019100000_catalog_generic_flow`.
+  - Moteur : `RuntimeService` résout le flux **employé → métier → règles** ;
+    `RuntimeAssistant.workflowScope` = `client` | `metier` | null (envoyé au flux).
+    Multi-clients : chaque appel porte les données du client, le flux ne stocke
+    rien. Flux planifiés partagés : `GET /n8n/professions/:slug/assistants`
+    (`N8nProfessionsController`, jeton `X-Tando-Token`).
+  - Souscription : `POST /me/catalog/subscribe { slug }` →
+    `CatalogSubscribeService` (idempotent ; **un seul contrat ouvert par
+    organisation** → 409 sinon) → `BillingService.startCatalogSubscription`
+    (essai `CATALOG_TRIAL_DAYS`, défaut 14 ; première facture mensuelle à la fin
+    de l'essai via la file `billing`) → employé créé depuis la fiche publiée
+    (nom, rôle, tâches, limites) → premier jour. `trialDays` exposé dans la
+    fiche publique.
+  - **Pas de carte enregistrée** : le rail de paiement ne fait que du paiement
+    facture par facture. Essai sans carte ; la 1re facture se règle depuis « Mes
+    documents ». Prélèvement automatique (Stripe SetupIntent / off-session) = à
+    ajouter derrière `PaymentProvider`.
+  - Web : fiche métier → « Essayer X 14 jours gratuitement » →
+    `/employes-virtuels/[slug]/souscrire` (connexion requise, `?suite=`) ; le
+    questionnaire reste en appel secondaire. Essai affiché dans « Mes documents »,
+    « Mon compte » (web + mobile). Back-office : section « Flux n8n générique »
+    sur `/admin/metiers/[id]` (`GET/PATCH /admin/professions/:id/workflow`, URL
+    vérifiée par `assertAllowedUrl`, libellés au filtre anti-jargon). Copy :
+    `subscribeCopy`. CGV : clause de paiement alignée sur l'essai.
+  - Doc : `docs/n8n/README.md` (« Flux générique d'un métier »). e2e
+    `pret-a-l-emploi.spec.ts` (2 tests) ; `parcours-mvp` suit le nouveau CTA.
+
+### Notes Lot 16
+
+- **Non exécuté contre la pile** (Docker éteint) : migration non appliquée,
+  e2e non lancés. `pnpm build` d'`apps/api` échoue en EPERM tant que `pnpm dev`
+  tourne (verrou Prisma, cf. Notes Lot 2) — `nest build` seul passe.
+- Vérifié : lint + typecheck + test verts (126 tests API dont 4
+  `catalog-subscribe`), build web OK.
+- **Textes à revoir** (choix commerciaux) : landing « Pas d'entretien, pas de
+  période d'essai… » (`landing.ts`, métaphore qui contredit désormais l'essai de
+  14 jours).
+
+### Notes Lot 15
+
+- **Non exécuté contre la pile** (Docker Desktop éteint) : migration non
+  appliquée, e2e `aide.spec.ts` (2 tests) écrit mais pas lancé. À faire :
+  `pnpm db:up && pnpm db:migrate:deploy && pnpm db:seed`, puis la suite e2e.
+- Vérifié : `turbo run lint typecheck test build` vert (27 tâches, 122 tests
+  API dont 18 du matcher), bundle `expo export --platform ios` OK.
+- Les routes typées Expo (`.expo/types/router.d.ts`, ignoré par git) se
+  régénèrent au prochain `expo start` avec l'écran `aide`.
+
 ### Notes Lot 14
 
 - La validation anti-jargon des libellés de boutons est faite côté web
@@ -490,9 +571,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   domaine MX, vérification d'entreprise et revue d'app Meta). Pas de
   conversation vocale (appel → renvoi ou SMS). Pas de messages modèles
   WhatsApp (au-delà de 24 h).
-- En `pnpm dev`, Next échoue à compiler `@tando/types` (CommonJS) dans les
-  composants clients qui importent `@tando/api-client` (`/questionnaire`,
-  `/formulaire/*`) — les e2e tournent sur les builds (`start`).
+- ~~En `pnpm dev`, Next échouait à compiler `@tando/types` (« Cannot use 'import.meta' outside a module »)~~ — **corrigé** : le lien pnpm vers `packages/types/dist` (CommonJS) est hors de `node_modules`, Next y injectait le rechargement à chaud. `apps/web/next.config.ts` fait pointer `@tando/types` vers ses sources TS (alias webpack) ; l'API garde `dist/`.
 
 ### Notes Lot 11
 

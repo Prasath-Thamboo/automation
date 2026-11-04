@@ -105,6 +105,47 @@ export class BillingService {
     }
   }
 
+  /**
+   * Lot 16 — abonnement « prêt à l'emploi » souscrit en libre-service : pas de
+   * mise en service, essai gratuit de `trialDays` jours. La première facture
+   * mensuelle part à la fin de l'essai (file `billing`) ; résilier avant = rien
+   * à payer. Pas de carte enregistrée : le client règle chaque facture.
+   */
+  async startCatalogSubscription(input: {
+    organizationId: string;
+    formula: string;
+    monthlyCents: number;
+    trialDays: number;
+  }): Promise<{ id: string }> {
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + Math.max(0, input.trialDays) * DAY);
+    const sub = await this.prisma.subscription.create({
+      data: {
+        organizationId: input.organizationId,
+        formula: input.formula,
+        monthlyCents: input.monthlyCents,
+        setupCents: 0,
+        vatRatePct: this.env.VAT_RATE_PCT,
+        status: "active",
+        startedAt: now,
+        currentPeriodEnd: trialEnd,
+        trialEndsAt: input.trialDays > 0 ? trialEnd : null,
+        providerRef: this.provider.name,
+      },
+    });
+    await this.queue.enqueueBillingJob(
+      { type: "monthly", subscriptionId: sub.id },
+      trialEnd.getTime() - now.getTime(),
+    );
+    await this.audit.record({
+      organizationId: input.organizationId,
+      action: "subscription.activated",
+      target: `subscription:${sub.id}`,
+      metadata: { formula: input.formula, trialDays: input.trialDays },
+    });
+    return { id: sub.id };
+  }
+
   /** Résiliation (§6). L'abonnement s'arrête ; les factures restent inchangées. */
   async cancelSubscription(organizationId: string): Promise<SubscriptionSummary | null> {
     const sub = await this.prisma.subscription.findFirst({
@@ -599,6 +640,7 @@ function toSubSummary(sub: {
   setupCents: number;
   currentPeriodEnd: Date | null;
   canceledAt: Date | null;
+  trialEndsAt: Date | null;
 }): SubscriptionSummary {
   return {
     status: sub.status as SubscriptionStatus,
@@ -608,5 +650,6 @@ function toSubSummary(sub: {
     setupEur: sub.setupCents / 100,
     currentPeriodEnd: sub.currentPeriodEnd ? sub.currentPeriodEnd.toISOString() : null,
     canceledAt: sub.canceledAt ? sub.canceledAt.toISOString() : null,
+    trialEndsAt: sub.trialEndsAt ? sub.trialEndsAt.toISOString() : null,
   };
 }

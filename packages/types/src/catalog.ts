@@ -82,6 +82,8 @@ export interface CatalogList {
 
 export interface ProfessionDetail extends ProfessionCard {
   setupPriceEur: number;
+  /** Lot 16 — jours d'essai gratuit de l'offre prêt à l'emploi (0 = aucun). */
+  trialDays: number;
   content: TemplateContent;
 }
 
@@ -185,6 +187,7 @@ export const professionDetailSchema: z.ZodType<ProfessionDetail> = z.object({
   assistantName: z.string(),
   monthlyPriceEur: z.number().int(),
   setupPriceEur: z.number().int(),
+  trialDays: z.number().int(),
   content: templateContentSchema,
 });
 

@@ -30,8 +30,9 @@ test("landing → fiche dentiste → besoin → devis accepté → employé virt
   await page.locator('a[href="/employes-virtuels/dentiste"]').first().click();
   await expect(page).toHaveURL(/\/employes-virtuels\/dentiste$/);
 
-  // 3. L'appel à l'action mène au questionnaire de besoin
-  await page.getByRole("link", { name: /décrire mon besoin/i }).last().click();
+  // 3. L'appel secondaire (besoin plus précis) mène au questionnaire ; le
+  //    libre-service est couvert par `pret-a-l-emploi.spec.ts`.
+  await page.getByRole("link", { name: /quelque chose de plus précis/i }).last().click();
   await expect(page).toHaveURL(/\/questionnaire/);
 
   // 4. Besoin → devis envoyé par le back-office → acceptation (via l'API)

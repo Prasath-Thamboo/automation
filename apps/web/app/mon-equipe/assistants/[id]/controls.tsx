@@ -25,7 +25,7 @@ export function PauseControl({ id, paused }: { id: string; paused: boolean }) {
             setError(r.error);
           })
         }
-        className="min-h-touch rounded-md border border-primary-600 px-4 py-2 text-sm font-semibold text-primary-700 disabled:opacity-60"
+        className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-sm font-bold text-primary-700 disabled:opacity-60 bg-white transition-colors hover:bg-primary-50"
       >
         {pending ? "…" : paused ? "Le remettre au travail" : "Le mettre en pause"}
       </button>
@@ -38,7 +38,7 @@ export function PauseControl({ id, paused }: { id: string; paused: boolean }) {
 export function SwitchList({ id, switches }: { id: string; switches: AssistantSwitch[] }) {
   if (switches.length === 0) return <p className="mt-3 text-sm text-ink-500">{sx.empty}</p>;
   return (
-    <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+    <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
       {switches.map((s) => (
         <SwitchRow key={s.key} id={id} sw={s} />
       ))}
@@ -68,8 +68,7 @@ function SwitchRow({ id, sw }: { id: string; sw: AssistantSwitch }) {
             setError(r.error);
           })
         }
-        className={`min-h-touch min-w-[96px] shrink-0 rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60 ${
-          sw.enabled ? "bg-primary-600 text-white" : "border border-ink-300 text-ink-700"
+        className={`min-h-touch min-w-[96px] shrink-0 rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60 ${ sw.enabled ? "bg-primary-600 text-white" : "border border-ink-300 text-ink-700"
         }`}
       >
         {pending ? "…" : sw.enabled ? sx.on : sx.off}
@@ -89,14 +88,14 @@ export function InstructionForm({ id }: { id: string }) {
         name="text"
         rows={2}
         placeholder="Ex. : quand on demande le parking, dis qu'il y en a un derrière le bâtiment."
-        className="w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+        className="w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
       />
       {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
-      {state.ok ? <p className="text-sm text-primary-700">Consigne ajoutée.</p> : null}
+      {state.ok ? <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">Consigne ajoutée.</p> : null}
       <button
         type="submit"
         disabled={saving}
-        className="min-h-touch self-start rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+        className="min-h-touch self-start rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
       >
         {saving ? "…" : "Ajouter la consigne"}
       </button>
@@ -128,7 +127,7 @@ export function EscalationCard({ escalation, assistantId }: { escalation: Escala
   const done = escalation.status === "repondue" || state.ok;
 
   return (
-    <div className="rounded-lg border border-ink-100 bg-white p-4">
+    <div className="rounded-lg border border-ink-100 bg-white p-4 shadow-soft">
       <p className="text-base font-semibold text-ink-900">{escalation.question}</p>
       {escalation.context ? (
         <p className="mt-1 text-sm text-ink-500">{escalation.context}</p>
@@ -144,13 +143,13 @@ export function EscalationCard({ escalation, assistantId }: { escalation: Escala
             name="answer"
             rows={2}
             placeholder="Votre réponse — il reprendra la main avec."
-            className="w-full rounded-md border border-ink-100 px-3 py-2 text-base"
+            className="w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
           />
           {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
           <button
             type="submit"
             disabled={saving}
-            className="min-h-touch self-start rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+            className="min-h-touch self-start rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
           >
             {saving ? "…" : "Répondre"}
           </button>

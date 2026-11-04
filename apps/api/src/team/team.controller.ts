@@ -17,6 +17,7 @@ import {
   answerEscalationSchema,
   onboardingStepSchema,
   setSwitchSchema,
+  subscribeCatalogSchema,
   simulateSchema,
   updateAccountSchema,
   type AccountInfo,
@@ -28,6 +29,7 @@ import {
   type MobileBillingView,
   type OnboardingStep,
   type SetSwitch,
+  type SubscribeCatalog,
   type RuntimeTurn,
   type SessionUser,
   type Simulate,
@@ -42,6 +44,7 @@ import { RuntimeService } from "../assistants/runtime.service";
 import { AssistantService } from "./assistant.service";
 import { EscalationsService } from "./escalations.service";
 import { AccountService } from "./account.service";
+import { CatalogSubscribeService } from "./catalog-subscribe.service";
 
 @ApiTags("team")
 @Controller("me")
@@ -52,12 +55,22 @@ export class TeamController {
     private readonly escalations: EscalationsService,
     private readonly account: AccountService,
     private readonly runtime: RuntimeService,
+    private readonly catalog: CatalogSubscribeService,
   ) {}
 
   @Get("team")
   @ApiOkResponse({ description: "Les employés virtuels de l'organisation et leur état." })
   team(@CurrentUser() user: SessionUser): Promise<TeamList> {
     return this.assistants.team(user.organizationId);
+  }
+
+  /** Lot 16 — embauche « prêt à l'emploi » en libre-service (essai gratuit). */
+  @Post("catalog/subscribe")
+  subscribe(
+    @CurrentUser() user: SessionUser,
+    @Body(new ZodValidationPipe(subscribeCatalogSchema)) body: SubscribeCatalog,
+  ): Promise<{ assistantId: string }> {
+    return this.catalog.subscribe(user.organizationId, body.slug);
   }
 
   @Get("today")

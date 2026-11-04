@@ -104,6 +104,8 @@ function routeFromData(
     router.push("/(app)/reglages");
   } else if (screen === "today") {
     router.push("/(app)/aujourdhui");
+  } else if (screen === "help") {
+    router.push("/(app)/aide");
   }
 }
 

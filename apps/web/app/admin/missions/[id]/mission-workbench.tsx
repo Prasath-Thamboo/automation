@@ -39,7 +39,7 @@ export function StatusControls({ mission }: { mission: AdminMissionDetail }) {
           </button>
         ))}
       </div>
-      {message.ok ? <p className="text-sm text-primary-700">{message.ok}</p> : null}
+      {message.ok ? <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">{message.ok}</p> : null}
       {message.error ? <p className="text-sm text-danger">{message.error}</p> : null}
     </div>
   );
@@ -96,7 +96,7 @@ export function ChecklistEditor({
           {pending ? "…" : "Enregistrer la check-list"}
         </button>
       </div>
-      {state.ok ? <p className="text-sm text-primary-700">{state.ok}</p> : null}
+      {state.ok ? <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">{state.ok}</p> : null}
       {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
     </form>
   );

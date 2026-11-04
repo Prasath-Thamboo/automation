@@ -43,7 +43,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
   }
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-14 sm:px-6 sm:py-20">
+    <section className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
         Le premier jour de {assistant.name}
       </p>
@@ -201,7 +201,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
             <button
               type="button"
               onClick={() => setStep(2)}
-              className="min-h-touch rounded-md border border-primary-600 px-5 py-2 text-base font-semibold text-primary-700"
+              className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
             >
               Précédent
             </button>
@@ -209,7 +209,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               type="button"
               disabled={pending}
               onClick={finish}
-              className="min-h-touch rounded-md bg-primary-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60"
+              className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
             >
               {pending ? "…" : "Il peut commencer"}
             </button>
@@ -237,7 +237,7 @@ function Nav({
         <button
           type="button"
           onClick={onBack}
-          className="min-h-touch rounded-md border border-primary-600 px-5 py-2 text-base font-semibold text-primary-700"
+          className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
         >
           Précédent
         </button>
@@ -246,7 +246,7 @@ function Nav({
         type="button"
         disabled={pending}
         onClick={onNext}
-        className="min-h-touch rounded-md bg-primary-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60"
+        className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
       >
         {pending ? "…" : "Suivant"}
       </button>

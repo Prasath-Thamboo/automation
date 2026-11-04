@@ -4,6 +4,25 @@
  * et valider. Les réponses sont vérifiées avec les schémas de `@tando/types`.
  */
 import {
+  adminProfessionWorkflowSchema,
+  type AdminProfessionWorkflow,
+  type UpdateProfessionWorkflow,
+  adminHelpArticleListSchema,
+  adminHelpArticleSchema,
+  adminHelpRequestListSchema,
+  helpHomeSchema,
+  helpReplySchema,
+  helpRequestItemSchema,
+  type AdminHelpArticle,
+  type AdminHelpArticleList,
+  type AdminHelpRequestList,
+  type AskHelp,
+  type CreateHelpArticle,
+  type HelpHome,
+  type HelpReply,
+  type HelpRequestItem,
+  type HelpRequestStatus,
+  type UpdateHelpArticle,
   adminAssistantSetupSchema,
   type AdminAssistantSetup,
   type CreateSwitch,
@@ -350,6 +369,13 @@ export function createApiClient(options: ApiClientOptions) {
       },
 
       // ── Mon équipe (§6) ──────────────────────────────────────────────────
+      /** Lot 16 — embauche « prêt à l'emploi » en libre-service (essai gratuit). */
+      subscribeCatalog(slug: string): Promise<{ assistantId: string }> {
+        return request("/me/catalog/subscribe", z.object({ assistantId: z.string().uuid() }), {
+          method: "POST",
+          body: JSON.stringify({ slug }),
+        });
+      },
       team(): Promise<TeamList> {
         return request("/me/team", teamListSchema);
       },
@@ -454,6 +480,30 @@ export function createApiClient(options: ApiClientOptions) {
         return request("/me/notification-preferences", notificationPrefsSchema, {
           method: "PUT",
           body: JSON.stringify(body),
+        });
+      },
+    },
+
+    /** « Une question ? » — aide au patron (Lot 15, session requise). */
+    help: {
+      home(): Promise<HelpHome> {
+        return request("/me/help", helpHomeSchema);
+      },
+      ask(body: AskHelp): Promise<HelpReply> {
+        return request("/me/help/ask", helpReplySchema, {
+          method: "POST",
+          body: JSON.stringify(body),
+        });
+      },
+      feedback(id: string, helpful: boolean): Promise<HelpRequestItem> {
+        return request(`/me/help/requests/${id}/feedback`, helpRequestItemSchema, {
+          method: "POST",
+          body: JSON.stringify({ helpful }),
+        });
+      },
+      transmit(id: string): Promise<HelpRequestItem> {
+        return request(`/me/help/requests/${id}/transmit`, helpRequestItemSchema, {
+          method: "POST",
         });
       },
     },
@@ -599,6 +649,19 @@ export function createApiClient(options: ApiClientOptions) {
 
       /** Flux n8n et boutons de pilotage d'un employé (Lot 14). */
       setup: {
+        /** Lot 16 — flux générique d'un métier + boutons par défaut. */
+        professionWorkflow(professionId: string): Promise<AdminProfessionWorkflow> {
+          return request(`/admin/professions/${professionId}/workflow`, adminProfessionWorkflowSchema);
+        },
+        setProfessionWorkflow(
+          professionId: string,
+          body: UpdateProfessionWorkflow,
+        ): Promise<AdminProfessionWorkflow> {
+          return request(`/admin/professions/${professionId}/workflow`, adminProfessionWorkflowSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
         get(assistantId: string): Promise<AdminAssistantSetup> {
           return request(`/admin/assistants/${assistantId}/setup`, adminAssistantSetupSchema);
         },
@@ -622,6 +685,38 @@ export function createApiClient(options: ApiClientOptions) {
         },
         removeSwitch(id: string): Promise<AdminAssistantSetup> {
           return request(`/admin/switches/${id}`, adminAssistantSetupSchema, { method: "DELETE" });
+        },
+      },
+
+      /** Base de réponses « Une question ? » et questions des clients (Lot 15). */
+      help: {
+        articles(): Promise<AdminHelpArticleList> {
+          return request("/admin/help/articles", adminHelpArticleListSchema);
+        },
+        createArticle(body: CreateHelpArticle): Promise<AdminHelpArticle> {
+          return request("/admin/help/articles", adminHelpArticleSchema, {
+            method: "POST",
+            body: JSON.stringify(body),
+          });
+        },
+        updateArticle(id: string, body: UpdateHelpArticle): Promise<{ ok: true }> {
+          return request(`/admin/help/articles/${id}`, okSchema, {
+            method: "PATCH",
+            body: JSON.stringify(body),
+          });
+        },
+        removeArticle(id: string): Promise<{ ok: true }> {
+          return request(`/admin/help/articles/${id}`, okSchema, { method: "DELETE" });
+        },
+        requests(status?: HelpRequestStatus): Promise<AdminHelpRequestList> {
+          const qs = status ? `?status=${encodeURIComponent(status)}` : "";
+          return request(`/admin/help/requests${qs}`, adminHelpRequestListSchema);
+        },
+        answer(id: string, answer: string): Promise<{ ok: true }> {
+          return request(`/admin/help/requests/${id}/answer`, okSchema, {
+            method: "POST",
+            body: JSON.stringify({ answer }),
+          });
         },
       },
 
@@ -715,4 +810,14 @@ export type {
   RegisterPushToken,
   UpdateNotificationPrefs,
   DevicePlatform,
+  AdminProfessionWorkflow,
+  DefaultSwitch,
+  HelpAction,
+  HelpTopic,
+  HelpHome,
+  HelpReply,
+  HelpRequestItem,
+  HelpRequestStatus,
+  AdminHelpArticle,
+  AdminHelpRequest,
 } from "@tando/types";

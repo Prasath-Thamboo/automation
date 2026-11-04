@@ -99,7 +99,7 @@ export const conditionsGenerales: LegalPage = {
     {
       heading: "Prix et paiement",
       paragraphs: [
-        "Les prix affichés sont mensuels et toutes taxes comprises. Le paiement s'effectue par carte bancaire ou prélèvement, à la souscription puis chaque mois.",
+        "Les prix affichés sont mensuels et toutes taxes comprises. Le paiement s'effectue par carte bancaire, facture par facture, chaque mois. Pour une formule prête à l'emploi, la première facture est émise à la fin de l'essai gratuit ; une résiliation pendant l'essai n'entraîne aucun paiement.",
         "Les factures sont numérotées de façon séquentielle et ne sont jamais modifiées après émission : une erreur est corrigée par un avoir.",
       ],
     },

@@ -18,6 +18,7 @@ function ctx(workflowUrl: string | null = FLOW): RuntimeContext {
       role: "votre assistante",
       professionSlug: null,
       workflowUrl,
+      workflowScope: workflowUrl ? "client" : null,
       jobDescription: { limits: ["Ne jamais donner un prix"] },
       establishment: { openingHours: "Lun-Ven 9h-18h" },
       specifics: {},

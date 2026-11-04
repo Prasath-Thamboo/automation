@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Redirect, Tabs } from "expo-router";
+import { helpCopy } from "@tando/copy";
 import { useAuth } from "@/src/auth";
 import { useNotificationRouting } from "@/src/notifications";
 import { ConnectivityBanner } from "@/src/components";
@@ -50,6 +51,7 @@ export default function AppLayout() {
         <Tabs.Screen name="former/[assistantId]" options={{ href: null, title: "Le former" }} />
         <Tabs.Screen name="reglages" options={{ href: null, title: "Notifications" }} />
         <Tabs.Screen name="compte" options={{ href: null, title: "Mon compte" }} />
+        <Tabs.Screen name="aide" options={{ href: null, title: helpCopy.title }} />
       </Tabs>
     </View>
   );

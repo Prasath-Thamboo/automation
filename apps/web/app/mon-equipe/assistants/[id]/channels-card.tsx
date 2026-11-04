@@ -36,7 +36,7 @@ export function ChannelsCard({ channels }: { channels: AssistantChannels }) {
       <h2 className="mt-12 text-xl font-bold text-ink-900">{channelsCopy.title}</h2>
       <p className="mt-1 text-base text-ink-700">{channelsCopy.intro}</p>
 
-      <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white">
+      <ul className="mt-4 divide-y divide-ink-100 rounded-lg border border-ink-100 bg-white shadow-soft">
         {listed.map((c) => (
           <li key={`${c.kind}-${c.display}`} className="flex flex-wrap items-center justify-between gap-3 p-4">
             <div className="min-w-0">

@@ -38,14 +38,14 @@ export function DemoConversation({ demo, assistantName }: { demo: Demo; assistan
   const done = started && shown >= demo.messages.length;
 
   return (
-    <div className="rounded-lg border border-ink-100 bg-white p-5">
+    <div className="rounded-lg bg-paper p-5 sm:p-6">
       <p className="text-base text-ink-700">{demo.intro}</p>
 
       {!started ? (
         <button
           type="button"
           onClick={play}
-          className="mt-4 inline-flex min-h-touch items-center rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white hover:bg-primary-700"
+          className="mt-4 inline-flex min-h-touch items-center rounded-full bg-primary-600 px-5 py-2 text-base font-bold text-white hover:bg-primary-700 shadow-soft transition-colors"
         >
           Voir la conversation
         </button>
@@ -56,11 +56,11 @@ export function DemoConversation({ demo, assistantName }: { demo: Demo; assistan
               key={i}
               className={
                 m.from === "assistant"
-                  ? "max-w-[85%] rounded-lg rounded-bl-sm bg-primary-50 px-4 py-2 text-base text-ink-900"
-                  : "ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-ink-100 px-4 py-2 text-base text-ink-900"
+                  ? "max-w-[85%] rounded-lg rounded-bl-sm bg-primary-100 px-4 py-3 text-base text-ink-900"
+                  : "ml-auto max-w-[85%] rounded-lg rounded-br-sm bg-white px-4 py-3 text-base text-ink-900 shadow-soft"
               }
             >
-              <span className="mb-0.5 block text-xs font-semibold text-ink-500">
+              <span className="mb-0.5 block text-sm font-bold text-ink-700">
                 {m.from === "assistant" ? assistantName : "Client"}
               </span>
               {m.text}
@@ -73,7 +73,7 @@ export function DemoConversation({ demo, assistantName }: { demo: Demo; assistan
         <button
           type="button"
           onClick={play}
-          className="mt-4 inline-flex min-h-touch items-center rounded-md border border-primary-600 px-5 py-2 text-base font-semibold text-primary-700 hover:bg-primary-50"
+          className="mt-4 inline-flex min-h-touch items-center rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 hover:bg-primary-50 bg-white transition-colors"
         >
           Rejouer
         </button>

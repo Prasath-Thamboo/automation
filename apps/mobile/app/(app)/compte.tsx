@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import { mobileAccount as ax } from "@tando/copy";
+import { mobileAccount as ax, subscribeCopy } from "@tando/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";
@@ -167,6 +167,11 @@ export default function CompteScreen() {
             <Text style={s.body}>
               {(CONTRACT_STATUS[sub.status] ?? sub.status)}
             </Text>
+            {sub.trialEndsAt && new Date(sub.trialEndsAt) > new Date() ? (
+              <Text style={[s.body, { color: t.color.primaryStrong, fontWeight: "600" }]}>
+                {subscribeCopy.trialUntil(new Date(sub.trialEndsAt).toLocaleDateString("fr-FR"))}
+              </Text>
+            ) : null}
             {sub.canceledAt ? (
               <Text style={s.muted}>
                 {ax.contract.canceledLabel} {new Date(sub.canceledAt).toLocaleDateString("fr-FR")}

@@ -33,8 +33,8 @@ export default async function ConversationPage({
   }
 
   return (
-    <section className="mx-auto max-w-prose px-4 py-14 sm:px-6 sm:py-20">
-      <Link href={`/mon-equipe/assistants/${id}`} className="text-sm text-primary-700">
+    <section className="mx-auto max-w-prose px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+      <Link href={`/mon-equipe/assistants/${id}`} className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">
         ← Son carnet de bord
       </Link>
       <h1 className="mt-2 text-2xl font-bold text-ink-900">

@@ -40,7 +40,7 @@ export function AssistantChat({ assistantId, name }: { assistantId: string; name
   }
 
   return (
-    <div className="rounded-lg border border-ink-100 bg-white p-4">
+    <div className="rounded-lg border border-ink-100 bg-white p-4 shadow-soft">
       <div ref={listRef} className="max-h-72 space-y-2 overflow-y-auto">
         {lines.length === 0 ? (
           <p className="text-sm text-ink-500">
@@ -80,7 +80,7 @@ export function AssistantChat({ assistantId, name }: { assistantId: string; name
         <button
           type="submit"
           disabled={pending || !draft.trim()}
-          className="min-h-touch rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="min-h-touch rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-primary-700"
         >
           Envoyer
         </button>
