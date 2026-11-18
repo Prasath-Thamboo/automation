@@ -1,4 +1,4 @@
-import type { InvoiceDoc } from "@tando/types";
+import type { InvoiceDoc } from "@velekya/types";
 
 const euro = (n: number) =>
   n.toLocaleString("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 2 });

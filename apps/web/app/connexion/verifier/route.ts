@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { verifyMagicLinkSchema } from "@tando/types";
+import { verifyMagicLinkSchema } from "@velekya/types";
 import { anonApi } from "@/lib/api";
 import { SESSION_COOKIE } from "@/lib/constants";
 import { sessionCookieOptions } from "@/lib/session";
@@ -20,13 +20,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const result = await anonApi().auth.verify(parsed.data);
     if (!result.token) return back;
 
-    const suite = request.cookies.get("tando_after_login")?.value;
+    const suite = request.cookies.get("velekya_after_login")?.value;
     const target =
       suite && /^\/[A-Za-z0-9\-/_]*$/.test(suite) && !suite.startsWith("//") ? suite : "/mon-equipe";
 
     const response = NextResponse.redirect(new URL(target, request.url));
     response.cookies.set(SESSION_COOKIE, result.token, sessionCookieOptions());
-    response.cookies.delete("tando_after_login");
+    response.cookies.delete("velekya_after_login");
     return response;
   } catch {
     return back;

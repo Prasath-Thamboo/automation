@@ -1,6 +1,6 @@
 /**
  * Lot 14 — boutons de pilotage d'un employé (web + mobile). Les libellés des
- * boutons eux-mêmes sont écrits par l'équipe Tando dans le back-office.
+ * boutons eux-mêmes sont écrits par l'équipe Velekya dans le back-office.
  */
 export const switchesCopy = {
   title: "Ce qu'il fait pour vous",

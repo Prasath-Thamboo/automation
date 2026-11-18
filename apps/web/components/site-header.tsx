@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { nav } from "@tando/copy";
+import { nav } from "@velekya/copy";
 import { Logo } from "./logo";
 import { NavLinks } from "./nav-links";
 

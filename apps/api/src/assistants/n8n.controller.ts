@@ -45,7 +45,7 @@ export interface WorkflowState {
 /**
  * Lot 14 — accès des flux n8n à l'API, pour les flux qui tournent seuls
  * (planifiés) : ils lisent l'état du client avant d'agir (pause, boutons), puis
- * rendent compte. Authentifié par `X-Tando-Token` (= `N8N_TOKEN`), sans session.
+ * rendent compte. Authentifié par `X-Velekya-Token` (= `N8N_TOKEN`), sans session.
  */
 @ApiTags("n8n")
 @Controller("n8n/assistants")
@@ -58,7 +58,7 @@ export class N8nController {
 
   @Get(":id/state")
   async state(
-    @Headers("x-tando-token") token: string | undefined,
+    @Headers("x-velekya-token") token: string | undefined,
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<WorkflowState> {
     const a = await this.assistant(token, id);
@@ -75,7 +75,7 @@ export class N8nController {
 
   @Post(":id/activity")
   async activity(
-    @Headers("x-tando-token") token: string | undefined,
+    @Headers("x-velekya-token") token: string | undefined,
     @Param("id", ParseUUIDPipe) id: string,
     @Body(new ZodValidationPipe(activitySchema)) body: Activity,
   ): Promise<{ conversationId: string }> {
@@ -91,7 +91,7 @@ export class N8nController {
 
   @Post(":id/escalations")
   async escalate(
-    @Headers("x-tando-token") token: string | undefined,
+    @Headers("x-velekya-token") token: string | undefined,
     @Param("id", ParseUUIDPipe) id: string,
     @Body(new ZodValidationPipe(escalationSchema)) body: WorkflowEscalation,
   ): Promise<{ conversationId: string }> {
@@ -129,7 +129,7 @@ export class N8nProfessionsController {
 
   @Get(":slug/assistants")
   async assistants(
-    @Headers("x-tando-token") token: string | undefined,
+    @Headers("x-velekya-token") token: string | undefined,
     @Param("slug") slug: string,
   ): Promise<{ assistants: WorkflowState[] }> {
     if (!safeEqual(token, n8nToken(this.env))) throw new ForbiddenException("Accès refusé.");

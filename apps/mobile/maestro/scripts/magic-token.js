@@ -5,7 +5,7 @@
 
 const api = MAESTRO_API_URL || "http://10.0.2.2:3333";
 const mailpit = MAESTRO_MAILPIT_URL || "http://10.0.2.2:8025";
-const email = MAESTRO_TEST_EMAIL || "e2e-mobile@tando.local";
+const email = MAESTRO_TEST_EMAIL || "e2e-mobile@velekya.local";
 
 const before = json(
   http.get(mailpit + "/api/v1/messages?limit=50"),

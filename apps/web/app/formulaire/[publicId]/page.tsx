@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { publicForm } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { publicForm } from "@velekya/copy";
 import { anonApi } from "@/lib/api";
 import { FormChat } from "./form-chat";
 
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * Formulaire public du patron (Lot 12). Affichable seul ou dans son site
- * (iframe) : pas d'en-tête Tando, en-têtes de cadrage assouplis pour cette
+ * (iframe) : pas d'en-tête Velekya, en-têtes de cadrage assouplis pour cette
  * route uniquement (`next.config.ts`).
  */
 export default async function FormulairePage({ params }: { params: Promise<{ publicId: string }> }) {

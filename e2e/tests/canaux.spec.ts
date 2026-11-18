@@ -10,7 +10,7 @@ import {
   API_URL,
   type ApiSession,
   staffLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 const API = `${API_URL}/api/v1`;
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { mobileTraining as tx } from "@tando/copy";
+import { mobileTraining as tx } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useQuery } from "@/src/use-query";
 import { queueAction } from "@/src/offline-queue";

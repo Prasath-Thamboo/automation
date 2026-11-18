@@ -22,7 +22,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const LAST_TOKEN_KEY = "tando:pushToken";
+const LAST_TOKEN_KEY = "velekya:pushToken";
 
 async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== "android") return;

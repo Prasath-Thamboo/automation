@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 
-/** Télécharge l'export comptable (CSV ou FEC) pour le personnel Tando. */
+/** Télécharge l'export comptable (CSV ou FEC) pour le personnel Velekya. */
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") {

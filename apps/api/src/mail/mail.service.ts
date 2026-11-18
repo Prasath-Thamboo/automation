@@ -44,7 +44,7 @@ export class MailService {
     return info.messageId ?? null;
   }
 
-  /** Adresse nue de l'expéditeur par défaut (`bonjour@…` dans `Tando <bonjour@…>`). */
+  /** Adresse nue de l'expéditeur par défaut (`bonjour@…` dans `Velekya <bonjour@…>`). */
   get defaultAddress(): string {
     return /<([^>]+)>/.exec(this.from)?.[1] ?? this.from;
   }

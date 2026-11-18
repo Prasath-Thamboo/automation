@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { subscribeCopy } from "@tando/copy";
+import { subscribeCopy } from "@velekya/copy";
 import { subscribeToProfession } from "@/app/mon-equipe/team-actions";
 
 export function SubscribeButton({ slug, name }: { slug: string; name: string }) {

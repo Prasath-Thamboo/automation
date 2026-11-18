@@ -1,4 +1,4 @@
-# Déploiement — Tando
+# Déploiement — Velekya
 
 Monorepo Turborepo/pnpm. Trois livrables : **API** (`apps/api`, NestJS),
 **web** (`apps/web`, Next.js 15), **mobile** (`apps/mobile`, Expo — voir
@@ -43,19 +43,19 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `BILLING_MANAGE_URL` / `BILLING_MANAGE_HINT` | URL de gestion du contrat côté web |
 | `ASSISTANT_RUNTIME` | `rules` (défaut) ou `n8n` |
 | `CATALOG_TRIAL_DAYS` | Jours d'essai gratuit de l'offre prêt à l'emploi (défaut 14, 0 = aucun) |
-| `N8N_BASE_URL` | origine de l'instance n8n (ex. `https://n8n.tando.fr`) : l'adresse du flux de chaque employé (back-office → Pilotage) doit s'y trouver. Instance **hébergée dans l'UE** (messages des clients finaux) |
-| `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort partagé dans les deux sens (en-tête `X-Tando-Token`) : vérifié par les nœuds Webhook, présenté par les flux à `/api/v1/n8n/*` |
+| `N8N_BASE_URL` | origine de l'instance n8n (ex. `https://n8n.velekya.fr`) : l'adresse du flux de chaque employé (back-office → Pilotage) doit s'y trouver. Instance **hébergée dans l'UE** (messages des clients finaux) |
+| `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort partagé dans les deux sens (en-tête `X-Velekya-Token`) : vérifié par les nœuds Webhook, présenté par les flux à `/api/v1/n8n/*` |
 | `N8N_TIMEOUT_MS` | délai max d'un tour (défaut 15000) ; au-delà → escalade |
 | `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta ; la changer rend illisibles les données déjà chiffrées |
 | `CHANNELS_DELIVERY` | `live` |
-| `INBOUND_EMAIL_DOMAIN` | domaine de réception (ex. `in.tando.fr`), MX pointé vers Brevo |
+| `INBOUND_EMAIL_DOMAIN` | domaine de réception (ex. `in.velekya.fr`), MX pointé vers Brevo |
 | `BREVO_INBOUND_TOKEN` | secret fort, repris dans l'URL du webhook Brevo |
 | `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | compte Twilio live |
 | `TWILIO_WEBHOOK_BASE_URL` | URL publique de l'API telle que Twilio l'appelle (signature) |
 | `META_APP_SECRET` / `META_VERIFY_TOKEN` | application Meta (WhatsApp + Instagram) |
 | `PUSH_ENABLED` | `true` |
 | `EXPO_PUSH_URL` / `EXPO_ACCESS_TOKEN` | API Expo Push (jeton d'accès recommandé) |
-| `MOBILE_DEEP_LINK_SCHEME` | `tando` |
+| `MOBILE_DEEP_LINK_SCHEME` | `velekya` |
 
 `docker-compose.yml` et les variables `*_HOST_PORT` ne servent **qu'au
 développement local**.
@@ -84,7 +84,7 @@ pnpm install --frozen-lockfile
 pnpm build            # turbo : packages ^build puis apps/api (prisma generate + nest build) et apps/web (next build)
 ```
 
-Artefacts : `apps/api/dist/`, `apps/web/.next/`. `@tando/types` et `@tando/ui`
+Artefacts : `apps/api/dist/`, `apps/web/.next/`. `@velekya/types` et `@velekya/ui`
 sont compilés vers `dist/` ; les autres packages sont consommés en source
 (le runtime doit embarquer tout le monorepo, pas seulement `apps/*/dist`).
 
@@ -93,7 +93,7 @@ sont compilés vers `dist/` ; les autres packages sont consommés en source
 À chaque déploiement, **avant** de démarrer la nouvelle version de l'API :
 
 ```bash
-pnpm --filter @tando/api exec prisma migrate deploy
+pnpm --filter @velekya/api exec prisma migrate deploy
 ```
 
 `prisma migrate deploy` n'applique que des migrations existantes (pas de
@@ -107,7 +107,7 @@ production. Pas de `db:seed` en production.
 node apps/api/dist/main.js
 
 # Web (port 3000)
-pnpm --filter @tando/web start
+pnpm --filter @velekya/web start
 ```
 
 - L'API a besoin de `trust proxy` (déjà activé) : la placer derrière un reverse
@@ -129,7 +129,7 @@ pnpm --filter @tando/web start
 - **`packages/copy/src/offers.ts`** : prix définitifs (sinon repris du §7).
 - **`SELLER_NAME` / `SELLER_LEGAL` / `SELLER_ADDRESS`** (env) : identité vendeur
   figée dans les factures.
-- `security@tando.fr` : créer l'adresse (cf. `SECURITY.md`).
+- `security@velekya.fr` : créer l'adresse (cf. `SECURITY.md`).
 - Registre des traitements, politique de confidentialité relue, DPA type,
   bandeau cookies conforme CNIL (déjà en place, à valider juridiquement).
 

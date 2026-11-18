@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Redirect, Tabs } from "expo-router";
-import { helpCopy } from "@tando/copy";
+import { helpCopy } from "@velekya/copy";
 import { useAuth } from "@/src/auth";
 import { useNotificationRouting } from "@/src/notifications";
 import { ConnectivityBanner } from "@/src/components";

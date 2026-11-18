@@ -1,4 +1,4 @@
-import type { PublicQuote } from "@tando/types";
+import type { PublicQuote } from "@velekya/types";
 
 /**
  * Document du devis en HTML imprimable (§4.2). Le rendu PDF proprement dit sera
@@ -40,7 +40,7 @@ export function renderQuoteDocument(q: PublicQuote): string {
   @media print{body{margin:0}}
 </style></head><body>
   <div class="head">
-    <h1>Tando</h1>
+    <h1>Velekya</h1>
     <div class="muted">Devis n° ${escape(q.number)}<br>${new Date().toLocaleDateString("fr-FR")}</div>
   </div>
   <p class="muted">Pour ${escape(q.content.company)}${q.content.contactName ? ` — à l'attention de ${escape(q.content.contactName)}` : ""}</p>
@@ -73,6 +73,6 @@ export function renderQuoteDocument(q: PublicQuote): string {
   </div>
 
   <h2>Conditions</h2>
-  <p class="muted">L'acceptation de ce devis vaut acceptation des conditions générales de Tando, disponibles sur tando.fr/cgv. Le prix affiché est mensuel et toutes taxes comprises. La résiliation se fait en un clic, sans préavis ni pénalité.</p>
+  <p class="muted">L'acceptation de ce devis vaut acceptation des conditions générales de Velekya, disponibles sur velekya.fr/cgv. Le prix affiché est mensuel et toutes taxes comprises. La résiliation se fait en un clic, sans préavis ni pénalité.</p>
 </body></html>`;
 }

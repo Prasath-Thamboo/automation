@@ -1,4 +1,4 @@
-import { test, expect } from "../fixtures/tando";
+import { test, expect } from "../fixtures/velekya";
 
 /**
  * Vitrine publique : les pages se chargent, portent une identité claire, et

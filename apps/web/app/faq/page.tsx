@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { faq, faqCopy } from "@tando/copy";
+import { faq, faqCopy } from "@velekya/copy";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {

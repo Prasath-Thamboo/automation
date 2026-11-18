@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { PublicQuote } from "@tando/api-client";
-import { ApiError } from "@tando/api-client";
+import type { PublicQuote } from "@velekya/api-client";
+import { ApiError } from "@velekya/api-client";
 import { browserApi, API_BASE } from "@/lib/browser-api";
 
 const euro = (n: number) =>
@@ -110,11 +110,11 @@ export function QuotePublicView({
         </div>
       ) : quote.status === "refuse" ? (
         <p className="mt-10 text-base text-ink-700">
-          Ce devis a été refusé. Si vous changez d&apos;avis, écrivez-nous à bonjour@tando.fr.
+          Ce devis a été refusé. Si vous changez d&apos;avis, écrivez-nous à bonjour@velekya.fr.
         </p>
       ) : quote.status === "expire" ? (
         <p className="mt-10 text-base text-ink-700">
-          Ce devis a expiré. Écrivez-nous à bonjour@tando.fr pour en obtenir un nouveau.
+          Ce devis a expiré. Écrivez-nous à bonjour@velekya.fr pour en obtenir un nouveau.
         </p>
       ) : (
         <div className="mt-10 rounded-lg border border-primary-600 p-6">

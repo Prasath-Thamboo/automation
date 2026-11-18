@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma, type Assistant } from "@prisma/client";
-import type { RuntimeTurn } from "@tando/types";
+import type { RuntimeTurn } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { QueueService } from "../queue/queue.module";

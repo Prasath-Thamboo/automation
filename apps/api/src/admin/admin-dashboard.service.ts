@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { AdminDashboard } from "@tando/types";
+import type { AdminDashboard } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 
 const DECIDED_STATUSES = ["envoye", "vu", "accepte", "refuse", "expire"] as const;

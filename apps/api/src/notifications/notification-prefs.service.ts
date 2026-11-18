@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { NotificationPrefs, UpdateNotificationPrefs } from "@tando/types";
+import type { NotificationPrefs, UpdateNotificationPrefs } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 
 /** Valeurs par défaut si l'utilisateur n'a jamais touché ses réglages (§6bis). */

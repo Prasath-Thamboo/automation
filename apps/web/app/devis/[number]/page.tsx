@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { anonApi } from "@/lib/api";
 import { QuotePublicView } from "@/components/quote/quote-public-view";
 
@@ -37,7 +37,7 @@ function Invalid() {
     <div className="mx-auto max-w-prose px-4 py-20 sm:px-6">
       <h1 className="text-2xl font-bold text-ink-900">Ce lien n&apos;est plus valide</h1>
       <p className="mt-4 text-base text-ink-700">
-        Le lien de votre devis a peut-être expiré. Écrivez-nous à bonjour@tando.fr et on vous en
+        Le lien de votre devis a peut-être expiré. Écrivez-nous à bonjour@velekya.fr et on vous en
         renvoie un.
       </p>
       <Link href="/" className="mt-6 inline-block font-semibold text-primary-700">

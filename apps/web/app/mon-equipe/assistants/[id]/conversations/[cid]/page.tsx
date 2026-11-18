@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { channelPlace } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { channelPlace } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 

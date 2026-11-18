@@ -12,7 +12,7 @@ import { SessionService } from "./session.service";
 import type { AuthedRequest } from "./current-user.decorator";
 
 /**
- * Réservé au personnel Tando : session valide ET rôle `admin`. Utilisé par le
+ * Réservé au personnel Velekya : session valide ET rôle `admin`. Utilisé par le
  * back-office (§9.1 : section protégée) — catalogue, missions, prix, clients.
  */
 @Injectable()
@@ -30,7 +30,7 @@ export class AdminGuard implements CanActivate {
     const user = await this.sessions.resolve(token);
     if (!user) throw new UnauthorizedException("Votre session a expiré. Reconnectez-vous.");
     if (user.role !== "admin") {
-      throw new ForbiddenException("Cet espace est réservé à l'équipe Tando.");
+      throw new ForbiddenException("Cet espace est réservé à l'équipe Velekya.");
     }
 
     request.user = user;

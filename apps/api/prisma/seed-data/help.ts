@@ -1,7 +1,7 @@
 /**
  * Lot 15 — base d'aide initiale (« Une question ? »). Textes lus par le client :
  * vocabulaire §2 (vérifié par `packages/copy/src/blacklist.test.ts`). L'équipe
- * Tando les enrichit ensuite depuis le back-office (`/admin/aide`).
+ * Velekya les enrichit ensuite depuis le back-office (`/admin/aide`).
  */
 export interface HelpArticleSeed {
   slug: string;
@@ -126,7 +126,7 @@ export const helpSeed: HelpArticleSeed[] = [
     question: "Comment mes clients peuvent-ils le joindre ?",
     keywords: ["joindre", "contacter", "formulaire", "email", "téléphone", "sms", "whatsapp", "instagram", "site"],
     answer:
-      "Sa fiche, rubrique « Comment vos clients le joignent », donne son adresse email et le code de son formulaire à copier sur votre site. Pour le téléphone, les SMS, WhatsApp ou Instagram, l'équipe Tando les branche avec vous : transmettez-nous la demande.",
+      "Sa fiche, rubrique « Comment vos clients le joignent », donne son adresse email et le code de son formulaire à copier sur votre site. Pour le téléphone, les SMS, WhatsApp ou Instagram, l'équipe Velekya les branche avec vous : transmettez-nous la demande.",
     action: "equipe",
     position: 130,
   },
@@ -144,7 +144,7 @@ export const helpSeed: HelpArticleSeed[] = [
     question: "Puis-je le suivre depuis mon téléphone ?",
     keywords: ["téléphone", "mobile", "application", "iphone", "android", "smartphone"],
     answer:
-      "Oui. L'application Tando (iPhone et Android) vous montre ce qu'il a fait aujourd'hui, les demandes à valider, et vous permet de le former à la voix ou de le mettre en pause. Connectez-vous avec la même adresse email.",
+      "Oui. L'application Velekya (iPhone et Android) vous montre ce qu'il a fait aujourd'hui, les demandes à valider, et vous permet de le former à la voix ou de le mettre en pause. Connectez-vous avec la même adresse email.",
     action: "aucune",
     position: 150,
   },
@@ -171,16 +171,16 @@ export const helpSeed: HelpArticleSeed[] = [
     question: "Comment embaucher un deuxième employé ?",
     keywords: ["deuxième", "autre employé", "nouvel employé", "embaucher", "second", "ajouter un employé"],
     answer:
-      "Transmettez-nous votre besoin ici même en quelques mots : l'équipe Tando vous prépare une fiche de poste et un devis, comme pour le premier.",
+      "Transmettez-nous votre besoin ici même en quelques mots : l'équipe Velekya vous prépare une fiche de poste et un devis, comme pour le premier.",
     action: "aucune",
     position: 180,
   },
   {
-    slug: "joindre-tando",
-    question: "Comment joindre l'équipe Tando ?",
-    keywords: ["joindre tando", "équipe tando", "parler à quelqu'un", "conseiller", "humain", "support", "aide"],
+    slug: "joindre-velekya",
+    question: "Comment joindre l'équipe Velekya ?",
+    keywords: ["joindre velekya", "équipe velekya", "parler à quelqu'un", "conseiller", "humain", "support", "aide"],
     answer:
-      "Posez votre question ici. Si je n'ai pas la réponse, appuyez sur « Transmettre à l'équipe Tando » : une personne de l'équipe vous répond par email et ici même.",
+      "Posez votre question ici. Si je n'ai pas la réponse, appuyez sur « Transmettre à l'équipe Velekya » : une personne de l'équipe vous répond par email et ici même.",
     action: "aucune",
     position: 190,
   },

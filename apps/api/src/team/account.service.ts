@@ -4,7 +4,7 @@ import type {
   MobileBillingView,
   SessionUser,
   UpdateAccount,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { BillingService } from "../billing/billing.service";

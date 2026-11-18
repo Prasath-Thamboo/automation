@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import type { AdminClientDetail, AdminClientList } from "@tando/types";
+import type { AdminClientDetail, AdminClientList } from "@velekya/types";
 import { AdminGuard } from "../auth/admin.guard";
 import { AdminClientsService } from "./admin-clients.service";
 

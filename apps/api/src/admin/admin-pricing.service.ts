@@ -4,7 +4,7 @@ import type {
   AdminPricingRuleList,
   CreatePricingRule,
   UpdatePricingRule,
-} from "@tando/types";
+} from "@velekya/types";
 import { Prisma, type PricingRule } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";

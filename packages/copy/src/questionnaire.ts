@@ -4,7 +4,7 @@
  * des réponses précédentes (`visibleIf`).
  *
  * Structure et libellés vivent ici ; les réponses (JSONB) et le chiffrage vivent
- * dans `@tando/types` et l'API.
+ * dans `@velekya/types` et l'API.
  */
 
 export type QuestionKind = "single" | "multi" | "text" | "textarea" | "contact";

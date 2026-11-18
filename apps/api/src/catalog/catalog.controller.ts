@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import type { CatalogList, ProfessionDetail } from "@tando/types";
+import type { CatalogList, ProfessionDetail } from "@velekya/types";
 import { CatalogService } from "./catalog.service";
 
 @ApiTags("catalog")

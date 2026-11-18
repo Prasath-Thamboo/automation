@@ -16,7 +16,7 @@ import {
   type AdminQuoteList,
   type SessionUser,
   type UpdateQuote,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { AdminGuard } from "../auth/admin.guard";
 import { CurrentUser } from "../auth/current-user.decorator";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { mobileEscalations as ex } from "@tando/copy";
+import { mobileEscalations as ex } from "@velekya/copy";
 import { api } from "@/src/api";
 import { queueAction } from "@/src/offline-queue";
 import { isOnlineNow } from "@/src/net";

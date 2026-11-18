@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { TemplateContent } from "@tando/api-client";
+import type { TemplateContent } from "@velekya/api-client";
 
 type Demo = TemplateContent["demo"];
 

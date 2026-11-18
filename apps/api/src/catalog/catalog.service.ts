@@ -5,7 +5,7 @@ import {
   type ProfessionCard,
   type ProfessionDetail,
   type TemplateContent,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { ENV } from "../config/config.module";
 import type { Env } from "../config/env";

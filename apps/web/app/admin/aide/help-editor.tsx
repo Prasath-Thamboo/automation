@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import type { AdminHelpArticle, HelpAction } from "@tando/api-client";
+import type { AdminHelpArticle, HelpAction } from "@velekya/api-client";
 import {
   answerRequest,
   createArticle,
@@ -14,7 +14,7 @@ const input = "w-full rounded-md border border-ink-100 px-2 py-1 text-sm";
 const button =
   "rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50";
 
-// Liste locale : `@tando/types` (CommonJS) ne se charge pas dans un composant
+// Liste locale : `@velekya/types` (CommonJS) ne se charge pas dans un composant
 // client sous `next dev` (voir notes du Lot 12).
 const ACTION_LABEL: Record<HelpAction, string> = {
   aucune: "Aucun renvoi",

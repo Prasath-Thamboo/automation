@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { mentionsLegales } from "@tando/copy";
+import { mentionsLegales } from "@velekya/copy";
 import { ContentPage, ContentSection } from "@/components/marketing-page";
 
 export const metadata: Metadata = {

@@ -6,7 +6,7 @@ import { z } from "zod";
  */
 
 export type ChannelKind = "formulaire" | "email" | "sms" | "telephone" | "whatsapp" | "instagram";
-/** `en_attente` : raccordement en cours par l'équipe Tando. */
+/** `en_attente` : raccordement en cours par l'équipe Velekya. */
 export type ChannelStatus = "en_attente" | "actif" | "desactive";
 
 export const channelKindEnum = z.enum(["formulaire", "email", "sms", "telephone", "whatsapp", "instagram"]);
@@ -80,7 +80,7 @@ export const formReplySchema: z.ZodType<FormReply> = z.object({
   status: z.enum(["handled", "paused"]),
 });
 
-// ── Back-office : raccordement des canaux par l'équipe Tando ──────────────
+// ── Back-office : raccordement des canaux par l'équipe Velekya ──────────────
 
 export interface AdminChannel {
   id: string;

@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 import type { AuthChannel } from "@prisma/client";
-import type { RequestMagicLink, SessionUser, VerifyMagicLink } from "@tando/types";
+import type { RequestMagicLink, SessionUser, VerifyMagicLink } from "@velekya/types";
 import { ENV } from "../config/config.module";
 import { webBaseUrl, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";

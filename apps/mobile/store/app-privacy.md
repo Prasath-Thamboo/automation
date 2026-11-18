@@ -36,7 +36,7 @@ d'analyse tiers. `NSPrivacyTracking` = false, `NSPrivacyTrackingDomains` vide.
   les alertes (escalade, souci de paiement, résumé quotidien). Désactivé
   automatiquement s'il devient invalide ; supprimé à la déconnexion.
 - **Dictée vocale** : la reconnaissance vocale est faite par le système
-  d'exploitation (`expo-speech-recognition`). Tando ne reçoit que le **texte**
+  d'exploitation (`expo-speech-recognition`). Velekya ne reçoit que le **texte**
   transcrit, comme si l'utilisateur l'avait tapé. Aucun enregistrement audio
   n'est envoyé ni conservé.
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ProfessionCard as Card } from "@tando/api-client";
+import type { ProfessionCard as Card } from "@velekya/api-client";
 import { ArrowRight } from "@/components/icons";
 
 export function ProfessionCard({ profession }: { profession: Card }) {

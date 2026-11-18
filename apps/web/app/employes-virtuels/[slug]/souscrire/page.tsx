@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { subscribeCopy } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { subscribeCopy } from "@velekya/copy";
 import { anonApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { Check } from "@/components/icons";

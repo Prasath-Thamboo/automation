@@ -1,5 +1,5 @@
 /**
- * Fabrique le flux n8n importable d'un métier : Webhook (en-tête X-Tando-Token)
+ * Fabrique le flux n8n importable d'un métier : Webhook (en-tête X-Velekya-Token)
  * → Code (logique du métier, compilée depuis ce paquet) → Respond to Webhook.
  *
  * Le nœud Code ne peut rien importer : on y recopie `common.ts` puis le fichier
@@ -25,14 +25,14 @@ export interface FlowDefinition {
 export const FLOWS: FlowDefinition[] = [
   {
     slug: "dentiste",
-    name: "Tando — Cabinet dentaire (générique)",
+    name: "Velekya — Cabinet dentaire (générique)",
     source: "dentiste.ts",
-    ids: { workflow: "tandoDentiste01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e01" },
+    ids: { workflow: "velekyaDentiste01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e01" },
   },
 ];
 
 /** Nom de la clé d'en-tête attendue, partagé avec l'API (`n8n.runtime.ts`). */
-export const HEADER_AUTH_CREDENTIAL = "Tando — X-Tando-Token";
+export const HEADER_AUTH_CREDENTIAL = "Velekya — X-Velekya-Token";
 
 function toPlainJs(file: string): string {
   const source = readFileSync(join(here, file), "utf8");
@@ -50,7 +50,7 @@ function toPlainJs(file: string): string {
 /** Code complet du nœud Code (mode « Run Once for All Items »). */
 export function buildCode(flow: FlowDefinition): string {
   return [
-    `// Flux « ${flow.slug} » — généré par @tando/n8n-flows (pnpm -F @tando/n8n-flows build:flows).`,
+    `// Flux « ${flow.slug} » — généré par @velekya/n8n-flows (pnpm -F @velekya/n8n-flows build:flows).`,
     "// Ne pas modifier ici : modifier packages/n8n-flows/src puis régénérer.",
     "",
     toPlainJs("common.ts"),
@@ -80,7 +80,7 @@ export function buildWorkflow(flow: FlowDefinition): Record<string, unknown> {
         webhookId: flow.ids.webhook,
         parameters: {
           httpMethod: "POST",
-          path: `tando-${flow.slug}`,
+          path: `velekya-${flow.slug}`,
           authentication: "headerAuth",
           responseMode: "responseNode",
           options: {},

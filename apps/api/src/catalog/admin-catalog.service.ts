@@ -10,7 +10,7 @@ import type {
   CreateProfession,
   TemplateContent,
   UpdateProfession,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { parseContent } from "./catalog.service";

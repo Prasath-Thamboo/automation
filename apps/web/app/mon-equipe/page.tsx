@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { glossary } from "@tando/copy";
-import type { AssistantCard } from "@tando/api-client";
+import { glossary } from "@velekya/copy";
+import type { AssistantCard } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { SignOutButton } from "@/components/sign-out-button";

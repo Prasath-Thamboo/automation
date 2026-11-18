@@ -1,6 +1,6 @@
 import { createParamDecorator, type ExecutionContext } from "@nestjs/common";
 import type { Request } from "express";
-import type { SessionUser } from "@tando/types";
+import type { SessionUser } from "@velekya/types";
 
 export interface AuthedRequest extends Request {
   user?: SessionUser;

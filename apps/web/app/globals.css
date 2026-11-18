@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
- * Variables consommées par les composants @tando/ui (préfixe --tnd-).
+ * Variables consommées par les composants @velekya/ui (préfixe --tnd-).
  * Valeurs alignées sur apps/web/tailwind.config.ts (surcharges web).
  */
 :root {

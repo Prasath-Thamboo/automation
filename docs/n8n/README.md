@@ -12,14 +12,14 @@ Deux modèles coexistent :
 Ordre de résolution à chaque message : flux propre de l'employé → flux
 générique de son métier → moteur à règles.
 
-Sur mesure : Le client décrit son besoin, l'équipe Tando
+Sur mesure : Le client décrit son besoin, l'équipe Velekya
 construit son flux, le branche dans le back-office, puis déclare les **boutons**
 que le client pourra actionner. Le client ne voit jamais le flux (§2) : sur le
 web et dans l'app, il voit « Ce qu'il fait pour vous » et des interrupteurs.
 
 ```
 Client final (SMS, email, WhatsApp, formulaire…)
-  → API Tando : canaux, conversation, garde-fous
+  → API Velekya : canaux, conversation, garde-fous
   → flux n8n du client (POST JSON, avec l'état de ses boutons)
   → réponse | rendez-vous | escalade
   → API : remise par le canal, carnet de bord, notification au patron
@@ -63,7 +63,7 @@ propre). `assistant.id` identifie le client pour les rappels vers l'API.
 **Flux planifiés partagés** : liste les employés servis, puis traite chacun.
 
 ```
-GET /api/v1/n8n/professions/:slug/assistants   (X-Tando-Token)
+GET /api/v1/n8n/professions/:slug/assistants   (X-Velekya-Token)
 → { "assistants": [{ "assistantId", "name", "working", "state", "switches", "establishment" }] }
 ```
 
@@ -83,22 +83,22 @@ Message reçu (Webhook, Header Auth)  →  Logique <métier> (Code)  →  Répon
 
 | Métier | Fichier à importer | Chemin du webhook |
 |---|---|---|
-| Cabinet dentaire | `packages/n8n-flows/flows/dentiste.workflow.json` | `/webhook/tando-dentiste` |
+| Cabinet dentaire | `packages/n8n-flows/flows/dentiste.workflow.json` | `/webhook/velekya-dentiste` |
 
 Modifier un flux : édite `src/<métier>.ts`, puis
-`pnpm -F @tando/n8n-flows build:flows` et committe le JSON régénéré. Un test
+`pnpm -F @velekya/n8n-flows build:flows` et committe le JSON régénéré. Un test
 échoue si le JSON n'est pas à jour. Ne modifie jamais le code directement dans
 n8n : il serait écrasé au prochain import.
 
 **Mise en place (une fois par instance n8n)** :
 
-1. n8n → Credentials → **Header Auth**, nommé `Tando — X-Tando-Token` :
-   Name = `X-Tando-Token`, Value = la valeur de `N8N_TOKEN` côté API
+1. n8n → Credentials → **Header Auth**, nommé `Velekya — X-Velekya-Token` :
+   Name = `X-Velekya-Token`, Value = la valeur de `N8N_TOKEN` côté API
    (`dev-n8n-token` en local).
 2. Workflows → **Import from File** → `dentiste.workflow.json`. Sur le nœud
    « Message reçu », sélectionne la clé créée à l'étape 1. **Active** le flux.
 3. Back-office → Métiers → Cabinet dentaire → **Flux n8n générique** : colle
-   l'URL de production (`<N8N_BASE_URL>/webhook/tando-dentiste`). Les boutons
+   l'URL de production (`<N8N_BASE_URL>/webhook/velekya-dentiste`). Les boutons
    par défaut (`rendez_vous`, `nouveaux_patients`) sont déjà semés par
    `pnpm db:seed`.
 4. Côté API : `ASSISTANT_RUNTIME=n8n`.
@@ -128,7 +128,7 @@ Prix, urgences explicites et demande d'un humain n'arrivent jamais au flux
 
 ## 1. Messages entrants (API → flux)
 
-`POST` sur l'URL branchée, en-tête `X-Tando-Token: <N8N_TOKEN>` (à vérifier par
+`POST` sur l'URL branchée, en-tête `X-Velekya-Token: <N8N_TOKEN>` (à vérifier par
 le nœud Webhook, authentification « Header Auth »).
 
 ```json
@@ -141,7 +141,7 @@ le nœud Webhook, authentification « Header Auth »).
     "name": "Léa",
     "role": "votre assistante",
     "professionSlug": "dentiste",
-    "workflowUrl": "https://n8n.tando.fr/webhook/…",
+    "workflowUrl": "https://n8n.velekya.fr/webhook/…",
     "workflowScope": "metier",
     "jobDescription": { "summary": "…", "tasks": ["…"], "hours": "…", "limits": ["…"], "tone": "…" },
     "establishment": { "name": "…", "address": "…", "openingHours": "…" },
@@ -194,7 +194,7 @@ sans jargon.
 
 Un flux qui tourne seul (déclencheur « Schedule ») connaît l'`assistantId` de son
 client (affiché sur la page Pilotage). Tous les appels portent l'en-tête
-`X-Tando-Token: <N8N_TOKEN>` ; sans lui, réponse 403.
+`X-Velekya-Token: <N8N_TOKEN>` ; sans lui, réponse 403.
 
 **Avant d'agir**, lis l'état :
 

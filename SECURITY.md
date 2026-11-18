@@ -1,7 +1,7 @@
-# Sécurité — Tando
+# Sécurité — Velekya
 
 État de la posture de sécurité et audit du Lot 11. Se lit avec le §9.4 du cahier
-des charges (`prompt-claude-code-tando.md`).
+des charges (`prompt-claude-code-velekya.md`).
 
 ## En place
 
@@ -20,14 +20,14 @@ des charges (`prompt-claude-code-tando.md`).
   `forOrganization()` (extension Prisma, `apps/api/src/prisma/tenant.ts`), jamais
   par un filtre ajouté à la main.
 - Le back-office (`/admin/**`, `AdminGuard`) lit en travers des organisations —
-  accès réservé au rôle `admin` (personnel Tando).
+  accès réservé au rôle `admin` (personnel Velekya).
 - **Prouvé par test** : `e2e/tests/isolation-multi-tenant.spec.ts` (un client ne
   peut ni lire ni agir sur l'employé virtuel d'un autre ; accès non authentifié
   refusé).
 
 ### Entrées & sorties
 - **Validation stricte** : tout corps de requête passe par un schéma Zod
-  (`ZodValidationPipe`). Source de vérité des formes : `@tando/types`.
+  (`ZodValidationPipe`). Source de vérité des formes : `@velekya/types`.
 - Erreurs orientées action (`ApiError` normalisée) — le client reçoit *quoi
   faire*, jamais la trace technique.
 
@@ -63,7 +63,7 @@ des charges (`prompt-claude-code-tando.md`).
   d'`update`), un échec d'écriture n'interrompt pas la requête.
 - **`metadata` sans donnée personnelle en clair** — audit des 20 sites d'appel :
   uniquement des identifiants, slugs, numéros, montants, compteurs, hashs. Les
-  logs applicatifs masquent les adresses (`st***@tando.fr`).
+  logs applicatifs masquent les adresses (`st***@velekya.fr`).
 - **Journal des requêtes** (`RequestLoggerMiddleware`) : méthode + **chemin
   seul**, jamais la query string (elle porte des jetons : devis, lien magique).
 
@@ -115,4 +115,4 @@ des charges (`prompt-claude-code-tando.md`).
 
 ## Signaler une vulnérabilité
 
-Écrire à `security@tando.fr` (à créer). Ne pas ouvrir d'issue publique.
+Écrire à `security@velekya.fr` (à créer). Ne pas ouvrir d'issue publique.

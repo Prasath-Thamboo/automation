@@ -1,5 +1,5 @@
 {
-  "extends": "@tando/config/tsconfig/nest.json",
+  "extends": "@velekya/config/tsconfig/nest.json",
   "compilerOptions": {
     "baseUrl": "."
   },

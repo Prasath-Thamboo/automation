@@ -10,7 +10,7 @@ import type {
   AdminChannelList,
   CreateAdminChannel,
   UpdateAdminChannel,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { SecretBox } from "./secret-box";
@@ -19,7 +19,7 @@ import { normalizeEmail } from "./email-address";
 import { toE164 } from "./providers/twilio";
 
 /**
- * Back-office (Lot 12) : l'équipe Tando raccorde les canaux d'un assistant —
+ * Back-office (Lot 12) : l'équipe Velekya raccorde les canaux d'un assistant —
  * numéro Twilio, compte WhatsApp / Instagram — après les démarches auprès du
  * fournisseur. Lecture/écriture transverse, gardée par `AdminGuard`.
  */

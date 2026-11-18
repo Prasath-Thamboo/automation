@@ -1,4 +1,4 @@
-import { theme as tokens } from "@tando/ui-native";
+import { theme as tokens } from "@velekya/ui-native";
 
 /** Raccourcis de style pour l'app mobile, dérivés des tokens partagés. */
 export const t = {

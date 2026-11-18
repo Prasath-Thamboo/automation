@@ -1,9 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { requestMagicLinkSchema } from "@tando/types";
-import { ApiError } from "@tando/api-client";
-import { auth as authCopy } from "@tando/copy";
+import { requestMagicLinkSchema } from "@velekya/types";
+import { ApiError } from "@velekya/api-client";
+import { auth as authCopy } from "@velekya/copy";
 import { anonApi } from "@/lib/api";
 
 export interface MagicLinkState {
@@ -12,7 +12,7 @@ export interface MagicLinkState {
 }
 
 /** Chemin interne où revenir après connexion (ex. finir une souscription). */
-const AFTER_LOGIN_COOKIE = "tando_after_login";
+const AFTER_LOGIN_COOKIE = "velekya_after_login";
 function safePath(v: FormDataEntryValue | null): string | null {
   const s = String(v ?? "");
   return /^\/[A-Za-z0-9\-/_]*$/.test(s) && !s.startsWith("//") ? s : null;

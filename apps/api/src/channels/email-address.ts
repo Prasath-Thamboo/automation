@@ -17,7 +17,7 @@ export function inboxLocalPart(name: string): string {
   return `${slug || "accueil"}-${suffix}`;
 }
 
-/** Normalise une adresse email pour la recherche (`Accueil@In.Tando.fr` → minuscules). */
+/** Normalise une adresse email pour la recherche (`Accueil@In.Velekya.fr` → minuscules). */
 export function normalizeEmail(address: string): string {
   return address.trim().toLowerCase();
 }

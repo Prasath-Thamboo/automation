@@ -3,7 +3,7 @@
  * Pur, sans fournisseur de modèle : recouvrement de mots (racines simples) entre
  * la question et chaque fiche (sa question + ses mots-clés). Volontairement
  * prudent : sous le seuil, on ne répond pas — on propose des pistes ou la
- * transmission à l'équipe Tando.
+ * transmission à l'équipe Velekya.
  */
 
 export interface MatchableArticle {

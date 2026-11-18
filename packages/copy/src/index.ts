@@ -1,5 +1,5 @@
 /**
- * `@tando/copy` — tous les textes visibles par le client, au même endroit.
+ * `@velekya/copy` — tous les textes visibles par le client, au même endroit.
  * Voir §2 : aucune chaîne « technique » ne doit fuir dans l'UI. Le web et le
  * mobile importent leurs libellés d'ici ; le back-office garde le vocabulaire
  * technique normal et n'utilise pas ce package.
@@ -60,7 +60,7 @@ import { glossary } from "./glossary";
 
 /** Libellés généraux réutilisés partout dans l'app cliente. */
 export const common = {
-  appName: "Tando",
+  appName: "Velekya",
   tagline: "Recrutez un employé qui ne dort jamais.",
   loading: "Un instant…",
   retry: "Réessayer",
@@ -147,7 +147,7 @@ export const stub = {
   },
   contact: {
     title: "Parlons de votre besoin.",
-    body: "Écrivez-nous à bonjour@tando.fr en quelques mots : votre métier, ce qui vous prend du temps, et quand vous rappeler. Une vraie personne vous répond.",
+    body: "Écrivez-nous à bonjour@velekya.fr en quelques mots : votre métier, ce qui vous prend du temps, et quand vous rappeler. Une vraie personne vous répond.",
   },
   backHome: "Revenir à l'accueil",
 } as const;

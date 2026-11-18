@@ -9,7 +9,7 @@ import { AdminHelpService } from "./admin-help.service";
 
 /**
  * Lot 15 — aide au patron (« Une question ? ») : réponses écrites à l'avance,
- * recherche par mots, transmission à l'équipe Tando sinon. Back-office sous
+ * recherche par mots, transmission à l'équipe Velekya sinon. Back-office sous
  * `/admin/help`.
  */
 @Module({

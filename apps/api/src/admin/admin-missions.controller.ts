@@ -6,7 +6,7 @@ import {
   type AdminMissionList,
   type SessionUser,
   type UpdateMission,
-} from "@tando/types";
+} from "@velekya/types";
 import type { MissionStatus } from "@prisma/client";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { AdminGuard } from "../auth/admin.guard";

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Header, Param, Post, Query, Req } from "@nestjs/
 import { Throttle } from "@nestjs/throttler";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
-import { acceptQuoteSchema, type AcceptQuote, type PublicQuote } from "@tando/types";
+import { acceptQuoteSchema, type AcceptQuote, type PublicQuote } from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { QuotesService } from "./quotes.service";
 import { renderQuoteDocument } from "./quote-document";

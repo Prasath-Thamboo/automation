@@ -1,4 +1,4 @@
-# Prompt Claude Code — Tando, la plateforme d'employés virtuels (MVP complet)
+# Prompt Claude Code — Velekya, la plateforme d'employés virtuels (MVP complet)
 
 > Copier-coller l'intégralité de ce fichier dans Claude Code, à la racine d'un dossier vide.
 > Les sections marquées `[À COMPLÉTER]` sont à personnaliser avant envoi (prix, coordonnées légales).
@@ -21,15 +21,15 @@ Tu es un architecte / développeur full-stack senior. Tu vas construire avec moi
 
 ## 1. La marque
 
-Le produit s'appelle **Tando**. Ce nom est fixé : il s'écrit toujours ainsi, avec une majuscule initiale, jamais en capitales, jamais accompagné d'un suffixe (pas de « Tando AI », pas de « Tando App », pas de « TandoBot »).
+Le produit s'appelle **Velekya**. Ce nom est fixé : il s'écrit toujours ainsi, avec une majuscule initiale, jamais en capitales, jamais accompagné d'un suffixe (pas de « Velekya AI », pas de « Velekya App », pas de « VelekyaBot »).
 
 La baseline officielle, à utiliser telle quelle partout où le nom a besoin d'être expliqué — balise title, fiches stores, signature d'email, en-tête de devis :
 
-> **Tando — votre employé virtuel, 24h/24, 7j/7.**
+> **Velekya — votre employé virtuel, 24h/24, 7j/7.**
 
-Le nom ne décrit pas le produit, et c'est volontaire : c'est la baseline qui explique, jamais le nom. N'écris donc jamais de formule du type « Tando, la plateforme d'agents IA ». Décliner le nom en verbe (« tandoiser ») ou en nom commun (« un tando ») est interdit.
+Le nom ne décrit pas le produit, et c'est volontaire : c'est la baseline qui explique, jamais le nom. N'écris donc jamais de formule du type « Velekya, la plateforme d'agents IA ». Décliner le nom en verbe (« velekyaiser ») ou en nom commun (« un velekya ») est interdit.
 
-Le domaine de référence est `tando.fr`, avec `tando.com` en redirection. Les identifiants techniques (paquets, bases, variables d'environnement) utilisent le préfixe `tando-` / `TANDO_`.
+Le domaine de référence est `velekya.fr`, avec `velekya.com` en redirection. Les identifiants techniques (paquets, bases, variables d'environnement) utilisent le préfixe `velekya-` / `VELEKYA_`.
 
 Éléments d'identité à produire en même temps que le lot 1 : un logotype simple en texte, une icône carrée dérivée de la première lettre, une palette de deux couleurs plus des neutres, et une typographie unique déclinée en trois graisses. Rien de plus pour le MVP — pas de mascotte, pas de robot, pas de dégradé violet.
 
@@ -73,7 +73,7 @@ C'est la contrainte la plus importante du projet. Nos clients ne sont **pas** de
 
 La métaphore filée est celle de **l'embauche d'un collaborateur** : on décrit le poste, on le forme, il travaille, il rend des comptes. On tient cette métaphore de bout en bout sans jamais la rompre.
 
-La marque suit la même règle : on écrit « Tando », jamais « l'IA de Tando », « le moteur Tando » ni « la technologie Tando ». Tando prépare des employés virtuels, point.
+La marque suit la même règle : on écrit « Velekya », jamais « l'IA de Velekya », « le moteur Velekya » ni « la technologie Velekya ». Velekya prépare des employés virtuels, point.
 
 Côté code, base de données et documentation technique, on utilise le vocabulaire technique normal. La règle ne concerne que ce que le client lit. Prévois un fichier `packages/copy/glossary.ts` qui centralise les termes clients, pour qu'aucune chaîne « technique » ne fuite dans l'UI.
 
@@ -232,7 +232,7 @@ Le questionnaire de devis sur mesure et le back-office **ne sont pas** dans l'ap
 
 ### Livraison sur les stores
 
-Prévoir dès le lot mobile : comptes développeur Apple et Google, identité de l'app (nom affiché **Tando**, sous-titre « Votre employé virtuel », icône, écran de lancement), captures d'écran localisées FR, textes de fiche store rédigés avec le vocabulaire du §2 (jamais « agent IA »), politique de confidentialité en ligne, et une piste de test (TestFlight / test interne Play) avant la publication.
+Prévoir dès le lot mobile : comptes développeur Apple et Google, identité de l'app (nom affiché **Velekya**, sous-titre « Votre employé virtuel », icône, écran de lancement), captures d'écran localisées FR, textes de fiche store rédigés avec le vocabulaire du §2 (jamais « agent IA »), politique de confidentialité en ligne, et une piste de test (TestFlight / test interne Play) avant la publication.
 
 ---
 
@@ -262,7 +262,7 @@ Structure et contenu à intégrer tels quels (retouches mineures autorisées, ma
 
 > # Recrutez un employé qui ne dort jamais.
 >
-> Tando vous prépare un employé virtuel qui répond à vos clients, prend vos rendez-vous et gère vos demandes. 24h/24, 7j/7, week-ends compris. Sans contrat de travail, sans charges, sans arrêt maladie.
+> Velekya vous prépare un employé virtuel qui répond à vos clients, prend vos rendez-vous et gère vos demandes. 24h/24, 7j/7, week-ends compris. Sans contrat de travail, sans charges, sans arrêt maladie.
 >
 > **[ Découvrir mon futur employé ]**  ·  [ Voir un exemple en 2 minutes ]
 >
@@ -328,7 +328,7 @@ Ajouter une section « Depuis votre poche » avec les badges App Store et Google
 > Pas d'entretien, pas de période d'essai, pas de charges. Juste du travail en moins pour vous.
 > **[ Commencer maintenant ]**  ·  *Sans carte bancaire.*
 
-Le nom Tando apparaît dans le hero, dans le pied de page et dans la barre de navigation — pas davantage. Le reste de la page parle du client, pas de la marque.
+Le nom Velekya apparaît dans le hero, dans le pied de page et dans la barre de navigation — pas davantage. Le reste de la page parle du client, pas de la marque.
 
 ### Ton d'écriture, règles
 
@@ -453,7 +453,7 @@ Nos utilisateurs ont 45 ans en moyenne, consultent depuis leur téléphone, souv
 - Ne pas livrer l'app mobile sous forme de simple WebView du site : c'est une vraie application native, avec ses notifications, son mode hors ligne et ses codes.
 - Ne pas dupliquer une règle métier entre `apps/web` et `apps/mobile` : elle vit dans l'API.
 - Ne pas produire de code « générique impressionnant » : je préfère peu de code, lisible, qui marche.
-- Ne pas décliner la marque : pas de « Tando AI », pas de sous-marque, pas de mascotte, pas de logo robot.
+- Ne pas décliner la marque : pas de « Velekya AI », pas de sous-marque, pas de mascotte, pas de logo robot.
 
 ---
 

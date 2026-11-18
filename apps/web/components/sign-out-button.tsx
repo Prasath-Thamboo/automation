@@ -1,8 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { Button } from "@tando/ui";
-import { dashboard } from "@tando/copy";
+import { Button } from "@velekya/ui";
+import { dashboard } from "@velekya/copy";
 import { signOut } from "@/app/mon-equipe/actions";
 
 export function SignOutButton() {

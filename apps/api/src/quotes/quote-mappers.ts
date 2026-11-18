@@ -7,7 +7,7 @@ import type {
   QuoteContent,
   QuoteLine,
   QuoteStatus,
-} from "@tando/types";
+} from "@velekya/types";
 
 export const quoteWithRelations = {
   include: {

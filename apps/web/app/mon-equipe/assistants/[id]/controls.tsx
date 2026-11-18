@@ -8,8 +8,8 @@ import {
   togglePause,
   type FormState,
 } from "@/app/mon-equipe/team-actions";
-import type { AssistantSwitch, EscalationItem, Instruction } from "@tando/api-client";
-import { switchesCopy as sx } from "@tando/copy";
+import type { AssistantSwitch, EscalationItem, Instruction } from "@velekya/api-client";
+import { switchesCopy as sx } from "@velekya/copy";
 
 export function PauseControl({ id, paused }: { id: string; paused: boolean }) {
   const [pending, start] = useTransition();

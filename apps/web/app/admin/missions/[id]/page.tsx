@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { jobDescriptionContentSchema } from "@tando/types";
+import { ApiError } from "@velekya/api-client";
+import { jobDescriptionContentSchema } from "@velekya/types";
 import { sessionApi } from "@/lib/api";
 import { ChecklistEditor, StatusControls } from "./mission-workbench";
 

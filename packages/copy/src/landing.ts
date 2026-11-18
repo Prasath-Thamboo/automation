@@ -3,14 +3,14 @@
  * tels quels. Règles d'écriture : le « vous » partout, phrases courtes, aucun
  * superlatif technologique, aucun chiffre inventé, aucun jargon (§2).
  *
- * Le nom « Tando » n'apparaît que dans le hero ici (une fois) ; la barre de
+ * Le nom « Velekya » n'apparaît que dans le hero ici (une fois) ; la barre de
  * navigation et le pied de page le portent aussi, rien de plus.
  */
 
 export const landing = {
   hero: {
     title: "Recrutez un employé qui ne dort jamais.",
-    body: "Tando vous prépare un employé virtuel qui répond à vos clients, prend vos rendez-vous et gère vos demandes. 24h/24, 7j/7, week-ends compris. Sans contrat de travail, sans charges, sans arrêt maladie.",
+    body: "Velekya vous prépare un employé virtuel qui répond à vos clients, prend vos rendez-vous et gère vos demandes. 24h/24, 7j/7, week-ends compris. Sans contrat de travail, sans charges, sans arrêt maladie.",
     primaryCta: "Découvrir mon futur employé",
     secondaryCta: "Voir un exemple en 2 minutes",
     note: "Mis au travail en 5 minutes. Sans engagement.",

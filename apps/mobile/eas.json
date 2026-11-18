@@ -12,12 +12,12 @@
     "preview": {
       "distribution": "internal",
       "channel": "preview",
-      "env": { "EXPO_PUBLIC_API_URL": "https://api.tando.fr" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://api.velekya.fr" }
     },
     "production": {
       "channel": "production",
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://api.tando.fr" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://api.velekya.fr" }
     }
   },
   "submit": {

@@ -6,7 +6,7 @@ import {
   webLogin,
   API_URL,
   staffLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 const API = `${API_URL}/api/v1`;
 const N8N_TOKEN = process.env.N8N_TOKEN ?? "dev-n8n-token";
@@ -88,7 +88,7 @@ test("flux générique du métier : boutons par défaut + liste pour les flux pl
   expect(denied.status()).toBe(403);
   const list = await (
     await api.get(`${API}/n8n/professions/artisan-batiment/assistants`, {
-      headers: { "x-tando-token": N8N_TOKEN },
+      headers: { "x-velekya-token": N8N_TOKEN },
     })
   ).json();
   expect(list.assistants.map((a: { assistantId: string }) => a.assistantId)).toContain(assistantId);

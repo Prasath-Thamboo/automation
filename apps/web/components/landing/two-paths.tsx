@@ -1,4 +1,4 @@
-import { landing } from "@tando/copy";
+import { landing } from "@velekya/copy";
 import { Section } from "@/components/section";
 import { Cta } from "@/components/cta";
 import { Pencil, Users } from "@/components/icons";

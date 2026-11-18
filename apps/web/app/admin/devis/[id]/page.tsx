@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { QuoteWorkbench } from "./quote-workbench";
 

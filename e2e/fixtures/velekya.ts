@@ -7,7 +7,7 @@ const API = `${API_URL}/api/v1`;
 
 /** Adresse jetable et unique par test (isolation : un email = une organisation). */
 export function uniqueEmail(prefix = "e2e"): string {
-  return `${prefix}+${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}@e2e.tando.local`;
+  return `${prefix}+${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}@e2e.velekya.local`;
 }
 
 interface MailpitMessage {
@@ -17,7 +17,7 @@ interface MailpitMessage {
 }
 
 /** Objet du mail de lien magique (`apps/api/src/mail/templates.ts`). */
-const MAGIC_LINK_SUBJECT = "Votre lien pour entrer dans votre espace Tando";
+const MAGIC_LINK_SUBJECT = "Votre lien pour entrer dans votre espace Velekya";
 
 /**
  * Liens magiques reçus par `email`. Filtre sur l'objet : après une acceptation de
@@ -75,7 +75,7 @@ export interface ApiSession {
 /**
  * Connexion niveau API : renvoie un jeton Bearer (mobile / appels directs).
  * Réessaie si le jeton a déjà été consommé : une adresse partagée entre tests
- * parallèles (`staff@tando.fr`) peut voir passer le lien d'un autre worker.
+ * parallèles (`staff@velekya.fr`) peut voir passer le lien d'un autre worker.
  */
 export async function apiLogin(api: APIRequestContext, email: string): Promise<ApiSession> {
   let res = await api.post(`${API}/auth/verify`, {
@@ -100,11 +100,11 @@ export async function apiLogin(api: APIRequestContext, email: string): Promise<A
 let staffSession: Promise<ApiSession> | null = null;
 
 /**
- * Session du personnel Tando, ouverte une fois par worker : les tests parallèles
- * ne se disputent plus les liens magiques de `staff@tando.fr`.
+ * Session du personnel Velekya, ouverte une fois par worker : les tests parallèles
+ * ne se disputent plus les liens magiques de `staff@velekya.fr`.
  */
 export function staffLogin(api: APIRequestContext): Promise<ApiSession> {
-  staffSession ??= apiLogin(api, "staff@tando.fr").catch((err: unknown) => {
+  staffSession ??= apiLogin(api, "staff@velekya.fr").catch((err: unknown) => {
     staffSession = null;
     throw err;
   });

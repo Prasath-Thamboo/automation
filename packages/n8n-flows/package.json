@@ -1,5 +1,5 @@
 {
-  "name": "@tando/n8n-flows",
+  "name": "@velekya/n8n-flows",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,8 +11,8 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@tando/config": "workspace:*",
-    "@tando/copy": "workspace:*",
+    "@velekya/config": "workspace:*",
+    "@velekya/copy": "workspace:*",
     "@types/node": "^22.10.2",
     "eslint": "^9.17.0",
     "tsx": "^4.19.2",

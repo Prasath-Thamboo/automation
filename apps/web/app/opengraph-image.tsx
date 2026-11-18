@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { site } from "@tando/copy";
+import { site } from "@velekya/copy";
 
 export const alt = site.baseline;
 export const size = { width: 1200, height: 630 };
@@ -37,7 +37,7 @@ export default function OpengraphImage() {
           >
             T
           </div>
-          <div style={{ fontSize: 40, fontWeight: 700, color: "#1f5c3d" }}>Tando</div>
+          <div style={{ fontSize: 40, fontWeight: 700, color: "#1f5c3d" }}>Velekya</div>
         </div>
         <div style={{ marginTop: 48, fontSize: 60, fontWeight: 700, color: "#1c1a17", lineHeight: 1.15 }}>
           Recrutez un employé qui ne dort jamais.

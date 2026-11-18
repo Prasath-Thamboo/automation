@@ -1,5 +1,5 @@
 {
-  "name": "@tando/web",
+  "name": "@velekya/web",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,16 +14,16 @@
   "dependencies": {
     "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
     "@fontsource-variable/bricolage-grotesque": "5.3.0",
-    "@tando/api-client": "workspace:*",
-    "@tando/copy": "workspace:*",
-    "@tando/types": "workspace:*",
-    "@tando/ui": "workspace:*",
+    "@velekya/api-client": "workspace:*",
+    "@velekya/copy": "workspace:*",
+    "@velekya/types": "workspace:*",
+    "@velekya/ui": "workspace:*",
     "next": "^15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@tando/config": "workspace:*",
+    "@velekya/config": "workspace:*",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",

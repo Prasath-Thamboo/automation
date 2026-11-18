@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { findJargon } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { findJargon } from "@velekya/copy";
 import {
   answerHelpRequestSchema,
   createHelpArticleSchema,
   updateHelpArticleSchema,
-} from "@tando/types";
+} from "@velekya/types";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 
@@ -35,7 +35,7 @@ function fail(error: unknown): HelpActionState {
   return { error: error instanceof ApiError ? error.message : "L'opération a échoué." };
 }
 
-/** Textes lus par le client : même règle anti-jargon que `@tando/copy` (§2). */
+/** Textes lus par le client : même règle anti-jargon que `@velekya/copy` (§2). */
 function jargonError(...texts: Array<string | null | undefined>): string | null {
   for (const t of texts) {
     const hit = t ? findJargon(t)[0] : undefined;

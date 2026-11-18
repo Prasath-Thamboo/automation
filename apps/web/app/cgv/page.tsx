@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { conditionsGenerales } from "@tando/copy";
+import { conditionsGenerales } from "@velekya/copy";
 import { ContentPage, ContentSection } from "@/components/marketing-page";
 
 export const metadata: Metadata = {

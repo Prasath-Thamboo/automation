@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Suffisant pour `prisma generate` et le build ; aucun accès réseau à une vraie base.
-      DATABASE_URL: postgresql://tando:tando@localhost:5432/tando?schema=public
+      DATABASE_URL: postgresql://velekya:velekya@localhost:5432/velekya?schema=public
       REDIS_URL: redis://localhost:6379
       SESSION_SECRET: ci-session-secret-0000000000000000000000000000
     steps:
@@ -76,10 +76,10 @@ jobs:
         run: pnpm build
 
       - name: Navigateurs Playwright
-        run: pnpm --filter @tando/e2e exec playwright install --with-deps chromium
+        run: pnpm --filter @velekya/e2e exec playwright install --with-deps chromium
 
       - name: Tests end-to-end
-        run: pnpm --filter @tando/e2e test:e2e
+        run: pnpm --filter @velekya/e2e test:e2e
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -123,5 +123,5 @@ jobs:
   #           adb install app-preview.apk
   #           MAESTRO_API_URL=http://10.0.2.2:3333 \
   #           MAESTRO_MAILPIT_URL=http://10.0.2.2:8025 \
-  #           MAESTRO_TEST_EMAIL=e2e-mobile@tando.local \
+  #           MAESTRO_TEST_EMAIL=e2e-mobile@velekya.local \
   #           ~/.maestro/bin/maestro test apps/mobile/maestro/flows

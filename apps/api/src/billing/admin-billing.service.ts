@@ -6,7 +6,7 @@ import type {
   InvoiceKind,
   InvoiceStatus,
   IssueCreditNote,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { BillingService } from "./billing.service";
 

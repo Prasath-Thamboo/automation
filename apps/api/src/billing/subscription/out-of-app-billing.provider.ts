@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { BillingManageHandoff } from "@tando/types";
+import type { BillingManageHandoff } from "@velekya/types";
 import type { BillingProvider, ManageHandoffInput } from "./billing-provider";
 
 /**

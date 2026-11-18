@@ -1,6 +1,6 @@
 /**
  * Composants web partagés (landing, catalogue, espace client).
- * Le back-office peut aussi les utiliser. Le mobile a son propre `@tando/ui-native`.
+ * Le back-office peut aussi les utiliser. Le mobile a son propre `@velekya/ui-native`.
  * Style : classes utilitaires nommées `tnd-*` (voir styles.css), pas de dépendance
  * à la config Tailwind de l'app hôte pour rester réutilisable.
  */

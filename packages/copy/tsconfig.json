@@ -1,5 +1,5 @@
 {
-  "extends": "@tando/config/tsconfig/library.json",
+  "extends": "@velekya/config/tsconfig/library.json",
   "compilerOptions": {
     "noEmit": true,
     "types": ["vitest/globals", "node"]

@@ -1,6 +1,6 @@
 # Sous-parcours réutilisable : connexion par lien magique (canal mobile).
 # Laisse l'app sur l'onglet « Aujourd'hui ».
-appId: fr.tando.app
+appId: fr.velekya.app
 ---
 - runScript: ../scripts/magic-token.js
 - launchApp:
@@ -13,5 +13,5 @@ appId: fr.tando.app
 - tapOn: "Recevoir mon lien de connexion"
 - assertVisible: "C'est envoyé."
 # Le lien magique arrive par email ; on ouvre le deep link directement.
-- openLink: "tando://verifier?token=${output.magicToken}"
+- openLink: "velekya://verifier?token=${output.magicToken}"
 - assertVisible: "Aujourd'hui"

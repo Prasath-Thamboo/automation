@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { cookiesCopy } from "@tando/copy";
+import { cookiesCopy } from "@velekya/copy";
 import { ContentPage, ContentSection } from "@/components/marketing-page";
 
 export const metadata: Metadata = {

@@ -66,7 +66,7 @@ export function extractHumanStrings(file: string): ScannedString[] {
    * Vrai si la chaîne est du "code" et non du texte destiné à l'humain :
    * argument d'un appel de fonction (`searchParams.get("token")`), clé d'accès
    * (`obj["token"]`), ou nom de propriété. Ces chaînes ne sont jamais affichées
-   * telles quelles au client — les libellés visibles vivent dans `@tando/copy`
+   * telles quelles au client — les libellés visibles vivent dans `@velekya/copy`
    * ou dans du texte JSX.
    */
   const isCodeLiteral = (node: ts.Node): boolean => {

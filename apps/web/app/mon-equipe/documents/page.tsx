@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import type { InvoiceDoc } from "@tando/api-client";
-import { subscribeCopy } from "@tando/copy";
+import type { InvoiceDoc } from "@velekya/api-client";
+import { subscribeCopy } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { PayButton } from "./pay-button";

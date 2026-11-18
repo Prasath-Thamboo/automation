@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { offersCopy, subscribeCopy } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { offersCopy, subscribeCopy } from "@velekya/copy";
 import { anonApi } from "@/lib/api";
 import { Cta } from "@/components/cta";
 import { DemoConversation } from "@/components/catalog/demo-conversation";

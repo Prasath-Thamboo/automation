@@ -17,7 +17,7 @@ config.resolver.nodeModulesPaths = [
 // Metro doit pouvoir remonter l'arborescence pour les trouver. On garde donc
 // la recherche hiérarchique activée (pas de disableHierarchicalLookup).
 config.resolver.unstable_enableSymlinks = true;
-// Les packages partagés (@tando/config, @tando/ui-native…) exposent leurs
+// Les packages partagés (@velekya/config, @velekya/ui-native…) exposent leurs
 // entrées via le champ "exports" du package.json (sous-chemins ./tokens etc.).
 config.resolver.unstable_enablePackageExports = true;
 

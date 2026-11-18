@@ -3,10 +3,10 @@
  * Ce fichier n'est qu'une graine : une fois en base, tout se modifie depuis le
  * back-office, sans redéploiement.
  *
- * Le contenu suit `templateContentSchema` (@tando/types). Langage bénéfice,
+ * Le contenu suit `templateContentSchema` (@velekya/types). Langage bénéfice,
  * aucun jargon (§2).
  */
-import type { DefaultSwitch, TemplateContent } from "@tando/types";
+import type { DefaultSwitch, TemplateContent } from "@velekya/types";
 
 export interface CatalogSeed {
   slug: string;

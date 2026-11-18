@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppState } from "react-native";
-import type { SessionUser } from "@tando/api-client";
+import type { SessionUser } from "@velekya/api-client";
 import { api } from "./api";
 import { clearSessionToken, getSessionToken, setSessionToken } from "./session";
 import { canUseBiometrics, promptUnlock } from "./biometric";

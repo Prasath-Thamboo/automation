@@ -2,7 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import Link from "next/link";
-import type { AdminProfession } from "@tando/api-client";
+import type { AdminProfession } from "@velekya/api-client";
 import {
   publishProfession,
   removeProfession,

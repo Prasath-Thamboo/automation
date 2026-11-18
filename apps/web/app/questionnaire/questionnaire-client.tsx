@@ -6,8 +6,8 @@ import {
   questionnaire,
   questionnaireCopy as C,
   type Question,
-} from "@tando/copy";
-import type { AssessmentAnswers, JobDescriptionContent } from "@tando/api-client";
+} from "@velekya/copy";
+import type { AssessmentAnswers, JobDescriptionContent } from "@velekya/api-client";
 import { browserApi, getAssessmentToken, setAssessmentToken } from "@/lib/browser-api";
 
 type Phase = "loading" | "start" | "questions" | "review" | "done";

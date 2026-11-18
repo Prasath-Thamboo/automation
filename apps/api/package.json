@@ -1,5 +1,5 @@
 {
-  "name": "@tando/api",
+  "name": "@velekya/api",
   "version": "0.0.0",
   "private": true,
   "type": "commonjs",
@@ -26,7 +26,7 @@
     "@nestjs/swagger": "^11.0.5",
     "@nestjs/throttler": "^6.4.0",
     "@prisma/client": "^6.4.1",
-    "@tando/types": "workspace:*",
+    "@velekya/types": "workspace:*",
     "bullmq": "^5.41.5",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.5",
-    "@tando/config": "workspace:*",
+    "@velekya/config": "workspace:*",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",

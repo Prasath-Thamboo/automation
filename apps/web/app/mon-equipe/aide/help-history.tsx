@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { HelpRequestItem } from "@tando/api-client";
-import { helpCopy } from "@tando/copy";
+import type { HelpRequestItem } from "@velekya/api-client";
+import { helpCopy } from "@velekya/copy";
 import { helpLink } from "./help-links";
 
 const STATUS_STYLE: Record<HelpRequestItem["status"], string> = {

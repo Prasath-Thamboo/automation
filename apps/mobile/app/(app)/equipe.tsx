@@ -16,7 +16,7 @@ import {
   mobileTraining as tx,
   switchesCopy as sx,
   helpCopy,
-} from "@tando/copy";
+} from "@velekya/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";
@@ -41,7 +41,7 @@ export default function EquipeScreen() {
     if (data) void syncWidget(data);
   }, [data]);
 
-  // Deep link depuis le widget / une notification : tando://(app)/equipe?do=pause
+  // Deep link depuis le widget / une notification : velekya://(app)/equipe?do=pause
   const { do: intent } = useLocalSearchParams<{ do?: string }>();
   const intentDone = useRef(false);
 

@@ -1,4 +1,4 @@
-import base from "@tando/config/eslint";
+import base from "@velekya/config/eslint";
 
 export default [
   ...base,

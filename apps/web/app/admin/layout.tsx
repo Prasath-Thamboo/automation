@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-ink-100 pb-4">
         <Link href="/admin" className="font-heading text-lg font-bold text-ink-900 no-underline">
-          Tando · back-office
+          Velekya · back-office
         </Link>
         {(
           [

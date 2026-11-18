@@ -1,5 +1,5 @@
 {
-  "extends": "@tando/config/tsconfig/base.json",
+  "extends": "@velekya/config/tsconfig/base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM"],

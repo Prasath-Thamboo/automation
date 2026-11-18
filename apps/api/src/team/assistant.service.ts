@@ -18,7 +18,7 @@ import type {
   SpecificQuestion,
   TeamList,
   TodaySummary,
-} from "@tando/types";
+} from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
 import { AuditService } from "../audit/audit.service";
@@ -28,7 +28,7 @@ import { newPublicId } from "./public-id";
 
 type JD = { summary?: string; tasks?: string[]; hours?: string };
 
-/** Lot 14 — boutons de pilotage, dans l'ordre choisi par l'équipe Tando. */
+/** Lot 14 — boutons de pilotage, dans l'ordre choisi par l'équipe Velekya. */
 const WITH_SWITCHES = {
   switches: { orderBy: [{ position: "asc" as const }, { createdAt: "asc" as const }] },
 };

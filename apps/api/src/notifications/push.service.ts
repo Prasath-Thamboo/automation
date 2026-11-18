@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import type { RegisterPushToken } from "@tando/types";
+import type { RegisterPushToken } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { QueueService, type PushJob } from "../queue/queue.module";
@@ -100,7 +100,7 @@ export class PushService {
     });
   }
 
-  /** Lot 15 — l'équipe Tando a répondu à une question posée par cette personne.
+  /** Lot 15 — l'équipe Velekya a répondu à une question posée par cette personne.
    *  Réponse à sa propre demande : pas de préférence dédiée, heures de silence respectées. */
   async notifyHelpAnswered(input: { userId: string; question: string }): Promise<void> {
     const p = await this.prefs.get(input.userId);
@@ -108,7 +108,7 @@ export class PushService {
     await this.queue.enqueuePush({
       type: "send",
       userIds: [input.userId],
-      title: "L'équipe Tando vous a répondu",
+      title: "L'équipe Velekya vous a répondu",
       body: trim(input.question, 140),
       data: { screen: "help" },
     });

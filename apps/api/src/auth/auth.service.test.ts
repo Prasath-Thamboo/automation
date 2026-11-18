@@ -4,7 +4,7 @@ import { AuthService } from "./auth.service";
 import type { Env } from "../config/env";
 
 const env = {
-  MOBILE_DEEP_LINK_SCHEME: "tando",
+  MOBILE_DEEP_LINK_SCHEME: "velekya",
   NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
   WEB_ORIGIN: ["http://localhost:3000"],
 } as unknown as Env;
@@ -63,7 +63,7 @@ describe("AuthService.requestMagicLink", () => {
   it("construit un lien profond pour le canal mobile", async () => {
     const { service, queue } = makeService();
     await service.requestMagicLink({ email: "a@b.fr", channel: "mobile" });
-    expect(queue.enqueueEmail.mock.calls[0][0].text).toContain("tando://verifier?token=tok");
+    expect(queue.enqueueEmail.mock.calls[0][0].text).toContain("velekya://verifier?token=tok");
   });
 });
 

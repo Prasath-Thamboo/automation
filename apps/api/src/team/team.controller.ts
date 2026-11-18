@@ -36,7 +36,7 @@ import {
   type TeamList,
   type TodaySummary,
   type UpdateAccount,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { SessionGuard } from "../auth/session.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
@@ -193,7 +193,7 @@ export class TeamController {
 
   @Get("account/export")
   @Header("content-type", "application/json; charset=utf-8")
-  @Header("content-disposition", 'attachment; filename="mes-donnees-tando.json"')
+  @Header("content-disposition", 'attachment; filename="mes-donnees-velekya.json"')
   async exportData(@CurrentUser() user: SessionUser, @Res() res: Response): Promise<void> {
     const data = await this.account.exportData(user);
     res.status(200).send(JSON.stringify(data, null, 2));

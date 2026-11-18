@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { landing, nav } from "@tando/copy";
+import { landing, nav } from "@velekya/copy";
 import { Section, SectionHeading } from "@/components/section";
 import { ArrowRight, Hand, Help, Lock, Shield, Users } from "@/components/icons";
 

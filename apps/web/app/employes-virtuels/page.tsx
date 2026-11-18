@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { stub } from "@tando/copy";
+import { stub } from "@velekya/copy";
 import { anonApi } from "@/lib/api";
 import { ProfessionCard } from "@/components/catalog/profession-card";
 import { CatalogFilters } from "@/components/catalog/catalog-filters";

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import type { PricingRule } from "@prisma/client";
-import type { AssessmentAnswers, QuoteLine } from "@tando/types";
+import type { AssessmentAnswers, QuoteLine } from "@velekya/types";
 import { PrismaService } from "../../prisma/prisma.service";
 import { pricingRuleSeeds } from "./default-rules";
 

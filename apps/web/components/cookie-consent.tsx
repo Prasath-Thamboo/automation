@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { cookiesCopy } from "@tando/copy";
+import { cookiesCopy } from "@velekya/copy";
 
-const STORAGE_KEY = "tando_consent";
+const STORAGE_KEY = "velekya_consent";
 
 /**
  * Bandeau cookies conforme CNIL : « refuser » aussi simple et visible
  * qu'« accepter » (§9.4). Aujourd'hui le site n'utilise que des cookies
  * nécessaires ; ce bandeau enregistre le choix pour le jour où une mesure
- * d'audience serait ajoutée (elle devra vérifier `tando_consent === "all"`).
+ * d'audience serait ajoutée (elle devra vérifier `velekya_consent === "all"`).
  */
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);

@@ -7,7 +7,7 @@ import {
   submitAssessment,
   uniqueEmail,
   staffLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
 

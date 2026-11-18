@@ -1,10 +1,10 @@
-import { createApiClient } from "@tando/api-client";
+import { createApiClient } from "@velekya/api-client";
 
 /** Base d'URL de l'API, exposée au navigateur. */
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3333";
 
 /** Jeton de reprise du questionnaire (parcours anonyme, faible sensibilité). */
-const ASSESSMENT_TOKEN_KEY = "tando_assessment";
+const ASSESSMENT_TOKEN_KEY = "velekya_assessment";
 
 export function getAssessmentToken(): string | null {
   try {

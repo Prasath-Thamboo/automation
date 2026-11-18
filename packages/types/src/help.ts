@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Lot 15 — aide au patron (« Une question ? »). Le patron pose une question sur
  * son compte, ses factures, son employé… ; l'API cherche la réponse dans une
- * base écrite par l'équipe Tando. Sans réponse fiable, rien n'est inventé : la
+ * base écrite par l'équipe Velekya. Sans réponse fiable, rien n'est inventé : la
  * question peut être transmise à l'équipe, qui répond depuis le back-office.
  */
 
@@ -30,7 +30,7 @@ export interface HelpRequestItem {
   id: string;
   question: string;
   status: HelpRequestStatus;
-  /** Réponse de la base, ou réponse de l'équipe Tando. */
+  /** Réponse de la base, ou réponse de l'équipe Velekya. */
   answer: string | null;
   action: HelpAction;
   helpful: boolean | null;

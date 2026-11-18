@@ -20,12 +20,12 @@ describe("splitTtc", () => {
 describe("freezeInvoiceContent", () => {
   it("fige l'identité vendeur depuis la configuration", () => {
     const env = {
-      SELLER_NAME: "Tando SAS",
+      SELLER_NAME: "Velekya SAS",
       SELLER_ADDRESS: "1 rue de la Paix, Paris",
       SELLER_LEGAL: "SAS · SIREN 000",
     } as unknown as Env;
     const c = freezeInvoiceContent(env, "Garage Durand");
-    expect(c.seller.name).toBe("Tando SAS");
+    expect(c.seller.name).toBe("Velekya SAS");
     expect(c.buyer.name).toBe("Garage Durand");
     expect(c.legalNotice).toContain("L.441-10");
   });

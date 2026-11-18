@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { stub } from "@tando/copy";
+import { stub } from "@velekya/copy";
 import { StubPage } from "@/components/stub-page";
 
 export const metadata: Metadata = {

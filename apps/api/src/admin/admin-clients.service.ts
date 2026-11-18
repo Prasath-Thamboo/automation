@@ -4,7 +4,7 @@ import type {
   AdminClientList,
   AdminClientListItem,
   SubscriptionSummary,
-} from "@tando/types";
+} from "@velekya/types";
 import type { Subscription } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 

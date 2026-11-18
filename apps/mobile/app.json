@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Tando",
-    "slug": "tando",
-    "scheme": "tando",
+    "name": "Velekya",
+    "slug": "velekya",
+    "scheme": "velekya",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "fr.tando.app",
+      "bundleIdentifier": "fr.velekya.app",
       "buildNumber": "1",
       "appleTeamId": "[À COMPLÉTER — Apple Team ID]",
       "config": {
@@ -29,7 +29,7 @@
         "UIBackgroundModes": ["remote-notification"]
       },
       "entitlements": {
-        "com.apple.security.application-groups": ["group.fr.tando.app"]
+        "com.apple.security.application-groups": ["group.fr.velekya.app"]
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
@@ -39,10 +39,10 @@
           }
         ]
       },
-      "associatedDomains": ["applinks:tando.fr"]
+      "associatedDomains": ["applinks:velekya.fr"]
     },
     "android": {
-      "package": "fr.tando.app",
+      "package": "fr.velekya.app",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -52,7 +52,7 @@
         {
           "action": "VIEW",
           "autoVerify": true,
-          "data": [{ "scheme": "https", "host": "tando.fr", "pathPrefix": "/app" }],
+          "data": [{ "scheme": "https", "host": "velekya.fr", "pathPrefix": "/app" }],
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ]

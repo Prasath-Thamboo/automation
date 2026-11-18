@@ -46,7 +46,7 @@ export const channelsCopy = {
     "Ses coordonnées (adresse email, formulaire pour votre site…) vous attendent sur sa fiche, dès qu'il a commencé.",
 } as const;
 
-/** Formulaire public, affiché sur le site du patron. Le visiteur ne connaît pas Tando. */
+/** Formulaire public, affiché sur le site du patron. Le visiteur ne connaît pas Velekya. */
 export const publicForm = {
   title: (establishment: string) => `Écrivez à ${establishment}`,
   intro: "Posez votre question ou demandez un rendez-vous : on vous répond tout de suite.",

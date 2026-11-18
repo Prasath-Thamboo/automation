@@ -50,27 +50,27 @@ export const envSchema = z.object({
   RATE_LIMIT_DISABLED: booleanish.default("false"),
 
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET doit faire au moins 32 caractères"),
-  SESSION_COOKIE: z.string().default("tando_session"),
+  SESSION_COOKIE: z.string().default("velekya_session"),
   SESSION_TTL_SECONDS: z.coerce.number().int().positive().default(2_592_000),
   MAGIC_LINK_TTL_SECONDS: z.coerce.number().int().positive().default(900),
 
   SMTP_HOST: z.string().default("localhost"),
   SMTP_PORT: z.coerce.number().int().positive().default(1025),
   SMTP_SECURE: booleanish.default("false"),
-  MAIL_FROM: z.string().default("Tando <bonjour@tando.local>"),
-  /** Lot 15 — boîte de l'équipe Tando qui reçoit les questions transmises (défaut : MAIL_FROM). */
+  MAIL_FROM: z.string().default("Velekya <bonjour@velekya.local>"),
+  /** Lot 15 — boîte de l'équipe Velekya qui reçoit les questions transmises (défaut : MAIL_FROM). */
   HELP_DESK_EMAIL: z.string().email().optional(),
 
   /** Base des liens magiques web. Premier élément de WEB_ORIGIN si absent. */
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   /** Schéma de lien profond mobile : <scheme>://verifier?token=... */
-  MOBILE_DEEP_LINK_SCHEME: z.string().default("tando"),
+  MOBILE_DEEP_LINK_SCHEME: z.string().default("velekya"),
 
   // --- Facturation (Lot 4) ---
   /** Taux de TVA par défaut, en pourcentage. */
   VAT_RATE_PCT: z.coerce.number().min(0).max(100).default(20),
   /** Identité du vendeur, figée dans chaque facture (mentions légales). */
-  SELLER_NAME: z.string().default("Tando"),
+  SELLER_NAME: z.string().default("Velekya"),
   SELLER_LEGAL: z
     .string()
     .default("[À COMPLÉTER — forme juridique, capital, SIREN, RCS, TVA intracommunautaire]"),
@@ -88,7 +88,7 @@ export const envSchema = z.object({
   /** Phrase de renvoi vers la gestion du contrat, affichée telle quelle. */
   BILLING_MANAGE_HINT: z
     .string()
-    .default("Gérez votre contrat depuis votre espace, sur tando.fr."),
+    .default("Gérez votre contrat depuis votre espace, sur velekya.fr."),
 
   // --- Moteur « employé virtuel » (Lot 6) ---
   /**
@@ -99,12 +99,12 @@ export const envSchema = z.object({
   /** Lot 16 — jours d'essai gratuit de l'offre prêt à l'emploi (0 = pas d'essai). */
   CATALOG_TRIAL_DAYS: z.coerce.number().int().min(0).max(90).default(14),
   /**
-   * Instance n8n de Tando (ex. `https://n8n.tando.fr`). Si renseignée, l'adresse
+   * Instance n8n de Velekya (ex. `https://n8n.velekya.fr`). Si renseignée, l'adresse
    * du flux de chaque employé (back-office, Lot 14) doit être sur cette origine.
    */
   N8N_BASE_URL: z.string().url().optional(),
   /**
-   * Secret partagé avec n8n, dans les deux sens (en-tête `X-Tando-Token`) :
+   * Secret partagé avec n8n, dans les deux sens (en-tête `X-Velekya-Token`) :
    * l'API le présente aux flux, les flux le présentent à `/n8n/*`.
    */
   N8N_TOKEN: z.string().optional(),
@@ -122,7 +122,7 @@ export const envSchema = z.object({
    *  partent toujours par SMTP (mailpit en dev). */
   CHANNELS_DELIVERY: z.enum(["fake", "live"]).default("fake"),
   /** Domaine des adresses de réception (`<nom>@<domaine>`), routé vers Brevo. */
-  INBOUND_EMAIL_DOMAIN: z.string().default("in.tando.local"),
+  INBOUND_EMAIL_DOMAIN: z.string().default("in.velekya.local"),
   /** Jeton exigé dans l'URL du webhook de réception Brevo (`?token=`). */
   BREVO_INBOUND_TOKEN: z.string().optional(),
   TWILIO_ACCOUNT_SID: z.string().optional(),

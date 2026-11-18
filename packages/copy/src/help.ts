@@ -1,30 +1,30 @@
 /**
  * Lot 15 — « Une question ? » : l'aide au patron dans son espace (web + mobile).
- * Les réponses elles-mêmes sont écrites par l'équipe Tando (back-office).
+ * Les réponses elles-mêmes sont écrites par l'équipe Velekya (back-office).
  */
 export const helpCopy = {
   title: "Une question ?",
   intro:
-    "Votre contrat, vos factures, votre employé virtuel… Posez votre question avec vos mots. Si nous n'avons pas la réponse toute prête, l'équipe Tando vous répond.",
+    "Votre contrat, vos factures, votre employé virtuel… Posez votre question avec vos mots. Si nous n'avons pas la réponse toute prête, l'équipe Velekya vous répond.",
   placeholder: "Par exemple : où trouver mes factures ?",
   ask: "Poser ma question",
   asking: "Je cherche…",
   topicsTitle: "Les questions les plus posées",
   noAnswer:
-    "Je n'ai pas de réponse sûre à cette question. Plutôt que de vous dire n'importe quoi, je peux la transmettre à l'équipe Tando.",
+    "Je n'ai pas de réponse sûre à cette question. Plutôt que de vous dire n'importe quoi, je peux la transmettre à l'équipe Velekya.",
   maybe: "Vous cherchez peut-être :",
   helpfulQuestion: "Cette réponse vous aide ?",
   helpfulYes: "Oui, merci",
   helpfulNo: "Non",
   thanks: "Merci pour votre retour.",
-  transmit: "Transmettre à l'équipe Tando",
+  transmit: "Transmettre à l'équipe Velekya",
   transmitted:
-    "C'est transmis. Une personne de l'équipe Tando vous répond par email, et la réponse apparaîtra ici.",
+    "C'est transmis. Une personne de l'équipe Velekya vous répond par email, et la réponse apparaîtra ici.",
   historyTitle: "Vos questions",
   historyEmpty: "Vous n'avez encore posé aucune question.",
   you: "Vous",
-  tando: "Tando",
-  teamAnswer: "Réponse de l'équipe Tando",
+  velekya: "Velekya",
+  teamAnswer: "Réponse de l'équipe Velekya",
   status: {
     repondue: "Répondu",
     sans_reponse: "Sans réponse",

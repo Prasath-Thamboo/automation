@@ -43,7 +43,7 @@ export default defineConfig({
 
   webServer: [
     {
-      command: "pnpm --filter @tando/api start",
+      command: "pnpm --filter @velekya/api start",
       cwd: "..",
       url: `${API_URL}/api/v1/health`,
       reuseExistingServer: !CI,
@@ -51,7 +51,7 @@ export default defineConfig({
       stdout: "pipe",
     },
     {
-      command: "pnpm --filter @tando/web start",
+      command: "pnpm --filter @velekya/web start",
       cwd: "..",
       url: WEB_URL,
       reuseExistingServer: !CI,

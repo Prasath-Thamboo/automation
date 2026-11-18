@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { site, nav } from "@tando/copy";
+import { site, nav } from "@velekya/copy";
 import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
 import "@fontsource-variable/bricolage-grotesque/wght.css";
-import "@tando/ui/styles.css";
+import "@velekya/ui/styles.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: site.baseline,
-    template: "%s · Tando",
+    template: "%s · Velekya",
   },
   description: site.description,
   applicationName: site.name,

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { AssistantChannels } from "@tando/api-client";
-import { channelLabels, channelsCopy } from "@tando/copy";
+import type { AssistantChannels } from "@velekya/api-client";
+import { channelLabels, channelsCopy } from "@velekya/copy";
 
 function CopyButton({ value }: { value: string }) {
   const [done, setDone] = useState(false);

@@ -5,7 +5,7 @@ import type {
   InvoiceLine,
   InvoiceParty,
   InvoiceStatus,
-} from "@tando/types";
+} from "@velekya/types";
 import type { CreditNote, Invoice, InvoiceLineItem } from "@prisma/client";
 import type { Env } from "../config/env";
 

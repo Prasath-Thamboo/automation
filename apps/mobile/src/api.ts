@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { createApiClient } from "@tando/api-client";
+import { createApiClient } from "@velekya/api-client";
 import { clearSessionToken, getSessionToken } from "./session";
 
 function baseUrl(): string {

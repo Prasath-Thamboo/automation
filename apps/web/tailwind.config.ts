@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
-import preset from "@tando/config/tailwind-preset";
+import preset from "@velekya/config/tailwind-preset";
 
 /**
- * Surcharges propres au web (le mobile garde les tokens de @tando/config).
+ * Surcharges propres au web (le mobile garde les tokens de @velekya/config).
  *
  * Parti pris : moderne et chaleureux, mais lisible par tous — y compris les
  * patrons de plus de 60 ans.

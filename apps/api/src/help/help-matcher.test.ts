@@ -25,7 +25,7 @@ describe("help-matcher", () => {
     ["pourquoi il me remonte des demandes à valider", "a-valider"],
     ["je voudrais exporter mes données RGPD", "export-donnees"],
     ["comment régler les notifications ?", "notifications"],
-    ["je veux parler à un conseiller", "joindre-tando"],
+    ["je veux parler à un conseiller", "joindre-velekya"],
     ["factures", "trouver-factures"],
   ])("« %s » → %s", (question, slug) => {
     expect(best(question)).toBe(slug);

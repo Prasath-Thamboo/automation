@@ -7,7 +7,7 @@ import type {
   FormMessage,
   FormReply,
   PublicFormInfo,
-} from "@tando/types";
+} from "@velekya/types";
 import { ENV } from "../config/config.module";
 import { webBaseUrl, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";
@@ -47,7 +47,7 @@ export class ChannelsService {
 
   /**
    * Crée les canaux fournis d'office : le formulaire (adresse = publicId) et
-   * l'adresse email de réception. Les autres sont raccordés par l'équipe Tando.
+   * l'adresse email de réception. Les autres sont raccordés par l'équipe Velekya.
    */
   async ensureDefaults(assistant: Assistant): Promise<Assistant & { publicId: string }> {
     const a = assistant.publicId

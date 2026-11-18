@@ -9,7 +9,7 @@ import {
   type RemovePushToken,
   type SessionUser,
   type UpdateNotificationPrefs,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { SessionGuard } from "../auth/session.guard";
 import { CurrentUser } from "../auth/current-user.decorator";

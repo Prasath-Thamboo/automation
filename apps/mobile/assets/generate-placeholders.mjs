@@ -14,7 +14,7 @@ import { dirname, resolve } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-// Palette : tokens @tando/config (paper / primary / primaryStrong).
+// Palette : tokens @velekya/config (paper / primary / primaryStrong).
 const PAPER = [0xfb, 0xf9, 0xf4, 0xff];
 const PRIMARY = [0x2f, 0x7d, 0x4f, 0xff];
 const STRONG = [0x1f, 0x5c, 0x39, 0xff];

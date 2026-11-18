@@ -53,7 +53,7 @@ interface N8nRequest {
 
 /**
  * Moteur délégué au flux n8n construit pour chaque client (Lot 14). L'adresse
- * du flux est branchée par l'équipe Tando dans le back-office ; tant qu'elle ne
+ * du flux est branchée par l'équipe Velekya dans le back-office ; tant qu'elle ne
  * l'est pas, l'employé passe par le moteur à règles. L'API garde la main sur
  * tout le reste : canaux, escalades, notifications, facturation.
  *
@@ -111,7 +111,7 @@ export class N8nRuntime implements AssistantRuntime {
       headers: {
         accept: "application/json",
         "content-type": "application/json",
-        ...(token ? { "x-tando-token": token } : {}),
+        ...(token ? { "x-velekya-token": token } : {}),
       },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(this.env.N8N_TIMEOUT_MS),

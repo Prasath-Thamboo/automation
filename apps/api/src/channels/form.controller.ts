@@ -6,7 +6,7 @@ import {
   type FormMessage,
   type FormReply,
   type PublicFormInfo,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { ChannelsService } from "./channels.service";
 

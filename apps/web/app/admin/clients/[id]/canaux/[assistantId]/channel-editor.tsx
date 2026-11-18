@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import type { AdminChannel } from "@tando/api-client";
+import type { AdminChannel } from "@velekya/api-client";
 import {
   createChannel,
   deleteChannel,

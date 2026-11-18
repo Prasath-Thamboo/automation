@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
-import { mobileConnectivity as cx, mobileVoice as vx } from "@tando/copy";
+import { mobileConnectivity as cx, mobileVoice as vx } from "@velekya/copy";
 import { styles as s, t } from "./theme";
 import { useIsOnline } from "./net";
 import { usePendingActions } from "./offline-queue";

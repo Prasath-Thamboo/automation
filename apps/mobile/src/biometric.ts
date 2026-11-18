@@ -17,7 +17,7 @@ export async function canUseBiometrics(): Promise<boolean> {
 export async function promptUnlock(): Promise<boolean> {
   try {
     const res = await LocalAuthentication.authenticateAsync({
-      promptMessage: "Déverrouiller Tando",
+      promptMessage: "Déverrouiller Velekya",
       fallbackLabel: "Utiliser le code",
       cancelLabel: "Annuler",
     });

@@ -10,12 +10,12 @@ tests Playwright web (`e2e/`).
 
 1. **Maestro** installé : `curl -Ls "https://get.maestro.mobile.dev" | bash`
 2. **L'app installée** sur l'émulateur/simulateur :
-   - dev client : `pnpm --filter @tando/mobile ios` / `android`, ou
+   - dev client : `pnpm --filter @velekya/mobile ios` / `android`, ou
    - build EAS `preview` installé (`eas build -p android --profile preview`)
 3. **La pile back-end joignable depuis l'appareil** :
    ```bash
    pnpm db:up && pnpm db:migrate:deploy && pnpm db:seed
-   pnpm --filter @tando/api start          # :3333
+   pnpm --filter @velekya/api start          # :3333
    ```
    Depuis un émulateur Android, l'hôte est `10.0.2.2` ; depuis un simulateur iOS,
    `localhost`. L'app lit `EXPO_PUBLIC_API_URL` — la faire pointer vers la même
@@ -25,16 +25,16 @@ tests Playwright web (`e2e/`).
    |---|---|
    | `MAESTRO_API_URL` | `http://10.0.2.2:3333` |
    | `MAESTRO_MAILPIT_URL` | `http://10.0.2.2:8025` |
-   | `MAESTRO_TEST_EMAIL` | `e2e-mobile@tando.local` |
+   | `MAESTRO_TEST_EMAIL` | `e2e-mobile@velekya.local` |
 
 ## Lancer
 
 ```bash
 export MAESTRO_API_URL=http://10.0.2.2:3333
 export MAESTRO_MAILPIT_URL=http://10.0.2.2:8025
-export MAESTRO_TEST_EMAIL=e2e-mobile@tando.local
+export MAESTRO_TEST_EMAIL=e2e-mobile@velekya.local
 
-pnpm --filter @tando/mobile test:e2e         # = maestro test maestro/flows
+pnpm --filter @velekya/mobile test:e2e         # = maestro test maestro/flows
 # ou un seul parcours :
 maestro test apps/mobile/maestro/flows/00-connexion.yaml
 ```
@@ -43,7 +43,7 @@ maestro test apps/mobile/maestro/flows/00-connexion.yaml
 
 | Fichier | Parcours | Critère |
 |---|---|---|
-| `flows/00-connexion.yaml` | email → lien magique (`tando://verifier?token=`) → « Aujourd'hui » | connexion mobile de bout en bout |
+| `flows/00-connexion.yaml` | email → lien magique (`velekya://verifier?token=`) → « Aujourd'hui » | connexion mobile de bout en bout |
 | `flows/10-aujourdhui.yaml` | écran « Aujourd'hui » (ce qu'il a fait / à valider / à venir) + navigation par onglets | §6bis canal principal |
 | `flows/20-escalade.yaml` | « À valider » → ouvrir une question → réponse rapide en un tap → « c'est envoyé » | « escalade traitée en < 15 s, d'une seule main » (enregistre `escalade-15s`) |
 | `flows/30-pause-reprise.yaml` | « Mon équipe » → mettre en pause → remettre au travail | pause / reprise |

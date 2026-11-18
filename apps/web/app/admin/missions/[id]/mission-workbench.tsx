@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import type { AdminMissionDetail, MissionChecklistItem } from "@tando/api-client";
+import type { AdminMissionDetail, MissionChecklistItem } from "@velekya/api-client";
 import { saveChecklist, setMissionStatus, type MissionActionState } from "../actions";
 
 const STATUS: Record<string, string> = {

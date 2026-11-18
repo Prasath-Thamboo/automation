@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import type { AdminProfessionWorkflow } from "@tando/api-client";
+import type { AdminProfessionWorkflow } from "@velekya/api-client";
 import { saveProfessionWorkflow, type WorkflowActionState } from "./workflow-actions";
 
 const input = "w-full rounded-md border border-ink-100 px-2 py-1 font-mono text-sm";
@@ -34,7 +34,7 @@ export function WorkflowEditor({ workflow }: { workflow: AdminProfessionWorkflow
           <input
             name="workflowUrl"
             defaultValue={workflow.workflowUrl ?? ""}
-            placeholder="https://n8n.tando.fr/webhook/metier-dentiste"
+            placeholder="https://n8n.velekya.fr/webhook/metier-dentiste"
             className={`mt-0.5 ${input}`}
           />
         </label>

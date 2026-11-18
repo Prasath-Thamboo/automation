@@ -23,7 +23,7 @@ datasource db {
 }
 
 /// Rôle d'un utilisateur au sein d'une organisation cliente.
-/// `admin` est réservé au personnel Tando (accès back-office), il n'appartient à aucune organisation cliente.
+/// `admin` est réservé au personnel Velekya (accès back-office), il n'appartient à aucune organisation cliente.
 enum MembershipRole {
   owner
   member
@@ -213,7 +213,7 @@ model AssistantTemplate {
 
 /// Une version du contenu d'une fiche métier (§5.1). Une seule version `published`
 /// à la fois ; publier archive la précédente. `content` suit `templateContentSchema`
-/// (@tando/types) : journée type, ce qu'il sait faire, démo pré-scriptée, curseurs
+/// (@velekya/types) : journée type, ce qu'il sait faire, démo pré-scriptée, curseurs
 /// de gain, contrat, questions de personnalisation.
 model AssistantTemplateVersion {
   id          String         @id @default(uuid()) @db.Uuid
@@ -664,7 +664,7 @@ model Assistant {
   @@map("assistants")
 }
 
-/// Lot 14 — bouton de pilotage d'un employé. Déclaré par l'équipe Tando dans le
+/// Lot 14 — bouton de pilotage d'un employé. Déclaré par l'équipe Velekya dans le
 /// back-office, activé / coupé par le client ; son état est transmis au flux n8n
 /// sous `switches.<key>`.
 model AssistantSwitch {
@@ -819,7 +819,7 @@ enum ChannelKind {
 }
 
 enum ChannelStatus {
-  /// Raccordement en cours par l'équipe Tando.
+  /// Raccordement en cours par l'équipe Velekya.
   en_attente
   actif
   desactive
@@ -927,7 +927,7 @@ enum HelpAction {
   carnet
 }
 
-/// Réponse écrite à l'avance par l'équipe Tando, éditable dans le back-office.
+/// Réponse écrite à l'avance par l'équipe Velekya, éditable dans le back-office.
 /// Contenu global (pas d'`organizationId`), comme le catalogue.
 model HelpArticle {
   id        String     @id @default(uuid()) @db.Uuid
@@ -954,9 +954,9 @@ enum HelpRequestStatus {
   repondue
   /// Aucune réponse trouvée, pas (encore) transmise.
   sans_reponse
-  /// Transmise à l'équipe Tando, en attente.
+  /// Transmise à l'équipe Velekya, en attente.
   transmise
-  /// L'équipe Tando a répondu.
+  /// L'équipe Velekya a répondu.
   traitee
 }
 

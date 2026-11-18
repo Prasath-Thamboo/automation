@@ -1,4 +1,4 @@
-import type { TemplateContent } from "@tando/api-client";
+import type { TemplateContent } from "@velekya/api-client";
 
 /**
  * Conversion entre le formulaire du back-office (champs simples + zones de texte

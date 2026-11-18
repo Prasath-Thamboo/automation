@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 

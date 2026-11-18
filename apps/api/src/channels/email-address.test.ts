@@ -19,6 +19,6 @@ describe("inboxLocalPart", () => {
 
 describe("normalizeEmail", () => {
   it("met en minuscules", () => {
-    expect(normalizeEmail(" Accueil@In.Tando.FR ")).toBe("accueil@in.tando.fr");
+    expect(normalizeEmail(" Accueil@In.Velekya.FR ")).toBe("accueil@in.velekya.fr");
   });
 });

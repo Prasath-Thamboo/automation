@@ -2,7 +2,7 @@
 
 import { useActionState, useTransition, useState } from "react";
 import Link from "next/link";
-import type { AdminQuote } from "@tando/api-client";
+import type { AdminQuote } from "@velekya/api-client";
 import { updateQuote, sendQuote, type ActionState } from "../actions";
 
 const euro = (n: number) => n.toLocaleString("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 0 });

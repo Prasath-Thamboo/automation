@@ -1,5 +1,5 @@
-import type { HelpAction } from "@tando/api-client";
-import { helpCopy } from "@tando/copy";
+import type { HelpAction } from "@velekya/api-client";
+import { helpCopy } from "@velekya/copy";
 
 /** Où mène chaque renvoi sur le web. Pas de réglage des notifications ici
  *  (il vit dans l'application mobile) : pas de lien. */

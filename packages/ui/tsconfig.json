@@ -1,5 +1,5 @@
 {
-  "extends": "@tando/config/tsconfig/next.json",
+  "extends": "@velekya/config/tsconfig/next.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2022"]

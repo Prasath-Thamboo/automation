@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test, expect, webLogin, uniqueEmail } from "../fixtures/tando";
+import { test, expect, webLogin, uniqueEmail } from "../fixtures/velekya";
 
 /**
  * Critère d'acceptation §11 / §9.5 : « Tout le produit est utilisable au clavier

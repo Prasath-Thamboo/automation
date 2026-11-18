@@ -3,7 +3,7 @@
 #
 # Prérequis : le compte de test a AU MOINS une escalade ouverte. Sinon la flow
 # vérifie seulement l'état vide (voir maestro/README.md — script de semis).
-appId: fr.tando.app
+appId: fr.velekya.app
 tags:
   - escalade
 ---

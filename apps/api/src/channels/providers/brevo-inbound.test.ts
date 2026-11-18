@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { parseBrevoInbound, stripQuoted } from "./brevo-inbound";
 
-const own = ["in.tando.fr"];
+const own = ["in.velekya.fr"];
 
 function item(over: Record<string, unknown> = {}) {
   return {
     Uuid: ["u-1"],
     MessageId: "<abc@mail.example>",
     From: { Name: "Julie Martin", Address: "Julie.Martin@Example.com" },
-    To: [{ Name: null, Address: "Garage-Dupont-1a2b@in.tando.fr" }],
+    To: [{ Name: null, Address: "Garage-Dupont-1a2b@in.velekya.fr" }],
     Subject: "Rendez-vous",
     RawTextBody: "Bonjour,\nje voudrais un rendez-vous jeudi.\n\nLe 3 oct., Garage a écrit :\n> ancien",
     ExtractedMarkdownMessage: "Bonjour,\nje voudrais un rendez-vous jeudi.",
@@ -25,7 +25,7 @@ describe("parseBrevoInbound", () => {
     expect(emails).toEqual([
       {
         eventId: "<abc@mail.example>",
-        recipients: ["garage-dupont-1a2b@in.tando.fr"],
+        recipients: ["garage-dupont-1a2b@in.velekya.fr"],
         replyTo: "julie.martin@example.com",
         firstName: "Julie",
         subject: "Rendez-vous",
@@ -56,7 +56,7 @@ describe("parseBrevoInbound", () => {
           item({ Headers: { Precedence: "bulk" } }),
           item({ Headers: { "List-Id": "<news.example>" } }),
           item({ From: { Address: "MAILER-DAEMON@example.com" } }),
-          item({ From: { Address: "autre-9f9f@in.tando.fr" } }),
+          item({ From: { Address: "autre-9f9f@in.velekya.fr" } }),
           item({ SpamScore: 9 }),
           item({ ExtractedMarkdownMessage: "  ", RawTextBody: "> cité seulement" }),
           item({ From: null }),

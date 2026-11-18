@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
-import type { HelpReply, HelpRequestItem, HelpTopic } from "@tando/api-client";
-import { helpCopy } from "@tando/copy";
+import type { HelpReply, HelpRequestItem, HelpTopic } from "@velekya/api-client";
+import { helpCopy } from "@velekya/copy";
 import { askHelp, sendHelpFeedback, transmitHelp } from "./actions";
 import { helpLink } from "./help-links";
 
@@ -17,7 +17,7 @@ interface Turn {
 /**
  * Fenêtre « Une question ? » : le patron écrit, la réponse toute prête s'affiche
  * avec un renvoi vers le bon écran. Sans réponse sûre : des pistes et la
- * transmission à l'équipe Tando — jamais de réponse inventée.
+ * transmission à l'équipe Velekya — jamais de réponse inventée.
  */
 export function HelpDesk({ topics }: { topics: HelpTopic[] }) {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -85,7 +85,7 @@ export function HelpDesk({ topics }: { topics: HelpTopic[] }) {
               </p>
 
               <div className="max-w-[90%] space-y-3 rounded-lg rounded-bl-sm bg-primary-50 px-4 py-3 text-base text-ink-900">
-                <span className="sr-only">{helpCopy.tando} : </span>
+                <span className="sr-only">{helpCopy.velekya} : </span>
                 {r.answer ? (
                   <>
                     <p className="whitespace-pre-line">{r.answer}</p>

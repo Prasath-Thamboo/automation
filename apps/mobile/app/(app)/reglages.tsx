@@ -7,8 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { mobileNotifications as nx } from "@tando/copy";
-import type { NotificationPrefs } from "@tando/api-client";
+import { mobileNotifications as nx } from "@velekya/copy";
+import type { NotificationPrefs } from "@velekya/api-client";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";

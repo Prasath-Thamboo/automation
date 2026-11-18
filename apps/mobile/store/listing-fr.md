@@ -2,14 +2,14 @@
 
 Textes prêts à coller dans App Store Connect et Google Play Console. Vocabulaire
 client (§2) : on parle d'un collaborateur qu'on embauche, jamais de technique.
-Marque : **Tando**, jamais en capitales, jamais suffixée.
+Marque : **Velekya**, jamais en capitales, jamais suffixée.
 
 ---
 
 ## Nom de l'app
 
 ```
-Tando
+Velekya
 ```
 
 ## Sous-titre (App Store, 30 caractères max)
@@ -34,7 +34,7 @@ Suivez votre employé virtuel et répondez-lui en un geste, où que vous soyez.
 ## Description longue (App Store & Google Play)
 
 ```
-Tando, c'est votre employé virtuel : il répond au téléphone, prend les
+Velekya, c'est votre employé virtuel : il répond au téléphone, prend les
 rendez-vous et renseigne vos clients, 24 h/24, 7 j/7. L'application vous permet
 de garder la main sur lui, depuis votre poche.
 
@@ -61,7 +61,7 @@ Notifications que vous réglez au détail près, heures de silence, et la
 possibilité de fermer votre compte et de récupérer vos données directement
 depuis l'application.
 
-Le contrat se souscrit et se gère depuis votre espace sur tando.fr.
+Le contrat se souscrit et se gère depuis votre espace sur velekya.fr.
 ```
 
 ## Mots-clés (App Store, 100 caractères, séparés par des virgules)
@@ -77,9 +77,9 @@ employé virtuel,accueil téléphonique,rendez-vous,TPE,artisan,secrétariat,sta
 
 ## URL
 
-- Assistance : `https://tando.fr/contact`
-- Marketing : `https://tando.fr`
-- Confidentialité : `https://tando.fr/confidentialite`
+- Assistance : `https://velekya.fr/contact`
+- Marketing : `https://velekya.fr`
+- Confidentialité : `https://velekya.fr/confidentialite`
 
 ## Classification d'âge
 

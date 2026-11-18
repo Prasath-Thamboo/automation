@@ -20,4 +20,4 @@ export async function writeJson(key: string, value: unknown): Promise<void> {
 }
 
 /** Cache d'écran : la dernière réponse reçue, relue hors connexion. */
-export const cacheKey = (name: string) => `tando:cache:${name}`;
+export const cacheKey = (name: string) => `velekya:cache:${name}`;

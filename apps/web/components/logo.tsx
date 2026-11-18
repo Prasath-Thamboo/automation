@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { common } from "@tando/copy";
+import { common } from "@velekya/copy";
 
 /**
  * Logotype : le nom en toutes lettres, dans la police de titre (§1 — « un

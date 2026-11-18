@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import type { AdminSwitch } from "@tando/api-client";
+import type { AdminSwitch } from "@velekya/api-client";
 import {
   createSwitch,
   deleteSwitch,
@@ -41,7 +41,7 @@ export function WorkflowForm({
           name="workflowUrl"
           type="url"
           defaultValue={workflowUrl ?? ""}
-          placeholder="https://n8n.tando.fr/webhook/…"
+          placeholder="https://n8n.velekya.fr/webhook/…"
           className={`mt-0.5 block w-full font-mono ${input}`}
         />
       </label>

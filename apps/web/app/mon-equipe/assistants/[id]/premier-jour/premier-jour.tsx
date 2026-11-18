@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { AssistantDetail } from "@tando/api-client";
+import type { AssistantDetail } from "@velekya/api-client";
 import { activateAssistant, saveOnboardingStep } from "@/app/mon-equipe/team-actions";
 import { AssistantChat } from "@/components/assistant-chat";
-import { channelsCopy } from "@tando/copy";
+import { channelsCopy } from "@velekya/copy";
 
 const field = "mt-1 w-full rounded-md border border-ink-100 px-3 py-2 text-base";
 const STEPS = ["Vos informations", "Vos spécificités", "Comment il vous joint", "Essai en direct"];

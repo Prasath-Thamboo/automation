@@ -7,10 +7,10 @@ import {
   type ExceptionFilter,
 } from "@nestjs/common";
 import type { Request, Response } from "express";
-import type { ApiError } from "@tando/types";
+import type { ApiError } from "@velekya/types";
 
 /**
- * Normalise toutes les erreurs vers la forme `ApiError` de `@tando/types` :
+ * Normalise toutes les erreurs vers la forme `ApiError` de `@velekya/types` :
  * `{ statusCode, error, message, fields? }`. Le `message` est toujours orienté
  * action et sans jargon (§9.5) ; les détails techniques restent dans les logs.
  */

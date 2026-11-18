@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import type { AssistantChannels, SessionUser } from "@tando/types";
+import type { AssistantChannels, SessionUser } from "@velekya/types";
 import { SessionGuard } from "../auth/session.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { ChannelsService } from "./channels.service";

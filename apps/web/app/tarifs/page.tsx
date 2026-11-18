@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { offers, offerRows, offersCopy } from "@tando/copy";
+import { offers, offerRows, offersCopy } from "@velekya/copy";
 import { Section } from "@/components/section";
 import { Cta } from "@/components/cta";
 import { PageHeader } from "@/components/page-header";

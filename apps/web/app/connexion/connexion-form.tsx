@@ -2,8 +2,8 @@
 
 import { useActionState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button, Field, Callout } from "@tando/ui";
-import { auth as authCopy, common } from "@tando/copy";
+import { Button, Field, Callout } from "@velekya/ui";
+import { auth as authCopy, common } from "@velekya/copy";
 import { requestMagicLink, type MagicLinkState } from "./actions";
 
 const initial: MagicLinkState = { status: "idle" };

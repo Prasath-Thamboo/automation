@@ -1,6 +1,6 @@
 # §5 / §6bis — mettre l'employé virtuel en pause puis le remettre au travail,
 # depuis « Mon équipe ». Prérequis : un employé virtuel déjà au travail.
-appId: fr.tando.app
+appId: fr.velekya.app
 tags:
   - equipe
 ---

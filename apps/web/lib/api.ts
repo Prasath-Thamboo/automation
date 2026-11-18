@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { createApiClient } from "@tando/api-client";
+import { createApiClient } from "@velekya/api-client";
 import { SESSION_COOKIE } from "./constants";
 
 function baseUrl(): string {

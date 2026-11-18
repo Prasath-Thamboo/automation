@@ -15,7 +15,7 @@ import {
   type PaymentOutcome,
   type SessionUser,
   type StartPayment,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { SessionGuard } from "../auth/session.guard";
 import { CurrentUser } from "../auth/current-user.decorator";

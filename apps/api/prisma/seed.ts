@@ -1,7 +1,7 @@
 /**
  * Seed de développement.
  * - Compte de démonstration (organisation cliente + propriétaire).
- * - Compte du personnel Tando (rôle admin, accès back-office).
+ * - Compte du personnel Velekya (rôle admin, accès back-office).
  * - Catalogue : les 6 métiers du MVP, publiés (§5 / §10 Lot 2).
  * Idempotent (upsert).
  */
@@ -20,9 +20,9 @@ async function seedAccounts() {
   });
 
   const owner = await prisma.user.upsert({
-    where: { email: "patron@demo.tando.local" },
+    where: { email: "patron@demo.velekya.local" },
     update: {},
-    create: { email: "patron@demo.tando.local", fullName: "Camille Roy" },
+    create: { email: "patron@demo.velekya.local", fullName: "Camille Roy" },
   });
 
   await prisma.membership.upsert({
@@ -31,16 +31,16 @@ async function seedAccounts() {
     create: { userId: owner.id, organizationId: org.id, role: "owner" },
   });
 
-  // Personnel Tando : une organisation interne + un membre `admin`.
+  // Personnel Velekya : une organisation interne + un membre `admin`.
   const staffOrg = await prisma.organization.upsert({
-    where: { slug: "tando-staff" },
+    where: { slug: "velekya-staff" },
     update: {},
-    create: { name: "Tando", slug: "tando-staff" },
+    create: { name: "Velekya", slug: "velekya-staff" },
   });
   const staff = await prisma.user.upsert({
-    where: { email: "staff@tando.fr" },
+    where: { email: "staff@velekya.fr" },
     update: {},
-    create: { email: "staff@tando.fr", fullName: "Équipe Tando" },
+    create: { email: "staff@velekya.fr", fullName: "Équipe Velekya" },
   });
   await prisma.membership.upsert({
     where: { userId_organizationId: { userId: staff.id, organizationId: staffOrg.id } },
@@ -50,7 +50,7 @@ async function seedAccounts() {
 
   console.warn("Comptes :");
   console.warn(`  propriétaire  ${owner.email}  (organisation « ${org.name} »)`);
-  console.warn(`  admin Tando   ${staff.email}`);
+  console.warn(`  admin Velekya   ${staff.email}`);
 }
 
 /** Boutons par défaut du métier, s'il en déclare (Lot 16). */

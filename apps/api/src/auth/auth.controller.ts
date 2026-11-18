@@ -9,7 +9,7 @@ import {
   type RequestMagicLink,
   type SessionUser,
   type VerifyMagicLink,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { AuthService } from "./auth.service";
 import { SessionGuard } from "./session.guard";

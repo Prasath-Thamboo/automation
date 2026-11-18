@@ -1,5 +1,5 @@
 {
-  "name": "@tando/api-client",
+  "name": "@velekya/api-client",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,11 +14,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@tando/types": "workspace:*",
+    "@velekya/types": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@tando/config": "workspace:*",
+    "@velekya/config": "workspace:*",
     "eslint": "^9.17.0",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import type { AdminPricingRule } from "@tando/api-client";
+import type { AdminPricingRule } from "@velekya/api-client";
 import { createRule, deleteRule, updateRule, type PricingActionState } from "./actions";
 
 const KIND_LABEL: Record<string, string> = {

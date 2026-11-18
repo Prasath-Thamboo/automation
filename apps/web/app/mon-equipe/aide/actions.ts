@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ApiError, type HelpReply, type HelpRequestItem } from "@tando/api-client";
-import { helpCopy } from "@tando/copy";
+import { ApiError, type HelpReply, type HelpRequestItem } from "@velekya/api-client";
+import { helpCopy } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 

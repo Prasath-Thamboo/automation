@@ -1,4 +1,4 @@
-name: tando
+name: velekya
 
 # Les ports hôte sont surchargeables via .env (substitution docker compose) pour
 # cohabiter avec d'autres stacks locales. Défauts inchangés. Si tu changes un
@@ -13,15 +13,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: tando
-      POSTGRES_PASSWORD: tando
-      POSTGRES_DB: tando
+      POSTGRES_USER: velekya
+      POSTGRES_PASSWORD: velekya
+      POSTGRES_DB: velekya
     ports:
       - "${POSTGRES_HOST_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tando"]
+      test: ["CMD-SHELL", "pg_isready -U velekya"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -44,8 +44,8 @@ services:
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: tando
-      MINIO_ROOT_PASSWORD: tando-secret
+      MINIO_ROOT_USER: velekya
+      MINIO_ROOT_PASSWORD: velekya-secret
     ports:
       - "${MINIO_HOST_PORT:-9000}:9000"
       - "${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
@@ -65,8 +65,8 @@ services:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      mc alias set local http://minio:9000 tando tando-secret &&
-      mc mb --ignore-existing local/tando-documents &&
+      mc alias set local http://minio:9000 velekya velekya-secret &&
+      mc mb --ignore-existing local/velekya-documents &&
       echo 'bucket prêt'
       "
 

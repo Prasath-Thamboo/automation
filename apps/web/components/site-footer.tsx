@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { footer, common, glossary, site } from "@tando/copy";
+import { footer, common, glossary, site } from "@velekya/copy";
 
 const year = new Date().getFullYear();
 const columns = [footer.columns.product, footer.columns.legal];

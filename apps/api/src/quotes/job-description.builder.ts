@@ -1,4 +1,4 @@
-import type { AssessmentAnswers, JobDescriptionContent } from "@tando/types";
+import type { AssessmentAnswers, JobDescriptionContent } from "@velekya/types";
 
 /**
  * Construit la fiche de poste en langage clair (§4.1) à partir des réponses au

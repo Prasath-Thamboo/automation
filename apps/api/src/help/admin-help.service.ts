@@ -7,7 +7,7 @@ import type {
   CreateHelpArticle,
   HelpRequestStatus,
   UpdateHelpArticle,
-} from "@tando/types";
+} from "@velekya/types";
 import type { HelpArticle, Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
@@ -146,7 +146,7 @@ export class AdminHelpService {
     };
   }
 
-  /** L'équipe Tando répond : visible dans l'espace du client, email + notification. */
+  /** L'équipe Velekya répond : visible dans l'espace du client, email + notification. */
   async answer(id: string, answer: string, actorUserId: string): Promise<{ ok: true }> {
     const request = await this.prisma.helpRequest.findUnique({ where: { id } });
     if (!request) throw new NotFoundException("Cette question n'existe pas.");

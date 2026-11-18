@@ -1,9 +1,9 @@
 /**
- * Thème React Native dérivé des tokens partagés (`@tando/config/tokens`).
+ * Thème React Native dérivé des tokens partagés (`@velekya/config/tokens`).
  * Les composants natifs (Lot 7+) consommeront ce thème ; aucune valeur de couleur
  * ou d'espacement ne doit être écrite en dur ailleurs.
  */
-import { color, fontSize, radius, space, minTouchTarget } from "@tando/config/tokens";
+import { color, fontSize, radius, space, minTouchTarget } from "@velekya/config/tokens";
 
 export const theme = {
   color: {

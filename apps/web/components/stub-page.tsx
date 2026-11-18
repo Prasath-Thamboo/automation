@@ -1,4 +1,4 @@
-import { stub } from "@tando/copy";
+import { stub } from "@velekya/copy";
 import { Cta } from "@/components/cta";
 import { PageHeader } from "@/components/page-header";
 
@@ -9,10 +9,10 @@ export function StubPage({ title, body }: { title: string; body: string }) {
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Cta href="/">{stub.backHome}</Cta>
         <a
-          href="mailto:bonjour@tando.fr"
+          href="mailto:bonjour@velekya.fr"
           className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-primary-600 bg-white px-6 py-3 text-base font-bold text-primary-700 no-underline transition-colors hover:bg-primary-50"
         >
-          bonjour@tando.fr
+          bonjour@velekya.fr
         </a>
       </div>
     </PageHeader>

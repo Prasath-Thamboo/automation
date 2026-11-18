@@ -1,6 +1,6 @@
 /**
  * Textes adressés aux clients du patron par les canaux (voix, SMS). Ils parlent
- * au nom de l'établissement, jamais de Tando.
+ * au nom de l'établissement, jamais de Velekya.
  */
 
 export function missedCallSms(establishment: string): string {

@@ -6,7 +6,7 @@ import type {
   HelpRequestItem,
   HelpTopic,
   SessionUser,
-} from "@tando/types";
+} from "@velekya/types";
 import type { HelpArticle, HelpRequest } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
@@ -42,7 +42,7 @@ const topic = (a: HelpArticle): HelpTopic => ({ id: a.id, question: a.question }
  * Lot 15 — « Une question ? » : l'aide au patron dans son espace (web + mobile).
  * Réponses écrites à l'avance (`help_articles`), recherche par mots
  * (`help-matcher`), aucune réponse inventée. Sans réponse sûre, le patron peut
- * transmettre sa question à l'équipe Tando (email + back-office).
+ * transmettre sa question à l'équipe Velekya (email + back-office).
  */
 @Injectable()
 export class HelpService {
@@ -105,7 +105,7 @@ export class HelpService {
     return toHelpItem(updated);
   }
 
-  /** Le patron transmet sa question à l'équipe Tando. Idempotent. */
+  /** Le patron transmet sa question à l'équipe Velekya. Idempotent. */
   async transmit(user: SessionUser, id: string): Promise<HelpRequestItem> {
     const current = await this.mustOwn(user, id);
     if (current.status === "transmise" || current.status === "traitee") return toHelpItem(current);

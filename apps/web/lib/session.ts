@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import type { SessionUser } from "@tando/types";
+import type { SessionUser } from "@velekya/types";
 import { sessionApi } from "./api";
 import { SESSION_COOKIE } from "./constants";
 

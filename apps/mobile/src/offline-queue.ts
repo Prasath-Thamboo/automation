@@ -17,7 +17,7 @@ export type QueuedActionInput =
 
 export type QueuedAction = QueuedActionInput & { id: string };
 
-const KEY = "tando:queue:v1";
+const KEY = "velekya:queue:v1";
 const listeners = new Set<(count: number) => void>();
 
 async function load(): Promise<QueuedAction[]> {

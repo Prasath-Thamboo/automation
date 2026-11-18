@@ -1,4 +1,4 @@
-import type { BillingManageHandoff } from "@tando/types";
+import type { BillingManageHandoff } from "@velekya/types";
 
 /**
  * Rail d'abonnement, isolé derrière une interface (§10, Lot 9 — même principe que

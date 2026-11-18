@@ -13,7 +13,7 @@ import {
 } from "./twilio";
 
 describe("signature Twilio", () => {
-  const url = "https://api.tando.fr/api/v1/channels/twilio/sms";
+  const url = "https://api.velekya.fr/api/v1/channels/twilio/sms";
   const params = { To: "+33100000000", From: "+33612345678", Body: "Bonjour", MessageSid: "SM1" };
 
   it("suit l'algorithme documenté (URL + paramètres triés, HMAC-SHA1 base64)", () => {

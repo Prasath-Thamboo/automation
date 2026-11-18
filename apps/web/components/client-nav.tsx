@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { clientNav } from "@tando/copy";
+import { clientNav } from "@velekya/copy";
 
 const tabs = [
   { href: "/mon-equipe", label: clientNav.team },

@@ -46,7 +46,7 @@ async function bootstrap(): Promise<void> {
 
   if (shouldServeApiDocs(env)) {
     const openapi = new DocumentBuilder()
-      .setTitle("Tando API")
+      .setTitle("Velekya API")
       .setDescription("Contrat unique consommé par le web, le mobile et le back-office.")
       .setVersion("v1")
       .build();

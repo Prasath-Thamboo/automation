@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ApiError } from "@tando/api-client";
-import { channelPlace, glossary, switchesCopy } from "@tando/copy";
+import { ApiError } from "@velekya/api-client";
+import { channelPlace, glossary, switchesCopy } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { AssistantChat } from "@/components/assistant-chat";

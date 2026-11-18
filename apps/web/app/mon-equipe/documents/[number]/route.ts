@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 

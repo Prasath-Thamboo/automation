@@ -1,4 +1,4 @@
-import { test, expect, apiLogin, hireViaQuote, webLogin, uniqueEmail } from "../fixtures/tando";
+import { test, expect, apiLogin, hireViaQuote, webLogin, uniqueEmail } from "../fixtures/velekya";
 
 const API = `${process.env.API_URL ?? "http://localhost:3333"}/api/v1`;
 

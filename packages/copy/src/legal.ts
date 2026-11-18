@@ -32,12 +32,12 @@ export const legalIdentity = {
   vatNumber: TODO, // TVA intracommunautaire
   headOffice: TODO, // adresse du siège
   publicationDirector: TODO, // directeur de la publication
-  contactEmail: "bonjour@tando.fr",
+  contactEmail: "bonjour@velekya.fr",
   host: {
     name: TODO,
     address: TODO,
   },
-  dpoEmail: "confidentialite@tando.fr",
+  dpoEmail: "confidentialite@velekya.fr",
 } as const;
 
 export const mentionsLegales: LegalPage = {
@@ -49,7 +49,7 @@ export const mentionsLegales: LegalPage = {
     {
       heading: "Éditeur du site",
       paragraphs: [
-        `Le site tando.fr est édité par ${legalIdentity.publisher}, ${legalIdentity.legalForm} au capital de ${legalIdentity.capital}, dont le siège social est situé ${legalIdentity.headOffice}.`,
+        `Le site velekya.fr est édité par ${legalIdentity.publisher}, ${legalIdentity.legalForm} au capital de ${legalIdentity.capital}, dont le siège social est situé ${legalIdentity.headOffice}.`,
         `Immatriculée au registre du commerce et des sociétés sous le numéro ${legalIdentity.siren} (${legalIdentity.rcs}). Numéro de TVA intracommunautaire : ${legalIdentity.vatNumber}.`,
         `Directeur de la publication : ${legalIdentity.publicationDirector}. Contact : ${legalIdentity.contactEmail}.`,
       ],
@@ -85,7 +85,7 @@ export const conditionsGenerales: LegalPage = {
     {
       heading: "Objet",
       paragraphs: [
-        "Tando prépare, met à disposition et entretient pour votre entreprise un assistant qui répond à vos clients, prend des rendez-vous et gère des demandes courantes selon la fiche de poste convenue avec vous.",
+        "Velekya prépare, met à disposition et entretient pour votre entreprise un assistant qui répond à vos clients, prend des rendez-vous et gère des demandes courantes selon la fiche de poste convenue avec vous.",
         "Le périmètre exact — ce que l'assistant sait faire, ce qu'il ne fait pas — figure sur votre devis ou sur la fiche de la formule choisie.",
       ],
     },
@@ -111,7 +111,7 @@ export const conditionsGenerales: LegalPage = {
       ],
     },
     {
-      heading: "Engagements de Tando",
+      heading: "Engagements de Velekya",
       paragraphs: [
         "Nous mettons tout en œuvre pour que votre assistant soit disponible en continu. En cas d'incident, nous vous informons et nous rétablissons le service au plus vite.",
         "Votre assistant ne prétend jamais être un humain lorsqu'un client le lui demande, et il transmet à votre équipe tout ce dont il n'est pas sûr.",
@@ -126,7 +126,7 @@ export const conditionsGenerales: LegalPage = {
     {
       heading: "Responsabilité",
       paragraphs: [
-        "La responsabilité de Tando est limitée aux sommes versées au titre des trois derniers mois. Nous ne sommes pas responsables des conséquences d'informations erronées que vous nous auriez transmises.",
+        "La responsabilité de Velekya est limitée aux sommes versées au titre des trois derniers mois. Nous ne sommes pas responsables des conséquences d'informations erronées que vous nous auriez transmises.",
       ],
     },
     {
@@ -147,7 +147,7 @@ export const politiqueConfidentialite: LegalPage = {
     {
       heading: "Responsable du traitement",
       paragraphs: [
-        `${legalIdentity.publisher} est responsable du traitement des données collectées via tando.fr et l'application. Délégué à la protection des données : ${legalIdentity.dpoEmail}.`,
+        `${legalIdentity.publisher} est responsable du traitement des données collectées via velekya.fr et l'application. Délégué à la protection des données : ${legalIdentity.dpoEmail}.`,
       ],
     },
     {

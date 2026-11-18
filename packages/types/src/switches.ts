@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Lot 14 — pilotage d'un employé par boutons. L'équipe Tando construit le flux
+ * Lot 14 — pilotage d'un employé par boutons. L'équipe Velekya construit le flux
  * n8n du client et déclare ses boutons dans le back-office ; le client ne fait
  * que les activer ou les couper (web + mobile). Côté client, on parle de « ce
  * qu'il fait pour vous », jamais du flux.

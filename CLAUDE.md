@@ -1,7 +1,7 @@
-# Tando — guide du dépôt
+# Velekya — guide du dépôt
 
 Plateforme d'**employés virtuels** pour très petites entreprises (restaurant, cabinet
-dentaire, garage, salon, agence immobilière, artisan…). Voir `prompt-claude-code-tando.md`
+dentaire, garage, salon, agence immobilière, artisan…). Voir `prompt-claude-code-velekya.md`
 pour le cahier des charges complet et la roadmap (§10).
 
 ## Règle absolue — vocabulaire client (§2 du cahier des charges)
@@ -17,7 +17,7 @@ pipeline, IA générative, chatbot.
 « sa fiche de poste », « son carnet de bord », « le former », « le mettre en pause »,
 « son contrat », « ce qu'il a fait aujourd'hui ».
 
-- Tous les libellés clients vivent dans **`@tando/copy`**. Aucune chaîne « en dur » dans
+- Tous les libellés clients vivent dans **`@velekya/copy`**. Aucune chaîne « en dur » dans
   l'UI web ou mobile.
 - Le back-office et le code (DB, docs techniques) utilisent le vocabulaire technique normal.
 - Un test échoue si un terme interdit apparaît dans `packages/copy` ou `apps/web`
@@ -25,11 +25,11 @@ pipeline, IA générative, chatbot.
 
 ## Marque
 
-**Tando** — toujours avec une majuscule initiale, jamais en capitales, jamais suivi d'un
-suffixe (pas de « Tando AI », « Tando App »…). Baseline officielle :
-**« Tando — votre employé virtuel, 24h/24, 7j/7. »**
-On ne décline pas la marque (pas de « l'IA de Tando », pas de mascotte, pas de logo robot).
-Identifiants techniques : préfixe `@tando/` (paquets), `tando` (DB), `TANDO_` (env non
+**Velekya** — toujours avec une majuscule initiale, jamais en capitales, jamais suivi d'un
+suffixe (pas de « Velekya AI », « Velekya App »…). Baseline officielle :
+**« Velekya — votre employé virtuel, 24h/24, 7j/7. »**
+On ne décline pas la marque (pas de « l'IA de Velekya », pas de mascotte, pas de logo robot).
+Identifiants techniques : préfixe `@velekya/` (paquets), `velekya` (DB), `VELEKYA_` (env non
 préfixées `NEXT_PUBLIC_`/`EXPO_PUBLIC_`).
 
 ## Structure du monorepo
@@ -63,13 +63,13 @@ pnpm install
 cp .env.example .env            # ajuster SESSION_SECRET
 pnpm db:up                      # postgres, redis, minio, mailpit (docker compose)
 pnpm db:migrate:deploy          # applique les migrations Prisma
-pnpm db:seed                    # compte de démo : patron@demo.tando.local
+pnpm db:seed                    # compte de démo : patron@demo.velekya.local
 pnpm dev                        # api (:3333) + web (:3000)
 ```
 
 - Emails de dev : mailpit sur http://localhost:8025 (le lien magique y arrive).
 - Doc OpenAPI : http://localhost:3333/api/docs
-- Mobile : `pnpm --filter @tando/mobile dev` (Expo). `EXPO_PUBLIC_API_URL` doit pointer
+- Mobile : `pnpm --filter @velekya/mobile dev` (Expo). `EXPO_PUBLIC_API_URL` doit pointer
   vers l'IP de la machine sur un appareil réel.
 
 ### Commandes
@@ -88,7 +88,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **TypeScript strict partout.** `noUncheckedIndexedAccess` actif : indexer un tableau
   peut renvoyer `undefined`, gère-le.
 - **Zod = source de vérité.** Les types partagés sont inférés depuis les schémas de
-  `@tando/types`. L'API valide les entrées avec (voir `ZodValidationPipe`).
+  `@velekya/types`. L'API valide les entrées avec (voir `ZodValidationPipe`).
 - **Erreurs orientées action (§9.5).** Tout message d'erreur destiné au client dit *quoi
   faire*, jamais le détail technique. Forme normalisée `ApiError`
   (`{ statusCode, error, message, fields? }`) — voir `apps/api/src/common/http-exception.filter.ts`.
@@ -102,7 +102,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Auth.** Lien magique par email en priorité. Web : cookie httpOnly posé par le serveur
   Next à partir du jeton renvoyé par `/auth/verify`. Mobile : jeton en `expo-secure-store`,
   envoyé en `Authorization: Bearer`. Jetons stockés uniquement hashés (SHA-256).
-- **Packages partagés.** `@tando/types` et `@tando/ui` sont compilés vers `dist/`
+- **Packages partagés.** `@velekya/types` et `@velekya/ui` sont compilés vers `dist/`
   (`pnpm build` via Turborepo, tâche `^build`). Les autres sont consommés en source.
 - **Pas de couplage à un fournisseur de modèle.** Le moteur « employé virtuel » sera isolé
   derrière `AssistantRuntime` (Lot 6). Rien d'autre ne dépend d'un fournisseur.
@@ -133,13 +133,13 @@ pnpm dev                        # api (:3333) + web (:3000)
   démarre tout, la connexion par lien magique fonctionne de bout en bout.
 - **Lot 1 — Vitrine : fait.** Landing avec les textes du §8 (hero, problème, solution,
   « depuis votre poche », les deux voies, rassurance, CTA final), `/tarifs` (§7, prix
-  provisoires dans `@tando/copy/offers`), `/faq` (+ données structurées FAQPage),
+  provisoires dans `@velekya/copy/offers`), `/faq` (+ données structurées FAQPage),
   `/mentions-legales`, `/cgv`, `/confidentialite`, `/cookies` (identité de l'éditeur en
   `[À COMPLÉTER]` — à renseigner avant mise en ligne), bandeau cookies CNIL. Pages relais
   `/employes-virtuels` (Lot 2), `/questionnaire` (Lot 3), `/contact`. SEO : `metadata` +
   canoniques, `sitemap.ts`, `robots.ts`, `app/icon.svg`, `opengraph-image`, JSON-LD
   Organization. Polices : Inter + Bricolage Grotesque via `next/font`. Tout en Tailwind
-  (preset `@tando/config`), mobile-first, texte 16px min, cibles 44px.
+  (preset `@velekya/config`), mobile-first, texte 16px min, cibles 44px.
 - **Lot 2 — Catalogue : fait.** Modèle `professions` / `assistant_templates` /
   `assistant_template_versions` (contenu de fiche versionné en JSON, validé par
   `templateContentSchema`). API publique `GET /catalog/professions` (+ filtres secteur /
@@ -148,8 +148,8 @@ pnpm dev                        # api (:3333) + web (:3000)
   par section, enregistrer en brouillon, publier (archive la version précédente), masquer,
   supprimer — sans redéploiement. Web : `/employes-virtuels` (grille + filtres),
   `/employes-virtuels/[slug]` (fiche §5.1 en 8 parties, démo jouable pré-scriptée, curseurs
-  de gain). 6 métiers seedés et publiés. Le personnel Tando se connecte avec
-  `staff@tando.fr` (membre `admin` d'une organisation interne « Tando »).
+  de gain). 6 métiers seedés et publiés. Le personnel Velekya se connecte avec
+  `staff@velekya.fr` (membre `admin` d'une organisation interne « Velekya »).
 - **Lot 3 — Devis sur mesure : fait.** Questionnaire de besoin (§4.1) adaptatif, une
   question par écran, barre de progression, sauvegarde à chaque écran, reprise par lien
   magique (`/questionnaire`, `/questionnaire/reprendre`) — parcours anonyme, jeton de
@@ -207,7 +207,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     `status: loading | signedOut | locked | unlocked`. Verrou biométrique
     (`expo-local-authentication`, `src/biometric.ts`) : re-verrouillage quand l'app
     revient au premier plan (`AppState`).
-  - Connexion par lien magique `channel: "mobile"` → `tando://verifier?token=`
+  - Connexion par lien magique `channel: "mobile"` → `velekya://verifier?token=`
     (`app/verifier.tsx`). `app/index.tsx` : saisie e-mail → « lien envoyé » ;
     redirige vers `(app)` si une session valide existe déjà.
   - Navigation `(app)` en onglets : **Aujourd'hui** (`GET /me/today` — nouveau :
@@ -216,11 +216,11 @@ pnpm dev                        # api (:3333) + web (:3000)
     assistant, détail `conversation/[id]`), **Mon équipe** (état, pause / reprise,
     déconnexion). `src/use-query.ts` : rechargement à l'affichage de l'écran et à
     chaque retour dessus (`useFocusEffect`), pull-to-refresh.
-  - `src/theme.ts` dérive du thème partagé `@tando/ui-native` (tokens
-    `@tando/config`). `eas.json` : profils development / preview / production
+  - `src/theme.ts` dérive du thème partagé `@velekya/ui-native` (tokens
+    `@velekya/config`). `eas.json` : profils development / preview / production
     (`EXPO_PUBLIC_API_URL` par profil). `app.json` : plugin biométrie, deep links
-    `tando://` + `applinks:tando.fr`.
-  - Nouveau côté API : `GET /me/today` → `TodaySummary` (`@tando/types`),
+    `velekya://` + `applinks:velekya.fr`.
+  - Nouveau côté API : `GET /me/today` → `TodaySummary` (`@velekya/types`),
     méthode `AssistantService.today()`, client `api.me.today()`.
 - **Lot 8 — Application mobile, le cœur : fait.**
   - **À valider** : onglet dédié (`app/(app)/valider.tsx` + `valider/[id].tsx`),
@@ -248,7 +248,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     reprise, consigne) et les rejoue dans l'ordre à la reconnexion
     (`src/net.ts` via NetInfo) ; `ConnectivityBanner` global.
   - **Deep links** : une notification route vers le bon écran via `data.screen`
-    (`src/notifications.ts` → `useNotificationRouting`) ; `tando://(app)/equipe?do=pause`
+    (`src/notifications.ts` → `useNotificationRouting`) ; `velekya://(app)/equipe?do=pause`
     déclenche la mise en pause (widget / notification).
   - **Widget de mise en pause** : scaffold + plan dans
     `apps/mobile/targets/pause-widget/README.md`. Cible native (WidgetKit /
@@ -277,15 +277,15 @@ pnpm dev                        # api (:3333) + web (:3000)
     export RGPD (`GET /me/account/export` → feuille de partage système),
     **fermeture du compte** (`POST /me/account/delete`, double confirmation,
     titulaire uniquement) — exigence App Store 5.1.1(v). Copy : `mobileAccount`
-    dans `@tando/copy`.
+    dans `@velekya/copy`.
   - **Pont widget** : `apps/mobile/src/widget-bridge.ts` — `syncWidget(team)`
     publie `{ label, working }` vers le module natif optionnel
-    `TandoWidgetBridge` (repli cache local si absent). Appelé depuis
+    `VelekyaWidgetBridge` (repli cache local si absent). Appelé depuis
     `app/(app)/equipe.tsx`. Cible native à compiler au 1er build EAS.
   - **`app.json`** : `version` 1.0.0, `buildNumber`/`versionCode` 1, `icon` +
     `splash` (visuels provisoires générés par `assets/generate-placeholders.mjs`),
     `android.adaptiveIcon`, icône de notification, `usesNonExemptEncryption:false`,
-    App Group `group.fr.tando.app` (entitlement + `privacyManifests` User Defaults
+    App Group `group.fr.velekya.app` (entitlement + `privacyManifests` User Defaults
     `CA92.1`). **`eas.json`** : profils `submit` `preview` / `production`
     (TestFlight + piste interne Play), identifiants en `[À COMPLÉTER]`.
   - **Fiches store** : `apps/mobile/store/` (`listing-fr.md`, `app-privacy.md`,
@@ -313,7 +313,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   - **Clients** : `GET /admin/clients` (liste cross-tenant : membres,
     assistants, statut d'abonnement, escalades ouvertes),
     `GET /admin/clients/:id` (fiche : contrat, équipe, 5 dernières factures,
-    5 dernières escalades). Lecture transverse assumée (staff Tando), gardée
+    5 dernières escalades). Lecture transverse assumée (staff Velekya), gardée
     par `AdminGuard` — pas de `forOrganization()`, comme les `admin-*`
     existants.
   - Web : nav `/admin` remaniée (Tableau de bord · Missions · Devis · Métiers ·
@@ -322,12 +322,12 @@ pnpm dev                        # api (:3333) + web (:3000)
     (rôle `admin`) + `safeParse` Zod + `revalidatePath`.
   - Contrat : `packages/types/src/admin.ts` (schémas Zod + interfaces à la
     main), méthodes `api.admin.dashboard() / missions / pricing / clients` dans
-    `@tando/api-client`.
+    `@velekya/api-client`.
 - **Lot 11 — Durcissement : fait.**
-  - **e2e web** : paquet `@tando/e2e` (Playwright). `playwright.config.ts` 2
+  - **e2e web** : paquet `@velekya/e2e` (Playwright). `playwright.config.ts` 2
     projets (chromium = tout ; mobile/Pixel5 = vitrine seulement), `webServer`
     démarre api+web (reuseExistingServer hors CI), `globalSetup` vérifie
-    API+Mailpit. Fixtures (`fixtures/tando.ts`) : `requestMagicToken` (lien
+    API+Mailpit. Fixtures (`fixtures/velekya.ts`) : `requestMagicToken` (lien
     magique via l'API Mailpit), `apiLogin` (Bearer), `webLogin` (cookie
     httpOnly). Specs : `parcours-mvp` (landing → fiche dentiste →
     questionnaire → devis accepté → « au travail »), `parcours-sur-mesure` (questionnaire →
@@ -341,7 +341,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   - **e2e mobile** : `apps/mobile/maestro/` (Maestro) — `config.yaml`,
     `scripts/magic-token.js` (runScript), `common/login.yaml`, 4 flows
     (connexion, aujourd'hui, escalade « < 15 s », pause/reprise). `testID`
-    ajouté sur le champ email. `pnpm -F @tando/mobile test:e2e`. Job CI
+    ajouté sur le champ email. `pnpm -F @velekya/mobile test:e2e`. Job CI
     `e2e-mobile` **commenté** (émulateur + APK EAS requis). Voir
     `apps/mobile/maestro/README.md`.
   - **Sécurité** (voir `SECURITY.md`) : API `helmet({frameguard:{action:"deny"}})`
@@ -399,7 +399,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     canal, chiffré. Fenêtre de 24 h de Meta → remise en échec au-delà.
   - Client : `GET /me/assistants/:id/channels` → section « Comment vos clients le
     joignent » sur la fiche (coordonnées + code du formulaire à copier). Copy :
-    `channelPlace`, `channelLabels`, `channelsCopy`, `publicForm` (`@tando/copy`).
+    `channelPlace`, `channelLabels`, `channelsCopy`, `publicForm` (`@velekya/copy`).
   - Back-office : `GET/POST /admin/assistants/:id/channels`,
     `PATCH/DELETE /admin/channels/:id` (audit) ; page
     `/admin/clients/[id]/canaux/[assistantId]`.
@@ -412,7 +412,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Lot 13 — Moteur n8n : fait.**
   - `N8nRuntime` (`apps/api/src/assistants/runtime/n8n.runtime.ts`), 3e
     implémentation d'`AssistantRuntime`, choisie par `ASSISTANT_RUNTIME=n8n`.
-    `POST` JSON vers le flux de l'employé (Lot 14), en-tête `X-Tando-Token`
+    `POST` JSON vers le flux de l'employé (Lot 14), en-tête `X-Velekya-Token`
     (`N8N_TOKEN`), délai `N8N_TIMEOUT_MS`.
     Réponse validée par Zod (`n8nReplySchema` : reply | appointment | escalate).
   - Garde-fous gardés côté API : prix / urgence / humain → moteur à règles, sans
@@ -424,7 +424,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   - Env : `N8N_TOKEN` (obligatoire en prod si `n8n`), `N8N_TIMEOUT_MS`.
 
 - **Lot 13 bis — Nettoyage : fait.** Modèle retenu : le client décrit son besoin,
-  l'équipe Tando construit **son** flux n8n, le client le pilote avec des boutons
+  l'équipe Velekya construit **son** flux n8n, le client le pilote avec des boutons
   (Lot 14). Supprimé : souscription en libre-service (`/employes-virtuels/[slug]/souscrire`,
   `POST /me/catalog/subscribe`, `CatalogSubscribeService`,
   `BillingService.startCatalogSubscription`), colonne `professions.trialDays`
@@ -459,7 +459,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     fiche (`SwitchList`, `role="switch"`). Mobile : interrupteurs sous chaque
     employé dans « Mon équipe ». Copy : `switchesCopy`.
   - Flux planifiés : `N8nController` (`/n8n/assistants/:id/state | activity |
-    escalations`), jeton `X-Tando-Token` (`n8nToken()` : `N8N_TOKEN`, ou
+    escalations`), jeton `X-Velekya-Token` (`n8nToken()` : `N8N_TOKEN`, ou
     `dev-n8n-token` hors prod). `RuntimeService.reportFromWorkflow()` →
     carnet de bord « Travail planifié » / escalade notifiée.
   - Env : `N8N_WEBHOOK_URL` supprimée → `N8N_BASE_URL` (facultative).
@@ -477,7 +477,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     recouvrement de racines (question ×1, mot-clé ×2, expression-clé +3).
     Répond si score ≥ 3 (ou question courte entièrement couverte) **et** fiche
     seule en tête ; sinon pistes (« Vous cherchez peut-être… ») et bouton
-    « Transmettre à l'équipe Tando ». Jamais de réponse inventée.
+    « Transmettre à l'équipe Velekya ». Jamais de réponse inventée.
   - API : `GET /me/help`, `POST /me/help/ask` (`articleId` facultatif = question
     proposée choisie), `POST /me/help/requests/:id/feedback|transmit` (email
     interne vers `HELP_DESK_EMAIL`, défaut `MAIL_FROM`). Back-office
@@ -503,7 +503,7 @@ pnpm dev                        # api (:3333) + web (:3000)
     `RuntimeAssistant.workflowScope` = `client` | `metier` | null (envoyé au flux).
     Multi-clients : chaque appel porte les données du client, le flux ne stocke
     rien. Flux planifiés partagés : `GET /n8n/professions/:slug/assistants`
-    (`N8nProfessionsController`, jeton `X-Tando-Token`).
+    (`N8nProfessionsController`, jeton `X-Velekya-Token`).
   - Souscription : `POST /me/catalog/subscribe { slug }` →
     `CatalogSubscribeService` (idempotent ; **un seul contrat ouvert par
     organisation** → 409 sinon) → `BillingService.startCatalogSubscription`
@@ -526,11 +526,11 @@ pnpm dev                        # api (:3333) + web (:3000)
     `pret-a-l-emploi.spec.ts` (2 tests) ; `parcours-mvp` suit le nouveau CTA.
 
 - **Lot 17 — Premier flux métier : cabinet dentaire : fait.**
-  - Paquet `@tando/n8n-flows` (`packages/n8n-flows`) : logique des flux
+  - Paquet `@velekya/n8n-flows` (`packages/n8n-flows`) : logique des flux
     génériques en TypeScript testé (`src/common.ts` : contrat, texte, dates en
     heure de Paris ; `src/dentiste.ts`), compilée par `src/build.ts` dans le nœud
     Code d'un flux importable `flows/dentiste.workflow.json` (Webhook Header Auth
-    → Code → Respond to Webhook). `pnpm -F @tando/n8n-flows build:flows`
+    → Code → Respond to Webhook). `pnpm -F @velekya/n8n-flows build:flows`
     régénère ; un test échoue si le JSON n'est pas à jour, un autre exécute le
     code du nœud tel que n8n le ferait.
   - Sans fournisseur de modèle : douleur / question médicale / annulation /
@@ -573,7 +573,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 ### Notes Lot 14
 
 - La validation anti-jargon des libellés de boutons est faite côté web
-  (l'API ne dépend pas de `@tando/copy`, consommé en source).
+  (l'API ne dépend pas de `@velekya/copy`, consommé en source).
 - e2e `pilotage.spec.ts` **non exécuté** (Docker Desktop éteint lors du lot).
 
 ### Notes Lot 13
@@ -596,7 +596,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   domaine MX, vérification d'entreprise et revue d'app Meta). Pas de
   conversation vocale (appel → renvoi ou SMS). Pas de messages modèles
   WhatsApp (au-delà de 24 h).
-- ~~En `pnpm dev`, Next échouait à compiler `@tando/types` (« Cannot use 'import.meta' outside a module »)~~ — **corrigé** : le lien pnpm vers `packages/types/dist` (CommonJS) est hors de `node_modules`, Next y injectait le rechargement à chaud. `apps/web/next.config.ts` fait pointer `@tando/types` vers ses sources TS (alias webpack) ; l'API garde `dist/`.
+- ~~En `pnpm dev`, Next échouait à compiler `@velekya/types` (« Cannot use 'import.meta' outside a module »)~~ — **corrigé** : le lien pnpm vers `packages/types/dist` (CommonJS) est hors de `node_modules`, Next y injectait le rechargement à chaud. `apps/web/next.config.ts` fait pointer `@velekya/types` vers ses sources TS (alias webpack) ; l'API garde `dist/`.
 
 ### Notes Lot 11
 
@@ -640,7 +640,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   gagner d'écran de souscription ni de lien de paiement iOS.
 - **`GET /me/billing`** relit l'abonnement via `BillingService.documentsFor()`
   (pas de nouvelle requête Prisma) + `manageHandoff()` du fournisseur.
-- Bundle vérifié en headless : `pnpm -F @tando/mobile exec expo export
+- Bundle vérifié en headless : `pnpm -F @velekya/mobile exec expo export
   --platform ios` (1121 modules, OK). `turbo run lint typecheck test build`
   reste vert (26 tâches, 45 tests API).
 
@@ -654,7 +654,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   locale == `dailySummaryHour`. Pas de colonne « déjà envoyé » : la cadence
   horaire suffit, `jobId` par jour en filet de sécurité.
 - **Copy mobile** : `packages/copy/src/mobile.ts` (exports `mobile*`). Passe le
-  test anti-jargon comme le reste de `@tando/copy`.
+  test anti-jargon comme le reste de `@velekya/copy`.
 - **Dépendances natives** (`expo-notifications`, `expo-speech-recognition`,
   `@react-native-async-storage/async-storage`, `@react-native-community/netinfo`,
   `expo-device`) : le bundle `expo export` (iOS + Android) résout tout ; l'envoi
@@ -669,7 +669,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   `unstable_enablePackageExports` (les `packages/*` exposent leurs entrées via le
   champ `exports`). Ce changement de layout a été revalidé : `turbo run lint
   typecheck test build` reste vert sur les 26 tâches.
-- Vérif du bundle en environnement headless : `pnpm -F @tando/mobile exec expo
+- Vérif du bundle en environnement headless : `pnpm -F @velekya/mobile exec expo
   export --platform ios` (pas de simulateur / build EAS ici). Le vrai test des
   parcours mobiles (Maestro) arrive au Lot 11.
 - `@babel/runtime` et `@expo/metro-runtime` ajoutés en dépendances directes de

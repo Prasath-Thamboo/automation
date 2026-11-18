@@ -9,8 +9,8 @@ import {
   View,
 } from "react-native";
 import { router, type Href } from "expo-router";
-import type { HelpAction, HelpRequestItem, HelpTopic } from "@tando/api-client";
-import { helpCopy as hx } from "@tando/copy";
+import type { HelpAction, HelpRequestItem, HelpTopic } from "@velekya/api-client";
+import { helpCopy as hx } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useQuery } from "@/src/use-query";
 import { styles as s, t } from "@/src/theme";

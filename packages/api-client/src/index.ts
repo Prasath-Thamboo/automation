@@ -1,7 +1,7 @@
 /**
  * Client HTTP typé, partagé par le web et le mobile.
  * Toute règle métier vit dans l'API (§9.1) : ce package ne fait que transporter
- * et valider. Les réponses sont vérifiées avec les schémas de `@tando/types`.
+ * et valider. Les réponses sont vérifiées avec les schémas de `@velekya/types`.
  */
 import {
   adminProfessionWorkflowSchema,
@@ -129,7 +129,7 @@ import {
   type UpdateProfession,
   type UpdateQuote,
   type VerifyMagicLink,
-} from "@tando/types";
+} from "@velekya/types";
 import { z, type ZodType } from "zod";
 
 const okSchema = z.object({ ok: z.literal(true) });
@@ -820,4 +820,4 @@ export type {
   HelpRequestStatus,
   AdminHelpArticle,
   AdminHelpRequest,
-} from "@tando/types";
+} from "@velekya/types";

@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import { mobileAccount as ax, subscribeCopy } from "@tando/copy";
+import { mobileAccount as ax, subscribeCopy } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { useQuery } from "@/src/use-query";

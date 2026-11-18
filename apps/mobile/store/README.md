@@ -1,6 +1,6 @@
 # Publication sur les stores (Lot 9)
 
-Tout ce qui sert à soumettre `@tando/mobile` sur l'App Store et Google Play.
+Tout ce qui sert à soumettre `@velekya/mobile` sur l'App Store et Google Play.
 
 | Fichier | Contenu |
 |---|---|
@@ -29,7 +29,7 @@ iOS. Seuil de repli : une abstraction `BillingProvider`
   `assets/generate-placeholders.mjs` (aplat marque, sans texte). Déclarés dans
   `app.json` (`icon`, `splash`, `android.adaptiveIcon`, icône de notification).
 - **`app.json`** : `version` 1.0.0, `buildNumber` / `versionCode` 1,
-  `usesNonExemptEncryption: false`, App Group `group.fr.tando.app`
+  `usesNonExemptEncryption: false`, App Group `group.fr.velekya.app`
   (entitlement + `privacyManifests` User Defaults `CA92.1` pour le widget).
 - **`eas.json`** : profils `submit` `preview` et `production` (TestFlight /
   piste interne Play), avec identifiants en `[À COMPLÉTER]`.
@@ -49,7 +49,7 @@ iOS. Seuil de repli : une abstraction `BillingProvider`
       pas de déclinaison du logo — §Marque).
 - [ ] **Captures d'écran** FR sur build `preview` (voir `listing-fr.md`).
 - [ ] **Cible native du widget** : ajouter `@bacons/apple-targets` (iOS) + le
-      module Android, exposer le module natif `TandoWidgetBridge`
+      module Android, exposer le module natif `VelekyaWidgetBridge`
       (`targets/pause-widget/README.md`), compiler au 1er build EAS.
 - [ ] **`credentials/play-service-account.json`** : clé de compte de service
       Google Play (non versionnée — voir `.gitignore`).

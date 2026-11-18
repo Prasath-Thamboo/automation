@@ -8,13 +8,13 @@ import {
   webLogin,
   API_URL,
   staffLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 const API = `${API_URL}/api/v1`;
 const N8N_TOKEN = process.env.N8N_TOKEN ?? "dev-n8n-token";
 
 /**
- * Lot 14 — un flux n8n par client, piloté par boutons. L'équipe Tando branche
+ * Lot 14 — un flux n8n par client, piloté par boutons. L'équipe Velekya branche
  * le flux et déclare les boutons (back-office) ; le client les actionne ; le
  * flux lit leur état et rend compte dans le carnet de bord.
  */
@@ -55,7 +55,7 @@ test("back-office déclare un bouton → le client le bascule → le flux le lit
   const denied = await api.get(`${API}/n8n/assistants/${assistantId}/state`);
   expect(denied.status()).toBe(403);
   const state = await api.get(`${API}/n8n/assistants/${assistantId}/state`, {
-    headers: { "x-tando-token": N8N_TOKEN },
+    headers: { "x-velekya-token": N8N_TOKEN },
   });
   expect(state.ok()).toBeTruthy();
   expect(await state.json()).toMatchObject({ working: true, switches: { relance_devis: true } });
@@ -63,13 +63,13 @@ test("back-office déclare un bouton → le client le bascule → le flux le lit
   // 4. Mis en pause par le client → le flux le voit
   await api.post(`${API}/me/assistants/${assistantId}/pause`, { headers: session.headers });
   const paused = await api.get(`${API}/n8n/assistants/${assistantId}/state`, {
-    headers: { "x-tando-token": N8N_TOKEN },
+    headers: { "x-velekya-token": N8N_TOKEN },
   });
   expect((await paused.json()).working).toBe(false);
 
   // 5. Le flux rend compte → visible dans le carnet de bord
   const report = await api.post(`${API}/n8n/assistants/${assistantId}/activity`, {
-    headers: { "x-tando-token": N8N_TOKEN },
+    headers: { "x-velekya-token": N8N_TOKEN },
     data: { summary: "Il a relancé 2 devis sans réponse." },
   });
   expect(report.ok()).toBeTruthy();

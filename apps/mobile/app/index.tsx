@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Redirect } from "expo-router";
-import { requestMagicLinkSchema } from "@tando/types";
-import { auth as authCopy, common } from "@tando/copy";
+import { requestMagicLinkSchema } from "@velekya/types";
+import { auth as authCopy, common } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { styles as s, t } from "@/src/theme";

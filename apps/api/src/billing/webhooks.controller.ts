@@ -14,7 +14,7 @@ export class WebhooksController {
     const raw = req.rawBody?.toString("utf8") ?? JSON.stringify(req.body ?? {});
     const signature =
       (req.headers["stripe-signature"] as string | undefined) ??
-      (req.headers["x-tando-signature"] as string | undefined);
+      (req.headers["x-velekya-signature"] as string | undefined);
     return this.billing.handleWebhook(raw, signature);
   }
 }

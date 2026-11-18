@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-const KEY = "tando.session";
+const KEY = "velekya.session";
 
 /** Jeton de session courant, ou `null`. */
 export async function getSessionToken(): Promise<string | null> {

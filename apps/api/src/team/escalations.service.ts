@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import type { AnswerEscalation, EscalationItem } from "@tando/types";
+import type { AnswerEscalation, EscalationItem } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 import { QueueService } from "../queue/queue.module";

@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { createAdminChannelSchema, updateAdminChannelSchema } from "@tando/types";
+import { ApiError } from "@velekya/api-client";
+import { createAdminChannelSchema, updateAdminChannelSchema } from "@velekya/types";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 

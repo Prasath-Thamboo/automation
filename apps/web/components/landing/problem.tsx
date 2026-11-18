@@ -1,4 +1,4 @@
-import { landing } from "@tando/copy";
+import { landing } from "@velekya/copy";
 import { Section, SectionHeading } from "@/components/section";
 import { Clock, Moon, Phone } from "@/components/icons";
 

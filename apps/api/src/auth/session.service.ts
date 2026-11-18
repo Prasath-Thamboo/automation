@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { AuthChannel } from "@prisma/client";
-import type { SessionUser } from "@tando/types";
+import type { SessionUser } from "@velekya/types";
 import { ENV } from "../config/config.module";
 import type { Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";

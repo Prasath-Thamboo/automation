@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { Redirect, useLocalSearchParams } from "expo-router";
-import { verifyMagicLinkSchema } from "@tando/types";
-import { auth as authCopy } from "@tando/copy";
+import { verifyMagicLinkSchema } from "@velekya/types";
+import { auth as authCopy } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useAuth } from "@/src/auth";
 import { styles as s, t } from "@/src/theme";
 
 type Status = "checking" | "done" | "error";
 
-/** Cible du lien profond tando://verifier?token=... */
+/** Cible du lien profond velekya://verifier?token=... */
 export default function VerifierScreen() {
   const params = useLocalSearchParams<{ token?: string }>();
   const { signInWithToken } = useAuth();

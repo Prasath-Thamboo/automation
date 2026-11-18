@@ -5,8 +5,8 @@
 ## Compte de démonstration
 
 ```
-E-mail : patron@demo.tando.local
-Connexion : lien magique par e-mail (channel "mobile" → tando://verifier?token=).
+E-mail : patron@demo.velekya.local
+Connexion : lien magique par e-mail (channel "mobile" → velekya://verifier?token=).
 En environnement de test, le lien magique est disponible sur la boîte de
 démonstration fournie séparément (Mailpit / adresse de revue).
 ```
@@ -16,15 +16,15 @@ pré-généré valable 24 h via le back-office, ou un jeton de session de test.
 
 ## Modèle économique — pas d'achat intégré
 
-Tando est un **service professionnel B2B** : une entreprise souscrit un
+Velekya est un **service professionnel B2B** : une entreprise souscrit un
 abonnement pour doter son activité d'un « employé virtuel » (accueil
 téléphonique, prise de rendez-vous). L'abonnement :
 
-- est **souscrit et payé sur le web** (`tando.fr`), avec facture conforme
+- est **souscrit et payé sur le web** (`velekya.fr`), avec facture conforme
   (TVA, mentions légales) — nécessaire pour une dépense professionnelle ;
 - n'est **jamais vendu ni proposé à l'achat dans l'application** ;
 - l'application **n'affiche aucun lien de paiement** (sur iOS, l'écran « Mon
-  compte » ne montre qu'un texte : « Gérez votre contrat sur tando.fr », sans
+  compte » ne montre qu'un texte : « Gérez votre contrat sur velekya.fr », sans
   lien cliquable).
 
 L'application est un **outil de gestion** d'un service acquis ailleurs (cf.
@@ -46,7 +46,7 @@ données est proposé sur le même écran.
 
 - **Face ID / biométrie** : reverrouillage de l'espace au retour au premier plan.
 - **Micro + reconnaissance vocale** : dictée des réponses et des consignes. La
-  transcription est faite par l'OS ; aucun audio n'est transmis à Tando.
+  transcription est faite par l'OS ; aucun audio n'est transmis à Velekya.
 - **Notifications** : escalades, souci de paiement, résumé quotidien — réglables
   au détail, avec heures de silence.
 
@@ -54,5 +54,5 @@ données est proposé sur le même écran.
 
 Widget d'écran d'accueil (WidgetKit / Glance) : affiche l'état de l'employé
 virtuel et permet de le mettre en pause via un lien profond
-`tando://(app)/equipe?do=pause`. Aucune donnée personnelle affichée hors « au
+`velekya://(app)/equipe?do=pause`. Aucune donnée personnelle affichée hors « au
 travail / en pause ».

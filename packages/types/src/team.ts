@@ -46,7 +46,7 @@ export interface AssistantCard {
   professionSlug: string | null;
   onboarding: OnboardingStatus;
   onboardingStep: number;
-  /** Lot 14 — ses boutons de pilotage (vide tant que l'équipe Tando n'en a pas déclaré). */
+  /** Lot 14 — ses boutons de pilotage (vide tant que l'équipe Velekya n'en a pas déclaré). */
   switches: AssistantSwitch[];
 }
 

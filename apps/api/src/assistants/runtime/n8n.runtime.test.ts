@@ -45,7 +45,7 @@ describe("N8nRuntime", () => {
     expect(reply).toEqual({ kind: "reply", text: "Oui, le parking est derrière.", capability: "questions", summary: "Parking." });
     const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(FLOW);
-    expect((init.headers as Record<string, string>)["x-tando-token"]).toBe("secret");
+    expect((init.headers as Record<string, string>)["x-velekya-token"]).toBe("secret");
     expect(JSON.parse(init.body as string)).toMatchObject({
       version: 2,
       channel: "sms",

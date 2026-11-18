@@ -1,5 +1,5 @@
 {
-  "name": "@tando/ui-native",
+  "name": "@velekya/ui-native",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tando/config": "workspace:*"
+    "@velekya/config": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",

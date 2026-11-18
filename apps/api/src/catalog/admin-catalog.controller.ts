@@ -21,11 +21,11 @@ import {
   type CreateProfession,
   type TemplateContent,
   type UpdateProfession,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { AdminGuard } from "../auth/admin.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
-import type { SessionUser } from "@tando/types";
+import type { SessionUser } from "@velekya/types";
 import { AdminCatalogService } from "./admin-catalog.service";
 
 @ApiTags("admin-catalog")

@@ -42,7 +42,7 @@ importers:
       '@prisma/client':
         specifier: ^6.4.1
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
-      '@tando/types':
+      '@velekya/types':
         specifier: workspace:*
         version: link:../../packages/types
       bullmq:
@@ -79,7 +79,7 @@ importers:
       '@nestjs/cli':
         specifier: ^11.0.5
         version: 11.0.24(@types/node@22.20.1)(lightningcss@1.27.0)(prettier@3.9.6)
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/compression':
@@ -130,16 +130,16 @@ importers:
       '@react-native-community/netinfo':
         specifier: 11.4.1
         version: 11.4.1(react-native@0.76.6(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@19.0.12)(react@18.3.1))
-      '@tando/api-client':
+      '@velekya/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@tando/copy':
+      '@velekya/copy':
         specifier: workspace:*
         version: link:../../packages/copy
-      '@tando/types':
+      '@velekya/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@tando/ui-native':
+      '@velekya/ui-native':
         specifier: workspace:*
         version: link:../../packages/ui-native
       expo:
@@ -185,7 +185,7 @@ importers:
         specifier: ~4.4.0
         version: 4.4.0(react-native@0.76.6(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@19.0.12)(react@18.3.1))(react@18.3.1)
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/react':
@@ -206,16 +206,16 @@ importers:
       '@fontsource-variable/bricolage-grotesque':
         specifier: 5.3.0
         version: 5.3.0
-      '@tando/api-client':
+      '@velekya/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@tando/copy':
+      '@velekya/copy':
         specifier: workspace:*
         version: link:../../packages/copy
-      '@tando/types':
+      '@velekya/types':
         specifier: workspace:*
         version: link:../../packages/types
-      '@tando/ui':
+      '@velekya/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
@@ -228,7 +228,7 @@ importers:
         specifier: ^19.0.0
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/node':
@@ -279,14 +279,14 @@ importers:
 
   packages/api-client:
     dependencies:
-      '@tando/types':
+      '@velekya/types':
         specifier: workspace:*
         version: link:../types
       zod:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
       eslint:
@@ -316,7 +316,7 @@ importers:
 
   packages/copy:
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
       '@types/node':
@@ -334,10 +334,10 @@ importers:
 
   packages/n8n-flows:
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
-      '@tando/copy':
+      '@velekya/copy':
         specifier: workspace:*
         version: link:../copy
       '@types/node':
@@ -362,7 +362,7 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
       eslint:
@@ -378,7 +378,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
     devDependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
       '@types/react':
@@ -402,7 +402,7 @@ importers:
 
   packages/ui-native:
     dependencies:
-      '@tando/config':
+      '@velekya/config':
         specifier: workspace:*
         version: link:../config
     devDependencies:

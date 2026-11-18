@@ -1,6 +1,6 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import type { Prisma } from "@prisma/client";
-import { defaultSwitchSchema, type TemplateContent } from "@tando/types";
+import { defaultSwitchSchema, type TemplateContent } from "@velekya/types";
 import { z } from "zod";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
@@ -41,7 +41,7 @@ export class CatalogSubscribeService {
     });
     if (open) {
       throw new ConflictException(
-        "Vous avez déjà un contrat en cours. Pour un deuxième employé, posez la question dans « Une question ? » : l'équipe Tando vous prépare une proposition.",
+        "Vous avez déjà un contrat en cours. Pour un deuxième employé, posez la question dans « Une question ? » : l'équipe Velekya vous prépare une proposition.",
       );
     }
 

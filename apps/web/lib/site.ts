@@ -1,4 +1,4 @@
-import { site } from "@tando/copy";
+import { site } from "@velekya/copy";
 
 /** Base d'URL publique (métadonnées, sitemap, canoniques). */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? site.url;

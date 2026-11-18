@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { NewSwitchForm, SwitchRow, WorkflowForm } from "./setup-editor";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Pilotage d'un employé (Lot 14) : l'équipe Tando branche le flux n8n construit
+ * Pilotage d'un employé (Lot 14) : l'équipe Velekya branche le flux n8n construit
  * pour ce client et déclare les boutons qu'il pourra actionner (web + mobile).
  * Contrat du flux : docs/n8n/README.md.
  */
@@ -72,7 +72,7 @@ export default async function AdminSetupPage({
       <section className="space-y-1 text-xs text-ink-500">
         <h2 className="text-sm font-semibold text-ink-900">Flux planifiés</h2>
         <p>
-          En-tête <code>X-Tando-Token</code> (= <code>N8N_TOKEN</code>) :{" "}
+          En-tête <code>X-Velekya-Token</code> (= <code>N8N_TOKEN</code>) :{" "}
           <code>GET /api/v1/n8n/assistants/{data.assistant.id}/state</code> avant d&apos;agir
           (pause, boutons), puis <code>POST …/activity</code> pour le carnet de bord ou{" "}
           <code>POST …/escalations</code> pour transmettre au client.

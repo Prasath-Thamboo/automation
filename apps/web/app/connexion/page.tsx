@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Callout } from "@tando/ui";
-import { auth as authCopy } from "@tando/copy";
+import { Callout } from "@velekya/ui";
+import { auth as authCopy } from "@velekya/copy";
 import { Lock } from "@/components/icons";
 import { ConnexionForm } from "./connexion-form";
 

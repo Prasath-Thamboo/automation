@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ApiError } from "@tando/api-client";
-import { findJargon } from "@tando/copy";
-import { updateProfessionWorkflowSchema } from "@tando/types";
+import { ApiError } from "@velekya/api-client";
+import { findJargon } from "@velekya/copy";
+import { updateProfessionWorkflowSchema } from "@velekya/types";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 
@@ -45,7 +45,7 @@ export async function saveProfessionWorkflow(
     const issue = parsed.error.issues[0];
     return { error: `${issue?.path.join(".") || "formulaire"} : ${issue?.message ?? "invalide"}` };
   }
-  // Libellés vus par le client : même règle anti-jargon que `@tando/copy` (§2).
+  // Libellés vus par le client : même règle anti-jargon que `@velekya/copy` (§2).
   for (const s of parsed.data.defaultSwitches) {
     const hit = [s.label, s.help].map((t) => (t ? findJargon(t)[0] : undefined)).find(Boolean);
     if (hit) return { error: `« ${hit.term} » est interdit dans un libellé client (§2).` };

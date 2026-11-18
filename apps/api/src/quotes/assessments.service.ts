@@ -9,7 +9,7 @@ import type {
   AssessmentState,
   JobDescriptionContent,
   PatchAssessment,
-} from "@tando/types";
+} from "@velekya/types";
 import { ENV } from "../config/config.module";
 import { webBaseUrl, type Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";

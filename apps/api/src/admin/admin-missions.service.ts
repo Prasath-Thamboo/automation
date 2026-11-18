@@ -5,7 +5,7 @@ import type {
   AdminMissionListItem,
   MissionChecklistItem,
   UpdateMission,
-} from "@tando/types";
+} from "@velekya/types";
 import { Prisma, type Mission, type MissionStatus } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";

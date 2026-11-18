@@ -10,21 +10,21 @@ import {
   defaultSwitchSchema,
   type AdminProfessionWorkflow,
   type UpdateProfessionWorkflow,
-} from "@tando/types";
+} from "@velekya/types";
 import type {
   AdminAssistantSetup,
   AdminSwitch,
   CreateSwitch,
   UpdateSwitch,
   UpdateWorkflow,
-} from "@tando/types";
+} from "@velekya/types";
 import { ENV } from "../config/config.module";
 import type { Env } from "../config/env";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 
 /**
- * Back-office (Lot 14) : l'équipe Tando branche le flux n8n construit pour un
+ * Back-office (Lot 14) : l'équipe Velekya branche le flux n8n construit pour un
  * client et déclare les boutons qu'il pourra actionner. Lecture/écriture
  * transverse, gardée par `AdminGuard`.
  */
@@ -172,7 +172,7 @@ export class AdminSetupService {
 
 /**
  * L'API appelle cette adresse à chaque message : on la restreint à l'instance
- * n8n de Tando (`N8N_BASE_URL`) quand elle est configurée, et toujours en https
+ * n8n de Velekya (`N8N_BASE_URL`) quand elle est configurée, et toujours en https
  * en production.
  */
 export function assertAllowedUrl(url: string, env: Pick<Env, "N8N_BASE_URL" | "NODE_ENV">): void {

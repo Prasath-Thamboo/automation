@@ -37,7 +37,7 @@ export function channelKey(env: Env): Buffer {
     if (key.length !== 32) throw new Error("CHANNEL_SECRET_KEY doit faire 32 octets (base64).");
     return key;
   }
-  return createHash("sha256").update(`tando-channels:${env.SESSION_SECRET}`).digest();
+  return createHash("sha256").update(`velekya-channels:${env.SESSION_SECRET}`).digest();
 }
 
 /**

@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import type { AcceptQuote, AssessmentAnswers, JobDescriptionContent, PublicQuote } from "@tando/types";
+import type { AcceptQuote, AssessmentAnswers, JobDescriptionContent, PublicQuote } from "@velekya/types";
 import { PrismaService } from "../prisma/prisma.service";
 import { QueueService } from "../queue/queue.module";
 import { AuditService } from "../audit/audit.service";

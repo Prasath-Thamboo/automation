@@ -1,5 +1,5 @@
 {
-  "name": "tando",
+  "name": "velekya",
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "engines": {
@@ -15,11 +15,11 @@
     "db:up": "docker compose up -d postgres redis minio mailpit",
     "db:down": "docker compose --profile n8n down",
     "n8n:up": "docker compose --profile n8n up -d n8n",
-    "db:migrate": "pnpm --filter @tando/api db:migrate",
-    "db:seed": "pnpm --filter @tando/api db:seed",
-    "db:studio": "pnpm --filter @tando/api db:studio",
+    "db:migrate": "pnpm --filter @velekya/api db:migrate",
+    "db:seed": "pnpm --filter @velekya/api db:seed",
+    "db:studio": "pnpm --filter @velekya/api db:studio",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "db:migrate:deploy": "pnpm --filter @tando/api db:migrate:deploy"
+    "db:migrate:deploy": "pnpm --filter @velekya/api db:migrate:deploy"
   },
   "devDependencies": {
     "prettier": "^3.4.2",

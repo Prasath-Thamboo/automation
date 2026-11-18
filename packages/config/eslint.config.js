@@ -3,7 +3,7 @@ import tseslint from "typescript-eslint";
 
 /**
  * Config ESLint plate partagée. Chaque app/package fait :
- *   import base from "@tando/config/eslint";
+ *   import base from "@velekya/config/eslint";
  *   export default [...base, { ...surcharges }];
  */
 export default tseslint.config(

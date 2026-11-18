@@ -1,7 +1,7 @@
 /**
  * Liste noire de jargon (§2 du cahier des charges).
  * Aucun de ces termes ne doit apparaître dans une interface vue par le client :
- * textes de `@tando/copy` et JSX de `apps/web`.
+ * textes de `@velekya/copy` et JSX de `apps/web`.
  *
  * Un test automatisé (`blacklist.test.ts`) échoue si l'un d'eux fuit.
  */

@@ -1,4 +1,4 @@
-# @tando/e2e — tests end-to-end (Lot 11)
+# @velekya/e2e — tests end-to-end (Lot 11)
 
 Playwright, navigateur réel, pile complète. Couvre les parcours critiques du §11
 du cahier des charges.
@@ -9,18 +9,18 @@ du cahier des charges.
 pnpm db:up                     # postgres, redis, minio, mailpit
 pnpm db:migrate:deploy
 pnpm db:seed                   # 6 métiers publiés (dont « dentiste »)
-pnpm --filter @tando/e2e pw:install   # navigateurs Playwright (une fois)
+pnpm --filter @velekya/e2e pw:install   # navigateurs Playwright (une fois)
 ```
 
 ## Lancer
 
 ```bash
 # Option A — la pile tourne déjà (pnpm dev) : Playwright la réutilise
-pnpm --filter @tando/e2e test:e2e
+pnpm --filter @velekya/e2e test:e2e
 
 # Option B — à partir des builds
 pnpm build
-pnpm --filter @tando/e2e test:e2e
+pnpm --filter @velekya/e2e test:e2e
 ```
 
 Variables (défauts entre parenthèses) : `WEB_URL` (`http://localhost:3000`),

@@ -9,7 +9,7 @@ import { type ChannelSender, type OutboundMessage, PermanentDeliveryError } from
  * Codes Meta définitifs. 131047 / 2018278 : plus de 24 h depuis le dernier
  * message du client — Meta interdit alors une réponse libre (il faudrait un
  * message modèle validé, hors périmètre). 131026 : destinataire injoignable.
- * 190 : jeton du canal expiré ou révoqué (à renouveler par l'équipe Tando).
+ * 190 : jeton du canal expiré ou révoqué (à renouveler par l'équipe Velekya).
  */
 const PERMANENT_CODES = new Set([100, 190, 131026, 131047, 131051, 551]);
 const OUTSIDE_WINDOW = new Set([131047, 2018278]);

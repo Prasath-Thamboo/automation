@@ -10,7 +10,7 @@ import {
   type PatchAssessment,
   type StartAssessment,
   type SubmitAssessment,
-} from "@tando/types";
+} from "@velekya/types";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { AssessmentGuard, type AssessmentRequest } from "./assessment.guard";
 import { AssessmentsService } from "./assessments.service";

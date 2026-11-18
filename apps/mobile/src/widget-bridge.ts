@@ -1,16 +1,16 @@
 import { requireOptionalNativeModule } from "expo";
-import type { TeamList } from "@tando/api-client";
-import { mobileWidget as wx } from "@tando/copy";
+import type { TeamList } from "@velekya/api-client";
+import { mobileWidget as wx } from "@velekya/copy";
 import { writeJson } from "./store";
 
 /**
  * Pont vers le widget d'écran d'accueil (§6bis, point 6). L'app écrit l'état de
  * l'équipe dans un conteneur partagé, lu par la cible native :
- *   - iOS : App Group `group.fr.tando.app` → `UserDefaults(suiteName:)`
+ *   - iOS : App Group `group.fr.velekya.app` → `UserDefaults(suiteName:)`
  *   - Android : `SharedPreferences` du package, lues par le `GlanceAppWidget`
  *
  * Le conteneur partagé n'existe que dans un build EAS incluant la cible native
- * (module `TandoWidgetBridge`, ajouté avec `@bacons/apple-targets` au 1er build
+ * (module `VelekyaWidgetBridge`, ajouté avec `@bacons/apple-targets` au 1er build
  * du Lot 9). En son absence (Expo Go, tests, bundle headless),
  * `requireOptionalNativeModule` renvoie `null` : on se rabat sur un cache local,
  * sans effet visible mais sans erreur.
@@ -24,14 +24,14 @@ export interface WidgetSnapshot {
   updatedAt: string;
 }
 
-const SHARED_KEY = "tando.widget.snapshot";
-const APP_GROUP = "group.fr.tando.app";
+const SHARED_KEY = "velekya.widget.snapshot";
+const APP_GROUP = "group.fr.velekya.app";
 
 interface WidgetBridgeModule {
   set(group: string, key: string, value: string): void;
 }
 
-const native = requireOptionalNativeModule<WidgetBridgeModule>("TandoWidgetBridge");
+const native = requireOptionalNativeModule<WidgetBridgeModule>("VelekyaWidgetBridge");
 
 export function snapshotFromTeam(team: TeamList): WidgetSnapshot {
   const active = team.assistants.filter((a) => a.onboarding === "termine");

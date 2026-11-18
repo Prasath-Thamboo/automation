@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import type { AdminDashboard } from "@tando/types";
+import type { AdminDashboard } from "@velekya/types";
 import { AdminGuard } from "../auth/admin.guard";
 import { AdminDashboardService } from "./admin-dashboard.service";
 

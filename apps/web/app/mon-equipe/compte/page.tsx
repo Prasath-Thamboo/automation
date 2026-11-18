@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { subscribeCopy } from "@tando/copy";
+import { subscribeCopy } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import {
@@ -25,7 +25,7 @@ const SUB_STATUS: Record<string, string> = {
 const ROLE: Record<string, string> = {
   owner: "Titulaire",
   member: "Membre",
-  admin: "Équipe Tando",
+  admin: "Équipe Velekya",
 };
 
 export default async function ComptePage() {

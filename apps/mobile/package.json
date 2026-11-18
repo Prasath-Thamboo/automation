@@ -1,5 +1,5 @@
 {
-  "name": "@tando/mobile",
+  "name": "@velekya/mobile",
   "version": "0.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -18,10 +18,10 @@
     "@expo/metro-runtime": "~4.0.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "11.4.1",
-    "@tando/api-client": "workspace:*",
-    "@tando/copy": "workspace:*",
-    "@tando/types": "workspace:*",
-    "@tando/ui-native": "workspace:*",
+    "@velekya/api-client": "workspace:*",
+    "@velekya/copy": "workspace:*",
+    "@velekya/types": "workspace:*",
+    "@velekya/ui-native": "workspace:*",
     "expo": "~52.0.27",
     "expo-constants": "~17.0.4",
     "expo-device": "~7.0.3",
@@ -38,7 +38,7 @@
     "react-native-screens": "~4.4.0"
   },
   "devDependencies": {
-    "@tando/config": "workspace:*",
+    "@velekya/config": "workspace:*",
     "@types/react": "19.0.12",
     "eslint": "^9.17.0",
     "typescript": "^5.7.2"

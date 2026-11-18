@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApiError } from "@tando/api-client";
+import { ApiError } from "@velekya/api-client";
 import { sessionApi } from "@/lib/api";
 import { ChannelRow, NewChannelForm } from "./channel-editor";
 

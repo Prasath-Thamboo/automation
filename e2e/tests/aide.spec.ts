@@ -7,13 +7,13 @@ import {
   API_URL,
   MAILPIT_URL,
   staffLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 const API = `${API_URL}/api/v1`;
 
 /**
  * Lot 15 — « Une question ? ». Le patron pose une question : réponse de la base
- * si elle est sûre ; sinon transmission à l'équipe Tando, qui répond depuis le
+ * si elle est sûre ; sinon transmission à l'équipe Velekya, qui répond depuis le
  * back-office (réponse visible dans l'espace + email).
  */
 test("réponse toute prête dans l'espace client", async ({ page, api }) => {

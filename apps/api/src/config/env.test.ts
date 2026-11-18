@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { channelWebhookSecrets, loadEnv, shouldServeApiDocs } from "./env";
 
 const base = {
-  DATABASE_URL: "postgresql://tando:tando@localhost:5432/tando?schema=public",
+  DATABASE_URL: "postgresql://velekya:velekya@localhost:5432/velekya?schema=public",
   REDIS_URL: "redis://localhost:6379",
   SESSION_SECRET: "x".repeat(32),
 };

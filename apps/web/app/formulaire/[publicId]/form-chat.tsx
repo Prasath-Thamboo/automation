@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { publicForm } from "@tando/copy";
+import { publicForm } from "@velekya/copy";
 import { browserApi } from "@/lib/browser-api";
 
 interface Line {
@@ -13,7 +13,7 @@ const field = "mt-1 w-full rounded-md border border-ink-100 px-3 py-2 text-base"
 
 function readSession(publicId: string): string | undefined {
   try {
-    return sessionStorage.getItem(`tando_form_${publicId}`) ?? undefined;
+    return sessionStorage.getItem(`velekya_form_${publicId}`) ?? undefined;
   } catch {
     return undefined;
   }
@@ -21,7 +21,7 @@ function readSession(publicId: string): string | undefined {
 
 function writeSession(publicId: string, id: string): void {
   try {
-    sessionStorage.setItem(`tando_form_${publicId}`, id);
+    sessionStorage.setItem(`velekya_form_${publicId}`, id);
   } catch {
     /* stockage indisponible : la discussion repartira de zéro au rechargement */
   }

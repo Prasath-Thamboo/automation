@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Link } from "expo-router";
-import type { LogbookEntry } from "@tando/api-client";
+import type { LogbookEntry } from "@velekya/api-client";
 import { api } from "@/src/api";
 import { useQuery } from "@/src/use-query";
 import { styles as s, t } from "@/src/theme";

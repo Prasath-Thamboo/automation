@@ -1,5 +1,5 @@
 {
-  "name": "@tando/e2e",
+  "name": "@velekya/e2e",
   "version": "0.0.0",
   "private": true,
   "description": "Tests end-to-end des parcours critiques (Lot 11). Playwright, navigateur réel, pile complète.",

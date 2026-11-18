@@ -5,13 +5,13 @@ import {
   hireViaQuote,
   uniqueEmail,
   webLogin,
-} from "../fixtures/tando";
+} from "../fixtures/velekya";
 
 /**
  * Critère d'acceptation §11 : « je découvre la landing → je choisis mon
  * métier → … → mon assistant est actif ».
  *
- * Un seul chemin d'embauche : le client décrit son besoin, l'équipe Tando
+ * Un seul chemin d'embauche : le client décrit son besoin, l'équipe Velekya
  * prépare son employé (devis relu et envoyé), le client accepte, puis le met
  * au travail. Le détail du devis est couvert par `parcours-sur-mesure`.
  */

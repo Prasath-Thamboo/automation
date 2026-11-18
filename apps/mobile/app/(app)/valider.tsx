@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import { Link } from "expo-router";
-import { mobileEscalations as ex } from "@tando/copy";
+import { mobileEscalations as ex } from "@velekya/copy";
 import { api } from "@/src/api";
 import { useQuery } from "@/src/use-query";
 import { styles as s, t } from "@/src/theme";
