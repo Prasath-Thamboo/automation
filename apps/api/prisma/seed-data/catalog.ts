@@ -6,7 +6,7 @@
  * Le contenu suit `templateContentSchema` (@tando/types). Langage bénéfice,
  * aucun jargon (§2).
  */
-import type { TemplateContent } from "@tando/types";
+import type { DefaultSwitch, TemplateContent } from "@tando/types";
 
 export interface CatalogSeed {
   slug: string;
@@ -17,6 +17,9 @@ export interface CatalogSeed {
   monthlyPriceEur: number;
   position: number;
   content: TemplateContent;
+  /** Boutons créés pour chaque employé de ce métier, lus par son flux générique
+   *  (`packages/n8n-flows`). Absent : on ne touche pas à ceux déjà en base. */
+  defaultSwitches?: DefaultSwitch[];
 }
 
 const cancellation =
@@ -31,6 +34,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Prendre les rendez-vous", "Répondre au téléphone", "Rappeler les patients"],
     monthlyPriceEur: 89,
     position: 1,
+    defaultSwitches: [
+      {
+        key: "rendez_vous",
+        label: "Il note les demandes de rendez-vous",
+        help: "Coupé : chaque demande de rendez-vous vous est transmise directement.",
+        enabled: true,
+      },
+      {
+        key: "nouveaux_patients",
+        label: "Il accepte les nouveaux patients",
+        help: "Coupé : il répond poliment que le cabinet ne prend pas de nouveaux patients.",
+        enabled: true,
+      },
+    ],
     content: {
       assistantName: "Léa",
       assistantRole: "votre assistante de cabinet dentaire",

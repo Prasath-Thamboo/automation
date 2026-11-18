@@ -48,6 +48,7 @@ packages/
   ui/          Composants web (React 19).
   ui-native/   Thème + composants mobile (React Native).
   config/      Tokens de design, preset Tailwind, configs ESLint/TS partagées.
+  n8n-flows/   Flux n8n génériques des métiers (logique testée → JSON importable).
 ```
 
 **L'API est le contrat unique.** Toute règle métier vit dans `apps/api`. Si une logique
@@ -523,6 +524,30 @@ pnpm dev                        # api (:3333) + web (:3000)
     `subscribeCopy`. CGV : clause de paiement alignée sur l'essai.
   - Doc : `docs/n8n/README.md` (« Flux générique d'un métier »). e2e
     `pret-a-l-emploi.spec.ts` (2 tests) ; `parcours-mvp` suit le nouveau CTA.
+
+- **Lot 17 — Premier flux métier : cabinet dentaire : fait.**
+  - Paquet `@tando/n8n-flows` (`packages/n8n-flows`) : logique des flux
+    génériques en TypeScript testé (`src/common.ts` : contrat, texte, dates en
+    heure de Paris ; `src/dentiste.ts`), compilée par `src/build.ts` dans le nœud
+    Code d'un flux importable `flows/dentiste.workflow.json` (Webhook Header Auth
+    → Code → Respond to Webhook). `pnpm -F @tando/n8n-flows build:flows`
+    régénère ; un test échoue si le JSON n'est pas à jour, un autre exécute le
+    code du nœud tel que n8n le ferait.
+  - Sans fournisseur de modèle : douleur / question médicale / annulation /
+    déplacement / mutuelle → transmis ; rendez-vous notés en `propose` (le
+    cabinet confirme) ; horaires, adresse, praticiens, soins proposés depuis la
+    fiche et les spécificités du premier jour. Détail : `docs/n8n/README.md`.
+  - Boutons par défaut du métier semés (`CatalogSeed.defaultSwitches` →
+    `rendez_vous`, `nouveaux_patients`).
+  - Landing : « pas de période d'essai » retiré (contredisait l'essai de 14 j).
+
+### Notes Lot 17
+
+- **Non importé dans un vrai n8n** (Docker éteint) : le JSON suit le format
+  d'export n8n 1.x (webhook v2, code v2, respondToWebhook v1.1) ; la clé
+  Header Auth est référencée par son nom, à rattacher après import.
+- Reste : flux des 5 autres métiers (même gabarit), étape « modèle de langage »
+  facultative pour les questions libres (choix du fournisseur, hébergé UE).
 
 ### Notes Lot 16
 

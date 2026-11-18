@@ -53,6 +53,13 @@ async function seedAccounts() {
   console.warn(`  admin Tando   ${staff.email}`);
 }
 
+/** Boutons par défaut du métier, s'il en déclare (Lot 16). */
+function switchesOf(item: (typeof catalogSeed)[number]) {
+  return item.defaultSwitches
+    ? { defaultSwitches: item.defaultSwitches as unknown as Prisma.InputJsonValue }
+    : {};
+}
+
 async function seedCatalog() {
   for (const item of catalogSeed) {
     const profession = await prisma.profession.upsert({
@@ -65,6 +72,7 @@ async function seedCatalog() {
         monthlyPriceEur: item.monthlyPriceEur,
         position: item.position,
         published: true,
+        ...switchesOf(item),
       },
       create: {
         slug: item.slug,
@@ -75,6 +83,7 @@ async function seedCatalog() {
         monthlyPriceEur: item.monthlyPriceEur,
         position: item.position,
         published: true,
+        ...switchesOf(item),
         template: { create: {} },
       },
       include: { template: { include: { versions: true } } },

@@ -125,7 +125,7 @@ export const landing = {
 
   finalCta: {
     title: "Votre prochain employé est disponible tout de suite.",
-    body: "Pas d'entretien, pas de période d'essai, pas de charges. Juste du travail en moins pour vous.",
+    body: "Pas d'entretien, pas de charges, pas d'engagement. Juste du travail en moins pour vous.",
     cta: "Commencer maintenant",
     note: "Sans carte bancaire.",
   },

@@ -332,6 +332,30 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.51.2)
 
+  packages/n8n-flows:
+    devDependencies:
+      '@tando/config':
+        specifier: workspace:*
+        version: link:../config
+      '@tando/copy':
+        specifier: workspace:*
+        version: link:../copy
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
+      eslint:
+        specifier: ^9.17.0
+        version: 9.39.5(jiti@2.7.0)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.13
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.1)(lightningcss@1.27.0)(terser@5.51.2)
+
   packages/types:
     dependencies:
       zod:

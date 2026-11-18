@@ -71,6 +71,61 @@ Ne traite que ceux où `working` est vrai, en respectant leurs `switches`, puis
 rends compte par `/n8n/assistants/:id/activity|escalations`. Un employé qui a
 reçu un flux propre n'apparaît plus dans cette liste.
 
+## Flux prêts à importer (`packages/n8n-flows`)
+
+La logique de chaque flux métier est écrite en TypeScript et testée dans
+`packages/n8n-flows/src` (`common.ts` + un fichier par métier). Un script la
+compile dans le nœud **Code** d'un flux importable :
+
+```
+Message reçu (Webhook, Header Auth)  →  Logique <métier> (Code)  →  Réponse (Respond to Webhook)
+```
+
+| Métier | Fichier à importer | Chemin du webhook |
+|---|---|---|
+| Cabinet dentaire | `packages/n8n-flows/flows/dentiste.workflow.json` | `/webhook/tando-dentiste` |
+
+Modifier un flux : édite `src/<métier>.ts`, puis
+`pnpm -F @tando/n8n-flows build:flows` et committe le JSON régénéré. Un test
+échoue si le JSON n'est pas à jour. Ne modifie jamais le code directement dans
+n8n : il serait écrasé au prochain import.
+
+**Mise en place (une fois par instance n8n)** :
+
+1. n8n → Credentials → **Header Auth**, nommé `Tando — X-Tando-Token` :
+   Name = `X-Tando-Token`, Value = la valeur de `N8N_TOKEN` côté API
+   (`dev-n8n-token` en local).
+2. Workflows → **Import from File** → `dentiste.workflow.json`. Sur le nœud
+   « Message reçu », sélectionne la clé créée à l'étape 1. **Active** le flux.
+3. Back-office → Métiers → Cabinet dentaire → **Flux n8n générique** : colle
+   l'URL de production (`<N8N_BASE_URL>/webhook/tando-dentiste`). Les boutons
+   par défaut (`rendez_vous`, `nouveaux_patients`) sont déjà semés par
+   `pnpm db:seed`.
+4. Côté API : `ASSISTANT_RUNTIME=n8n`.
+
+### Flux « Cabinet dentaire »
+
+Il lit `establishment`, `specifics` (`praticiens`, `types_soins`, `urgences`,
+`logiciel_agenda` — saisis au « premier jour »), `instructions` et les boutons.
+Aucun fournisseur de modèle : tout est déterministe, et en cas de doute il
+transmet au cabinet.
+
+| Le patient… | Le flux |
+|---|---|
+| a mal, une dent cassée, une joue gonflée… | **transmet** tout de suite (+ rappel du 15) ; précise au cabinet s'il accepte les urgences |
+| pose une question médicale (médicament, « est-ce normal ») | **transmet** au praticien, jamais de conseil |
+| veut annuler / déplacer un rendez-vous | **transmet** (avec le nouveau créneau souhaité) |
+| demande un rendez-vous | note la demande, sur plusieurs messages si besoin (« jeudi » puis « 10h »), en heure de Paris → `appointment` **`propose`** : le cabinet confirme, l'agenda n'est pas consulté. Praticien demandé repris ; nouveau patient : rappel carte Vitale ; Doctolib proposé si c'est l'agenda du cabinet |
+| demande horaires, adresse, parking, praticiens | répond depuis la fiche, sinon transmet |
+| demande « vous faites les implants ? » | répond oui si le soin figure dans `types_soins`, sinon **transmet** (absent ≠ non) |
+| parle mutuelle, carte Vitale, remboursement | **transmet** (sauf consigne du patron qui y répond) |
+| autre chose | consigne du patron si elle correspond, sinon **transmet** |
+
+Boutons : `rendez_vous` coupé → chaque demande de rendez-vous est transmise ;
+`nouveaux_patients` coupé → réponse polie « pas de nouveaux patients ».
+Prix, urgences explicites et demande d'un humain n'arrivent jamais au flux
+(garde-fous de l'API).
+
 ## 1. Messages entrants (API → flux)
 
 `POST` sur l'URL branchée, en-tête `X-Tando-Token: <N8N_TOKEN>` (à vérifier par
