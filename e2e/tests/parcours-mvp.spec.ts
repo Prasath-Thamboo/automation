@@ -1,7 +1,6 @@
 import {
   test,
   expect,
-  activateAssistant,
   hireViaQuote,
   uniqueEmail,
   webLogin,
@@ -36,14 +35,36 @@ test("landing → fiche dentiste → besoin → devis accepté → employé virt
   await expect(page).toHaveURL(/\/questionnaire/);
 
   // 4. Besoin → devis envoyé par le back-office → acceptation (via l'API)
-  const { session, assistantId } = await hireViaQuote(api, email);
+  const { assistantId } = await hireViaQuote(api, email);
 
-  // 5. Mise en service (les 4 écrans « premier jour » finalisés par l'API —
-  //    pas encore de data-testid sur ces écrans)
-  await activateAssistant(api, session, assistantId);
+  // 5. Mise en service : les 4 écrans « premier jour », au clavier et à la souris
+  await webLogin(page, api, email);
+  await page.goto(`/mon-equipe/assistants/${assistantId}/premier-jour`);
+  const pj = page.getByTestId("premier-jour");
+  await expect(pj.getByTestId("pj-etape-informations")).toBeVisible();
+  await pj.getByTestId("pj-nom").fill("Cabinet E2E");
+  await pj.getByTestId("pj-adresse").fill("1 rue du Test, Paris");
+  await pj.getByTestId("pj-horaires").fill("Lun-Ven 9h-18h");
+  await pj.getByTestId("pj-suivant").click();
+
+  // L'écran des spécificités n'existe que si le métier en déclare.
+  const contact = pj.getByTestId("pj-etape-contact");
+  const specifics = pj.getByTestId("pj-etape-specificites");
+  await expect(contact.or(specifics)).toBeVisible();
+  if (await specifics.isVisible()) await pj.getByTestId("pj-suivant").click();
+
+  await expect(contact).toBeVisible();
+  await pj.getByTestId("pj-email").fill(email);
+  await pj.getByTestId("pj-telephone").fill("0600000000");
+  await pj.getByTestId("pj-reception").selectOption("email");
+  await pj.getByTestId("pj-suivant").click();
+
+  await expect(pj.getByTestId("pj-etape-essai")).toBeVisible();
+  await pj.getByTestId("pj-commencer").click();
+  // « Il peut commencer » ramène sur sa fiche.
+  await expect(page).toHaveURL(new RegExp(`/mon-equipe/assistants/${assistantId}$`));
 
   // 6. « Mon équipe » montre l'employé virtuel au travail
-  await webLogin(page, api, email);
   await page.goto("/mon-equipe");
   await expect(page.getByText(/au travail/i).first()).toBeVisible();
 });

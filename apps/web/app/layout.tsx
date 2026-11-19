@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import type { ReactNode } from "react";
 import { site, nav } from "@velekya/copy";
 import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
@@ -37,7 +38,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // CSP à nonce (Lot 18, `lib/csp.ts`) : chaque page est rendue à la demande
+  // pour que les scripts de Next portent le nonce de la requête.
+  await connection();
   return (
     <html lang="fr">
       <body className="flex min-h-dvh flex-col bg-paper text-ink-900">

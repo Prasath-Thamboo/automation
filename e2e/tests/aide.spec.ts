@@ -25,10 +25,12 @@ test("réponse toute prête dans l'espace client", async ({ page, api }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Une question ?" })).toBeVisible();
   await page.getByTestId("help-question").fill("Où trouver mes factures ?");
   await page.getByRole("button", { name: "Poser ma question" }).click();
-  await expect(page.getByText("Toutes vos factures et vos avoirs sont dans")).toBeVisible();
-  await expect(page.getByRole("link", { name: /Voir mes documents/ })).toBeVisible();
-  await page.getByRole("button", { name: "Oui, merci" }).click();
-  await expect(page.getByText("Merci pour votre retour.")).toBeVisible();
+  // La réponse figure aussi dans l'historique : on vise l'échange en cours.
+  const turn = page.getByTestId("help-turn").last();
+  await expect(turn.getByText("Toutes vos factures et vos avoirs sont dans")).toBeVisible();
+  await expect(turn.getByRole("link", { name: /Voir mes documents/ })).toBeVisible();
+  await turn.getByRole("button", { name: "Oui, merci" }).click();
+  await expect(turn.getByText("Merci pour votre retour.")).toBeVisible();
 });
 
 test("question sans réponse → transmise → l'équipe répond", async ({ api }) => {

@@ -541,6 +541,44 @@ pnpm dev                        # api (:3333) + web (:3000)
     `rendez_vous`, `nouveaux_patients`).
   - Landing : « pas de période d'essai » retiré (contredisait l'essai de 14 j).
 
+- **Lot 18 — Durcissement 2 (dette technique) : fait.**
+  - **Durées de conservation + purge** (§9.4) : `RetentionModule`
+    (`apps/api/src/retention/`) — `retention-policy.ts` (pur : durées →
+    dates limites), `RetentionService.run()`, `RetentionWorker` (job répétable
+    `0 3 * * *` sur la nouvelle file BullMQ `maintenance`, `jobId` fixe). Purge
+    liens magiques, sessions, questionnaires abandonnés, prospects non
+    convertis, événements de webhook, jetons push désactivés, activité ancienne
+    des comptes actifs. Compte supprimé → après le délai de grâce : employés
+    (cascade : activité, canaux, boutons), missions, aide, jetons effacés ;
+    utilisateurs sans autre entreprise anonymisés (`supprime-<id>@invalid.velekya`) ;
+    organisation renommée, `Organization.purgedAt` (migration
+    `20261119100000_retention`). Jamais purgés : factures, avoirs, paiements,
+    devis acceptés + preuve d'acceptation, journal d'audit. Env `RETENTION_*`.
+  - **CSP web à nonce** : `apps/web/middleware.ts` (désormais sur toutes les
+    pages, garde des zones connectées conservée) + `lib/csp.ts` (testé).
+    `connection()` dans `app/layout.tsx` → **toutes les pages rendues à la
+    demande**. `/formulaire/*` : `frame-ancestors *` via la CSP du middleware.
+  - **Scan de secrets** : job CI `secrets` (binaire gitleaks 8.21.2 épinglé,
+    historique complet) + `.gitleaks.toml`.
+  - **`data-testid` « premier jour »** (`pj-*`, conteneur `premier-jour`) ;
+    `parcours-mvp` pilote désormais les 4 écrans par l'interface.
+
+### Notes Lot 18
+
+- **e2e 57/57** contre la pile (migration appliquée). La CSP a révélé que
+  `/employes-virtuels/[slug]` (`generateStaticParams`) tombait en 500
+  (`DYNAMIC_SERVER_USAGE`) → passée en `force-dynamic`. **Aucune page ne doit
+  redevenir statique / ISR** tant que la CSP est à nonce. `aide.spec.ts` vise
+  l'échange en cours (`data-testid="help-turn"`), la réponse figurant aussi
+  dans l'historique.
+- gitleaks pas lancé en local (le job CI fera le premier passage — ajuster
+  `.gitleaks.toml` si faux positif).
+- Vérifié : `turbo run lint typecheck test build` vert (30 tâches, 132 tests
+  API dont 6 `retention`, 6 tests web `csp`).
+- Durées par défaut = proposition (CNIL : prospects 3 ans) → à faire valider.
+- Restent en dette : rotation de `CHANNEL_SECRET_KEY`, `testID` mobile,
+  Maestro en CI (1er build EAS), `style-src 'unsafe-inline'`.
+
 ### Notes Lot 17
 
 - **Non importé dans un vrai n8n** (Docker éteint) : le JSON suit le format

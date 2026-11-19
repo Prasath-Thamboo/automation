@@ -17,11 +17,13 @@ export const QUOTE_QUEUE = Symbol("QUOTE_QUEUE");
 export const BILLING_QUEUE = Symbol("BILLING_QUEUE");
 export const PUSH_QUEUE = Symbol("PUSH_QUEUE");
 export const CHANNEL_QUEUE = Symbol("CHANNEL_QUEUE");
+export const MAINTENANCE_QUEUE = Symbol("MAINTENANCE_QUEUE");
 const MAIL_QUEUE_NAME = "mail";
 export const QUOTE_QUEUE_NAME = "quote-lifecycle";
 export const BILLING_QUEUE_NAME = "billing";
 export const PUSH_QUEUE_NAME = "push";
 export const CHANNEL_QUEUE_NAME = "channel-out";
+export const MAINTENANCE_QUEUE_NAME = "maintenance";
 
 /** Tâche différée de cycle de vie d'un devis (relance J+7 / J+21, expiration J+30). */
 export interface QuoteJob {
@@ -46,6 +48,11 @@ export interface PushJob {
   title?: string;
   body?: string;
   data?: Record<string, string>;
+}
+
+/** Tâche système planifiée (Lot 18 : purge quotidienne des données échues). */
+export interface MaintenanceJob {
+  type: "retention";
 }
 
 /** Remise d'un message au client final par son canal (Lot 12). */
@@ -169,10 +176,11 @@ const makeQueue = <T>(name: string) => ({
     { provide: BILLING_QUEUE, ...makeQueue<BillingJob>(BILLING_QUEUE_NAME) },
     { provide: PUSH_QUEUE, ...makeQueue<PushJob>(PUSH_QUEUE_NAME) },
     { provide: CHANNEL_QUEUE, ...makeQueue<ChannelOutJob>(CHANNEL_QUEUE_NAME) },
+    { provide: MAINTENANCE_QUEUE, ...makeQueue<MaintenanceJob>(MAINTENANCE_QUEUE_NAME) },
     QueueService,
     MailWorker,
   ],
-  exports: [QueueService, QUOTE_QUEUE, BILLING_QUEUE, PUSH_QUEUE, CHANNEL_QUEUE],
+  exports: [QueueService, QUOTE_QUEUE, BILLING_QUEUE, PUSH_QUEUE, CHANNEL_QUEUE, MAINTENANCE_QUEUE],
 })
 export class QueueModule implements OnApplicationShutdown {
   constructor(
@@ -181,6 +189,7 @@ export class QueueModule implements OnApplicationShutdown {
     @Inject(BILLING_QUEUE) private readonly billingQueue: Queue,
     @Inject(PUSH_QUEUE) private readonly pushQueue: Queue,
     @Inject(CHANNEL_QUEUE) private readonly channelQueue: Queue,
+    @Inject(MAINTENANCE_QUEUE) private readonly maintenanceQueue: Queue,
   ) {}
 
   async onApplicationShutdown(): Promise<void> {
@@ -190,6 +199,7 @@ export class QueueModule implements OnApplicationShutdown {
       this.billingQueue.close(),
       this.pushQueue.close(),
       this.channelQueue.close(),
+      this.maintenanceQueue.close(),
     ]);
   }
 }

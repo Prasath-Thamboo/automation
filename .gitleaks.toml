@@ -1,0 +1,21 @@
+# Scan de secrets (Lot 18) — job CI `secrets`. Règles par défaut de gitleaks,
+# plus une liste blanche limitée aux valeurs de développement documentées
+# (`channelWebhookSecrets()`, `n8nToken()`, `.env.example`, CI).
+# Une vraie fuite se corrige en révoquant le secret, pas en l'ajoutant ici.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Valeurs de développement et de test, publiques par conception"
+regexes = [
+  '''dev-(twilio-token|meta-secret|meta-verify|brevo-inbound|n8n-token)''',
+  '''ci-session-secret-0+''',
+  '''change-me-in-production-0+''',
+  '''sk_test_\.\.\.''',
+  '''whsec_\.\.\.''',
+]
+paths = [
+  '''pnpm-lock\.yaml''',
+  '''\.env\.example''',
+]

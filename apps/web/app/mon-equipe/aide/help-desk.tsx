@@ -78,7 +78,7 @@ export function HelpDesk({ topics }: { topics: HelpTopic[] }) {
           const canTransmit =
             r.status === "sans_reponse" || (r.status === "repondue" && r.helpful === false);
           return (
-            <div key={r.id} className="space-y-3">
+            <div key={r.id} className="space-y-3" data-testid="help-turn">
               <p className="ml-auto w-fit max-w-[85%] rounded-lg rounded-br-sm bg-ink-100 px-4 py-2 text-base text-ink-900">
                 <span className="sr-only">{helpCopy.you} : </span>
                 {turn.question}

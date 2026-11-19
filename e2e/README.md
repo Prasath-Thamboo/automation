@@ -43,8 +43,6 @@ Variables (défauts entre parenthèses) : `WEB_URL` (`http://localhost:3000`),
 
 ## À compléter (suite du Lot 11)
 
-- Poser des `data-testid` sur les 4 écrans « premier jour » puis les piloter par
-  l'UI plutôt que par l'API (parcours MVP, étape 7).
 - e2e mobile (Maestro) — cf. `apps/mobile`.
 - Audit sécurité (revue + durcissement résiduel), monitoring/alertes, perf,
   `DEPLOYMENT.md`.

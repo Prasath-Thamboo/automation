@@ -144,6 +144,27 @@ export const envSchema = z.object({
   EXPO_PUSH_URL: z.string().url().default("https://exp.host/--/api/v2/push/send"),
   /** Jeton d'accès Expo (recommandé en production, facultatif en dev). */
   EXPO_ACCESS_TOKEN: z.string().optional(),
+
+  // --- Durées de conservation (Lot 18, §9.4) — en jours ---
+  /** Coupe la purge quotidienne (03:00). */
+  RETENTION_ENABLED: booleanish.default("true"),
+  /** Liens magiques, après leur expiration. */
+  RETENTION_MAGIC_LINK_DAYS: z.coerce.number().int().min(1).default(7),
+  /** Sessions, après expiration ou révocation. */
+  RETENTION_SESSION_DAYS: z.coerce.number().int().min(1).default(30),
+  /** Questionnaires abandonnés (aucun devis), après la dernière modification. */
+  RETENTION_ASSESSMENT_DAYS: z.coerce.number().int().min(1).default(90),
+  /** Prospects non convertis (questionnaire + devis non accepté) — 3 ans (CNIL). */
+  RETENTION_PROSPECT_DAYS: z.coerce.number().int().min(1).default(1095),
+  /** Événements de webhook (servent seulement au dédoublonnage). */
+  RETENTION_WEBHOOK_DAYS: z.coerce.number().int().min(1).default(90),
+  /** Jetons push désactivés. */
+  RETENTION_PUSH_TOKEN_DAYS: z.coerce.number().int().min(1).default(30),
+  /** Délai de grâce avant l'effacement d'un compte supprimé. */
+  RETENTION_DELETED_ACCOUNT_DAYS: z.coerce.number().int().min(1).default(30),
+  /** Activité d'un compte actif (conversations, escalades traitées, rendez-vous
+   * passés, questions d'aide). 0 = conservée tant que le compte existe. */
+  RETENTION_ACTIVITY_DAYS: z.coerce.number().int().min(0).default(730),
 });
 
 const envWithGuards = envSchema.superRefine((env, ctx) => {

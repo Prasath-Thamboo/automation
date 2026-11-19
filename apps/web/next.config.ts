@@ -5,8 +5,7 @@ import type { NextConfig } from "next";
  * En-têtes de sécurité (§9.4). Appliqués à toutes les routes ; seul le
  * formulaire public (`/formulaire/*`) peut être affiché dans un cadre.
  * HSTS n'a d'effet qu'en HTTPS ; inoffensif en local.
- * Pas de CSP complète ici : elle demande un nonce par requête (dette suivie —
- * voir SECURITY.md).
+ * La CSP (nonce par requête, `frame-ancestors`) est posée par `middleware.ts`.
  */
 const commonHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -27,12 +26,10 @@ const securityHeaders = [...commonHeaders, { key: "X-Frame-Options", value: "DEN
 
 /**
  * Formulaire public (Lot 12) : le patron l'affiche dans son propre site, dont
- * on ne connaît pas l'adresse — cadrage autorisé, pour cette route seulement.
+ * on ne connaît pas l'adresse — cadrage autorisé (`frame-ancestors *` dans la
+ * CSP du middleware), pour cette route seulement.
  */
-const embeddableHeaders = [
-  ...commonHeaders,
-  { key: "Content-Security-Policy", value: "frame-ancestors *" },
-];
+const embeddableHeaders = commonHeaders;
 
 const config: NextConfig = {
   reactStrictMode: true,

@@ -54,6 +54,7 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `TWILIO_WEBHOOK_BASE_URL` | URL publique de l'API telle que Twilio l'appelle (signature) |
 | `META_APP_SECRET` / `META_VERIFY_TOKEN` | application Meta (WhatsApp + Instagram) |
 | `PUSH_ENABLED` | `true` |
+| `RETENTION_ENABLED` / `RETENTION_*_DAYS` | `true` / défauts (voir `.env.example`, `SECURITY.md`) — purge quotidienne 03:00, à faire valider |
 | `EXPO_PUSH_URL` / `EXPO_ACCESS_TOKEN` | API Expo Push (jeton d'accès recommandé) |
 | `MOBILE_DEEP_LINK_SCHEME` | `velekya` |
 

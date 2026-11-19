@@ -45,6 +45,9 @@ model Organization {
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
+  /// Lot 18 — compte supprimé dont les données personnelles ont été effacées
+  /// à l'issue du délai de grâce (`RetentionService`). Les factures restent.
+  purgedAt  DateTime? @db.Timestamptz(6)
 
   memberships Membership[]
   auditLogs   AuditLog[]

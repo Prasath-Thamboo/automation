@@ -122,7 +122,8 @@ export class AccountService {
     };
   }
 
-  /** Suppression du compte (§9.4). Soft delete immédiat ; purge par la rétention. */
+  /** Suppression du compte (§9.4). Soft delete immédiat ; effacement définitif des
+   * données personnelles après `RETENTION_DELETED_ACCOUNT_DAYS` (`RetentionService`). */
   async deleteAccount(user: SessionUser): Promise<{ ok: true }> {
     this.requireOwner(user);
     const orgId = user.organizationId;

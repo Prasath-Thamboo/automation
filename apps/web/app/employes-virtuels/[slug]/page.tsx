@@ -21,14 +21,9 @@ async function getProfession(slug: string) {
   }
 }
 
-export async function generateStaticParams(): Promise<Params[]> {
-  try {
-    const { professions } = await anonApi().catalog.list();
-    return professions.map((p) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
-}
+// Pas de `generateStaticParams` : la CSP à nonce (Lot 18) impose un rendu à la
+// demande ; une fiche pré-générée lèverait DYNAMIC_SERVER_USAGE (erreur 500).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

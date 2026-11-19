@@ -43,7 +43,11 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
   }
 
   return (
-    <section className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <section
+      className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8"
+      data-testid="premier-jour"
+      data-step={step}
+    >
       <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
         Le premier jour de {assistant.name}
       </p>
@@ -56,11 +60,12 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
       <h1 className="mt-4 text-2xl font-bold text-ink-900">{STEPS[step]}</h1>
 
       {step === 0 ? (
-        <div className="mt-6 flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-4" data-testid="pj-etape-informations">
           <label className="text-base font-semibold text-ink-900">
             Nom de l&apos;établissement
             <input
               className={field}
+              data-testid="pj-nom"
               value={establishment.name}
               onChange={(e) => setEstablishment({ ...establishment, name: e.target.value })}
             />
@@ -69,6 +74,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
             Adresse
             <input
               className={field}
+              data-testid="pj-adresse"
               value={establishment.address}
               onChange={(e) => setEstablishment({ ...establishment, address: e.target.value })}
             />
@@ -77,6 +83,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
             Horaires d&apos;ouverture
             <input
               className={field}
+              data-testid="pj-horaires"
               placeholder="Lun-Ven 9h-18h, Sam 9h-12h"
               value={establishment.openingHours}
               onChange={(e) => setEstablishment({ ...establishment, openingHours: e.target.value })}
@@ -90,9 +97,13 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
       ) : null}
 
       {step === 1 ? (
-        <div className="mt-6 flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-4" data-testid="pj-etape-specificites">
           {assistant.specificQuestions.map((q) => (
-            <label key={q.key} className="text-base font-semibold text-ink-900">
+            <label
+              key={q.key}
+              className="text-base font-semibold text-ink-900"
+              data-testid={`pj-specifique-${q.key}`}
+            >
               {q.label}
               {q.type === "textarea" ? (
                 <textarea
@@ -138,11 +149,12 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
       ) : null}
 
       {step === 2 ? (
-        <div className="mt-6 flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-4" data-testid="pj-etape-contact">
           <label className="text-base font-semibold text-ink-900">
             Votre email
             <input
               className={field}
+              data-testid="pj-email"
               value={contact.email}
               onChange={(e) => setContact({ ...contact, email: e.target.value })}
             />
@@ -151,6 +163,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
             Votre téléphone
             <input
               className={field}
+              data-testid="pj-telephone"
               value={contact.phone}
               onChange={(e) => setContact({ ...contact, phone: e.target.value })}
             />
@@ -159,6 +172,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
             Où doivent arriver ce qu&apos;il vous remonte ?
             <select
               className={field}
+              data-testid="pj-reception"
               value={contact.inbox}
               onChange={(e) => setContact({ ...contact, inbox: e.target.value })}
             >
@@ -177,7 +191,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
       ) : null}
 
       {step === 3 ? (
-        <div className="mt-6">
+        <div className="mt-6" data-testid="pj-etape-essai">
           <p className="text-base text-ink-700">
             Essayez-le : écrivez comme un de vos clients. S&apos;il n&apos;est pas sûr, il vous
             transmettra la demande plutôt que d&apos;inventer.
@@ -196,11 +210,16 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               </li>
             ))}
           </ul>
-          {error ? <p className="mt-4 text-sm text-danger">{error}</p> : null}
+          {error ? (
+            <p className="mt-4 text-sm text-danger" role="alert" data-testid="pj-erreur">
+              {error}
+            </p>
+          ) : null}
           <div className="mt-6 flex gap-3">
             <button
               type="button"
               onClick={() => setStep(2)}
+              data-testid="pj-precedent"
               className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
             >
               Précédent
@@ -209,6 +228,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               type="button"
               disabled={pending}
               onClick={finish}
+              data-testid="pj-commencer"
               className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
             >
               {pending ? "…" : "Il peut commencer"}
@@ -217,7 +237,11 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
         </div>
       ) : null}
 
-      {step !== 3 && error ? <p className="mt-4 text-sm text-danger">{error}</p> : null}
+      {step !== 3 && error ? (
+        <p className="mt-4 text-sm text-danger" role="alert" data-testid="pj-erreur">
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }
@@ -237,6 +261,7 @@ function Nav({
         <button
           type="button"
           onClick={onBack}
+          data-testid="pj-precedent"
           className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
         >
           Précédent
@@ -246,6 +271,7 @@ function Nav({
         type="button"
         disabled={pending}
         onClick={onNext}
+        data-testid="pj-suivant"
         className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
       >
         {pending ? "…" : "Suivant"}

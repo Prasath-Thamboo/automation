@@ -50,7 +50,16 @@ des charges (`prompt-claude-code-velekya.md`).
   `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`
   (caméra/micro/géoloc/topics désactivés), `X-DNS-Prefetch-Control: off`,
   `poweredByHeader: false`.
-- **Prouvé par test** : `e2e/tests/securite.spec.ts`.
+- **CSP web à nonce** (Lot 18, `apps/web/middleware.ts` + `lib/csp.ts`) : nonce
+  aléatoire par requête, `script-src 'self' 'nonce-…' 'strict-dynamic'`,
+  `object-src 'none'`, `base-uri 'self'`, `form-action 'self'` (+ Stripe
+  Checkout), `connect-src` limité à l'API, `frame-ancestors 'none'` (`*` pour
+  `/formulaire/*` seulement), `upgrade-insecure-requests` en production.
+  `style-src` garde `'unsafe-inline'` (attributs `style` de React). Coût
+  assumé : toutes les pages sont rendues à la demande (`connection()` dans
+  `app/layout.tsx`), plus de pages statiques.
+- **Prouvé par test** : `e2e/tests/securite.spec.ts` (dont nonce différent à
+  chaque requête et aucune violation au chargement), `apps/web/lib/csp.test.ts`.
 
 ### CSRF
 - L'API n'a **pas d'authentification ambiante** (jeton Bearer explicite) → non
@@ -76,10 +85,27 @@ des charges (`prompt-claude-code-velekya.md`).
   **et le mobile** (`app/(app)/compte.tsx`). Suppression à double confirmation,
   réservée au titulaire, invalide session navigateur + jeton d'API.
 - **Prouvé par test** : `e2e/tests/rgpd-compte.spec.ts`.
+- **Durées de conservation + purge automatique** (Lot 18, `apps/api/src/retention/`) :
+  passage quotidien à 03:00 (file BullMQ `maintenance`), durées réglables
+  (`RETENTION_*`, en jours). Liens magiques (7 j après expiration), sessions
+  (30 j après expiration / révocation), questionnaires abandonnés (90 j),
+  prospects non convertis (3 ans), événements de webhook (90 j), jetons push
+  désactivés (30 j), activité des comptes actifs — conversations, escalades
+  traitées, rendez-vous passés, questions d'aide (2 ans, `0` = conservée).
+  **Compte supprimé** : après 30 j de grâce, employés et toute leur activité,
+  missions, questions d'aide et jetons effacés ; utilisateurs sans autre
+  entreprise anonymisés ; organisation renommée « Compte supprimé »
+  (`purgedAt`). **Jamais purgés** : factures, avoirs, paiements (10 ans,
+  identité client figée dedans), devis acceptés et preuve d'acceptation,
+  journal d'audit (sans donnée personnelle en clair). Chaque passage est
+  tracé (`retention.purged`, compteurs seuls).
 
 ### Secrets
 - `.env`, `.env.local`, `.env.*.local`, `apps/mobile/credentials/` sont
   git-ignorés. Seuls les `*.env.example` sont versionnés. Aucun `.env` suivi.
+- **Scan de secrets en CI** (Lot 18) : job `secrets` — gitleaks sur tout
+  l'historique, configuration `.gitleaks.toml` (règles par défaut + liste
+  blanche limitée aux valeurs de développement documentées).
 
 ### Doc OpenAPI
 - `/api/docs` : ouverte hors production, **fermée en production** par défaut
@@ -104,10 +130,9 @@ des charges (`prompt-claude-code-velekya.md`).
 
 | Sujet | État | Piste |
 |---|---|---|
-| **CSP complète côté web** | en-têtes de base seulement | CSP stricte avec nonce par requête (middleware Next), passer `frame-ancestors 'none'`, `script-src 'self' 'nonce-…'` |
-| **Durées de conservation + purge automatique** (§9.4) | non implémenté | colonnes de rétention configurables + job BullMQ de purge (assessments abandonnés, magic links, sessions expirées, logs anciens) |
+| **CSP : `style-src 'unsafe-inline'`** | assumé | passer les styles inline en classes si on veut le retirer |
+| **Durées de conservation** | durées par défaut, à valider | faire valider les durées (`RETENTION_*`) par un juriste / DPO ; logs applicatifs (stdout) : rétention côté hébergeur |
 | **Hébergement UE + chiffrement au repos** | responsabilité infra | Postgres/Redis/S3 managés en région UE, chiffrement au repos activé — voir `DEPLOYMENT.md` |
-| **Scan de secrets en CI** | absent | `gitleaks` en job CI |
 | **Rotation de `CHANNEL_SECRET_KEY`** | clé unique | versionner la clé (`v2.`) et re-chiffrer en tâche de fond |
 | **Registre des traitements, DPA type** | hors code | documents juridiques à produire |
 | **Identité légale** | `[À COMPLÉTER]` | `packages/copy/src/legal.ts`, `SELLER_*` — cf. `DEPLOYMENT.md` |
