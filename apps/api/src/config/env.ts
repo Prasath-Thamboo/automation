@@ -118,6 +118,11 @@ export const envSchema = z.object({
    * SESSION_SECRET ailleurs.
    */
   CHANNEL_SECRET_KEY: z.string().optional(),
+  /** Lot 19 — version de `CHANNEL_SECRET_KEY` (à incrémenter à chaque rotation). */
+  CHANNEL_SECRET_KEY_VERSION: z.coerce.number().int().min(1).default(1),
+  /** Lot 19 — anciennes clés encore lisibles : `1:base64,2:base64`. À retirer
+   * une fois le rechiffrement terminé (journal « Rechiffrement terminé »). */
+  CHANNEL_SECRET_KEY_PREVIOUS: z.string().optional(),
   /** `fake` : les envois SMS / WhatsApp / Instagram sont simulés. Les emails
    *  partent toujours par SMTP (mailpit en dev). */
   CHANNELS_DELIVERY: z.enum(["fake", "live"]).default("fake"),

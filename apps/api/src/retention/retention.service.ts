@@ -13,7 +13,7 @@ const ACCOUNTS_PER_RUN = 50;
 
 /**
  * Durées de conservation et purge automatique (§9.4, Lot 18). Un passage par
- * jour (`RetentionWorker`). Lecture transverse, assumée comme le back-office :
+ * jour (`MaintenanceWorker`). Lecture transverse, assumée comme le back-office :
  * c'est un traitement système, pas une requête d'un client.
  *
  * Ce qui n'est JAMAIS purgé : factures, avoirs, paiements (obligation comptable

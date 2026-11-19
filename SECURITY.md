@@ -121,6 +121,9 @@ des charges (`prompt-claude-code-velekya.md`).
 - Adresses de réponse des clients finaux (numéro, email, identifiant Meta) et
   jetons d'accès Meta chiffrés AES-256-GCM (`CHANNEL_SECRET_KEY`) ; la
   conversation n'est indexée que par un hash. Exclues de l'export RGPD.
+- **Rotation de clé** (Lot 19) : valeurs préfixées par la version de clé
+  (`v<N>.`), trousseau `CHANNEL_SECRET_KEY` + `CHANNEL_SECRET_KEY_PREVIOUS`,
+  rechiffrement automatique en tâche de fond — procédure dans `DEPLOYMENT.md` §10.
 - Formulaire public : débit limité par IP (15 messages / min), piège à robots,
   seule route du site autorisée en cadre (`frame-ancestors *`).
 - Emails entrants : réponses automatiques, listes, rebonds, indésirables et
@@ -133,7 +136,6 @@ des charges (`prompt-claude-code-velekya.md`).
 | **CSP : `style-src 'unsafe-inline'`** | assumé | passer les styles inline en classes si on veut le retirer |
 | **Durées de conservation** | durées par défaut, à valider | faire valider les durées (`RETENTION_*`) par un juriste / DPO ; logs applicatifs (stdout) : rétention côté hébergeur |
 | **Hébergement UE + chiffrement au repos** | responsabilité infra | Postgres/Redis/S3 managés en région UE, chiffrement au repos activé — voir `DEPLOYMENT.md` |
-| **Rotation de `CHANNEL_SECRET_KEY`** | clé unique | versionner la clé (`v2.`) et re-chiffrer en tâche de fond |
 | **Registre des traitements, DPA type** | hors code | documents juridiques à produire |
 | **Identité légale** | `[À COMPLÉTER]` | `packages/copy/src/legal.ts`, `SELLER_*` — cf. `DEPLOYMENT.md` |
 | **En-têtes sur build EAS mobile** | n/a (app native) | vérifier ATS iOS / `usesCleartextTraffic` Android au build |

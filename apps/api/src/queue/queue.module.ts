@@ -50,9 +50,10 @@ export interface PushJob {
   data?: Record<string, string>;
 }
 
-/** Tâche système planifiée (Lot 18 : purge quotidienne des données échues). */
+/** Tâche système planifiée : purge des données échues (Lot 18), rechiffrement
+ * des données de canal après une rotation de clé (Lot 19). */
 export interface MaintenanceJob {
-  type: "retention";
+  type: "retention" | "rekey";
 }
 
 /** Remise d'un message au client final par son canal (Lot 12). */

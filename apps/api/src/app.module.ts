@@ -19,7 +19,7 @@ import { TeamModule } from "./team/team.module";
 import { AdminModule } from "./admin/admin.module";
 import { HelpModule } from "./help/help.module";
 import { ChannelsModule } from "./channels/channels.module";
-import { RetentionModule } from "./retention/retention.module";
+import { MaintenanceModule } from "./maintenance/maintenance.module";
 
 @Module({
   imports: [
@@ -46,7 +46,7 @@ import { RetentionModule } from "./retention/retention.module";
     AdminModule,
     HelpModule,
     ChannelsModule,
-    RetentionModule,
+    MaintenanceModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

@@ -1,12 +1,9 @@
 import { Module } from "@nestjs/common";
-import { QueueModule } from "../queue/queue.module";
 import { RetentionService } from "./retention.service";
-import { RetentionWorker } from "./retention.worker";
 
-/** Durées de conservation et purge automatique (§9.4, Lot 18). */
+/** Durées de conservation et purge (§9.4, Lot 18). Planifiée par `MaintenanceModule`. */
 @Module({
-  imports: [QueueModule],
-  providers: [RetentionService, RetentionWorker],
+  providers: [RetentionService],
   exports: [RetentionService],
 })
 export class RetentionModule {}

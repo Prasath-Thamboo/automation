@@ -544,8 +544,8 @@ pnpm dev                        # api (:3333) + web (:3000)
 - **Lot 18 — Durcissement 2 (dette technique) : fait.**
   - **Durées de conservation + purge** (§9.4) : `RetentionModule`
     (`apps/api/src/retention/`) — `retention-policy.ts` (pur : durées →
-    dates limites), `RetentionService.run()`, `RetentionWorker` (job répétable
-    `0 3 * * *` sur la nouvelle file BullMQ `maintenance`, `jobId` fixe). Purge
+    dates limites), `RetentionService.run()`, planifiée par `MaintenanceWorker`
+    (job répétable `0 3 * * *` sur la nouvelle file BullMQ `maintenance`, `jobId` fixe). Purge
     liens magiques, sessions, questionnaires abandonnés, prospects non
     convertis, événements de webhook, jetons push désactivés, activité ancienne
     des comptes actifs. Compte supprimé → après le délai de grâce : employés
@@ -563,6 +563,24 @@ pnpm dev                        # api (:3333) + web (:3000)
   - **`data-testid` « premier jour »** (`pj-*`, conteneur `premier-jour`) ;
     `parcours-mvp` pilote désormais les 4 écrans par l'interface.
 
+- **Lot 19 — Rotation de `CHANNEL_SECRET_KEY` : fait.**
+  - `secret-box.ts` : trousseau versionné (`Keyring`, `channelKeyring(env)`),
+    format `v<N>.<iv>.<tag>.<chiffré>` — les valeurs `v1.` existantes restent
+    lues avec la clé 1 (pas de migration de données). Env
+    `CHANNEL_SECRET_KEY_VERSION` (défaut 1), `CHANNEL_SECRET_KEY_PREVIOUS`
+    (`1:base64,…`). Configuration incohérente → l'API refuse de démarrer.
+  - `ChannelKeyRotationService` (`channels/key-rotation.service.ts`) : rechiffre
+    `conversations.replyToEnc` et `channel_endpoints.secretEnc` par lots
+    (curseur sur `id`, `updateMany` conditionnel = pas d'écrasement), audit
+    `channels.key_rotated`, log « Rechiffrement terminé ».
+  - **`MaintenanceModule`** (`src/maintenance/`) : seul worker de la file
+    `maintenance` (`retention` 03:00 + `rekey` au démarrage et toutes les
+    heures). `RetentionModule` ne fait plus que fournir `RetentionService`.
+  - Procédure : `DEPLOYMENT.md` §10. Tests : `secret-box.test.ts` (7, dont
+    lecture du format historique), `key-rotation.service.test.ts` (3).
+  - Vérifié : turbo 30/30, e2e 57/57. Rotation réelle non jouée sur la base de
+    dev (couverte par les tests avec vrai chiffrement).
+
 ### Notes Lot 18
 
 - **e2e 57/57** contre la pile (migration appliquée). La CSP a révélé que
@@ -576,7 +594,7 @@ pnpm dev                        # api (:3333) + web (:3000)
 - Vérifié : `turbo run lint typecheck test build` vert (30 tâches, 132 tests
   API dont 6 `retention`, 6 tests web `csp`).
 - Durées par défaut = proposition (CNIL : prospects 3 ans) → à faire valider.
-- Restent en dette : rotation de `CHANNEL_SECRET_KEY`, `testID` mobile,
+- Restent en dette : `testID` mobile,
   Maestro en CI (1er build EAS), `style-src 'unsafe-inline'`.
 
 ### Notes Lot 17

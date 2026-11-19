@@ -46,7 +46,8 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `N8N_BASE_URL` | origine de l'instance n8n (ex. `https://n8n.velekya.fr`) : l'adresse du flux de chaque employé (back-office → Pilotage) doit s'y trouver. Instance **hébergée dans l'UE** (messages des clients finaux) |
 | `N8N_TOKEN` | si `n8n` : **obligatoire**, secret fort partagé dans les deux sens (en-tête `X-Velekya-Token`) : vérifié par les nœuds Webhook, présenté par les flux à `/api/v1/n8n/*` |
 | `N8N_TIMEOUT_MS` | délai max d'un tour (défaut 15000) ; au-delà → escalade |
-| `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta ; la changer rend illisibles les données déjà chiffrées |
+| `CHANNEL_SECRET_KEY` | **obligatoire** (`openssl rand -base64 32`) — chiffre adresses de réponse et jetons Meta. Ne jamais la remplacer « à sec » : suivre la procédure de rotation (§10) |
+| `CHANNEL_SECRET_KEY_VERSION` / `CHANNEL_SECRET_KEY_PREVIOUS` | rotation de clé (§10) — défaut `1` / vide |
 | `CHANNELS_DELIVERY` | `live` |
 | `INBOUND_EMAIL_DOMAIN` | domaine de réception (ex. `in.velekya.fr`), MX pointé vers Brevo |
 | `BREVO_INBOUND_TOKEN` | secret fort, repris dans l'URL du webhook Brevo |
@@ -182,3 +183,25 @@ déploiement) est à câbler selon la plateforme cible.
 - Base : les migrations Prisma ne sont pas réversibles automatiquement. Prévoir
   une restauration depuis sauvegarde ; écrire des migrations rétrocompatibles
   (ajout de colonnes nullable, pas de suppression immédiate).
+
+## 10. Rotation de `CHANNEL_SECRET_KEY` (Lot 19)
+
+À faire en cas de fuite supposée, de départ d'une personne qui y avait accès,
+ou par hygiène (annuelle). Aucune interruption de service.
+
+1. Générer la nouvelle clé : `openssl rand -base64 32`.
+2. Déployer avec :
+   - `CHANNEL_SECRET_KEY` = la **nouvelle** clé ;
+   - `CHANNEL_SECRET_KEY_VERSION` = version précédente **+ 1** (ex. `2`) ;
+   - `CHANNEL_SECRET_KEY_PREVIOUS` = `1:<ancienne clé>` (plusieurs : `1:…,2:…`).
+3. L'API chiffre aussitôt avec la nouvelle clé et lit encore l'ancienne. Le
+   rechiffrement (`ChannelKeyRotationService`, file `maintenance`) tourne au
+   démarrage puis toutes les heures, par lots.
+4. Attendre dans les logs `[KeyRotation] Rechiffrement terminé` (ou l'audit
+   `channels.key_rotated` avec `done: true`). Un avertissement « clé absente de
+   CHANNEL_SECRET_KEY_PREVIOUS » signale une ancienne version oubliée : l'ajouter.
+5. Redéployer **sans** `CHANNEL_SECRET_KEY_PREVIOUS`, puis détruire l'ancienne
+   clé du coffre de secrets.
+
+Une configuration incohérente (clé de mauvaise taille, version en double,
+format invalide) empêche l'API de démarrer — erreur explicite au boot.
