@@ -75,6 +75,9 @@ const NEW_PATIENT = [
 
 const HOURS = ["horaire", "ouvert", "ouverte", "ferme", "quelle heure", "jusqu a quelle heure", "a partir de quelle heure"];
 const ADDRESS = ["adresse", "ou etes vous", "ou se trouve", "comment venir", "parking", "garer", "vous situer", "acces", "metro", "bus", "tram"];
+/** Tournures parlées (« c'est où ? », « où est le cabinet ? ») — mot entier, pour ne pas lire « c'est ouvert ». */
+const ADDRESS_RE = /\b(c est ou|ou est (le|votre|ce) cabinet|ou est situe|ou ca se trouve|situe ou)\b/;
+const asksAddress = (t: string): boolean => has(t, ADDRESS) || ADDRESS_RE.test(t);
 const PRACTITIONERS = [
   "quel dentiste", "quels dentistes", "quelle dentiste", "praticien", "praticienne", "quel docteur",
   "qui consulte", "qui sont les dentistes", "combien de dentistes", "les dentistes du cabinet",
@@ -199,7 +202,7 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
     has(t, BOOK) ||
     (bookingInProgress &&
       !has(t, HOURS) &&
-      !has(t, ADDRESS) &&
+      !asksAddress(t) &&
       Boolean(slotHere.day || slotHere.time || slotHere.part));
   if (wantsBooking) {
     if (!switchOn(req, "rendez_vous")) {
@@ -279,7 +282,7 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
   }
 
   // ── 7. Adresse, accès, stationnement ──
-  if (has(t, ADDRESS)) {
+  if (asksAddress(t)) {
     const addr = a.establishment?.address;
     const access =
       pickSpecific(sp, ["parking", "acces", "stationnement", "transport"]) ??

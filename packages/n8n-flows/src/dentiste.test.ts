@@ -181,6 +181,19 @@ describe("flux dentiste — questions courantes", () => {
     expect(r.kind === "reply" && r.text).toContain("Parking gratuit");
   });
 
+  it.each(["C'est où le cabinet ?", "c'est où", "Où est le cabinet ?", "Le cabinet est situé où ?"])(
+    "comprend « %s » comme une question d'adresse",
+    (text) => {
+      const r = handle(req(text), NOW);
+      expect(r.kind === "reply" && r.text).toContain("12 rue des Lilas");
+    },
+  );
+
+  it("ne confond pas « c'est ouvert » avec l'adresse", () => {
+    const r = handle(req("C'est ouvert samedi ?"), NOW);
+    expect(r.kind === "reply" && r.text).toContain("9h-19h");
+  });
+
   it("présente les praticiens", () => {
     const r = handle(req("Quels dentistes consultent chez vous ?"), NOW);
     expect(r.kind === "reply" && r.text).toContain("Dr Martin, Dr Benali");

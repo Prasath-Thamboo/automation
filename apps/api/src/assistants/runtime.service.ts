@@ -334,17 +334,37 @@ export class RuntimeService {
     }
 
     if (reply.kind === "appointment") {
-      await this.prisma.appointment.create({
-        data: {
-          assistantId: assistant.id,
-          organizationId: assistant.organizationId,
-          conversationId,
-          customerLabel: input.customerLabel,
-          requestedText: input.text,
-          slot: reply.slotISO ? new Date(reply.slotISO) : null,
-          status: reply.status,
-        },
+      const slot = reply.slotISO ? new Date(reply.slotISO) : null;
+      // Une demande qui se précise sur plusieurs messages (« un rendez-vous » →
+      // « jeudi » → « 10h ») reste UN seul rendez-vous : on complète celui qui
+      // attend encore sa date dans cette conversation au lieu d'en créer un autre.
+      const pending = await this.prisma.appointment.findFirst({
+        where: { conversationId, slot: null, status: { not: "annule" } },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, requestedText: true },
       });
+      if (pending) {
+        await this.prisma.appointment.update({
+          where: { id: pending.id },
+          data: {
+            requestedText: `${pending.requestedText} / ${input.text}`.slice(-500),
+            slot,
+            status: reply.status,
+          },
+        });
+      } else {
+        await this.prisma.appointment.create({
+          data: {
+            assistantId: assistant.id,
+            organizationId: assistant.organizationId,
+            conversationId,
+            customerLabel: input.customerLabel,
+            requestedText: input.text,
+            slot,
+            status: reply.status,
+          },
+        });
+      }
       appointment = { slot: reply.slotISO, status: reply.status };
     }
 

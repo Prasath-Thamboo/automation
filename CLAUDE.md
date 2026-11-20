@@ -599,9 +599,17 @@ pnpm dev                        # api (:3333) + web (:3000)
 
 ### Notes Lot 17
 
-- **Non importé dans un vrai n8n** (Docker éteint) : le JSON suit le format
-  d'export n8n 1.x (webhook v2, code v2, respondToWebhook v1.1) ; la clé
-  Header Auth est référencée par son nom, à rattacher après import.
+- **Validé dans un vrai n8n 1.80** (2026-11-19) : import CLI
+  (`n8n import:credentials` puis `import:workflow` — ce dernier attend un
+  **tableau** ; ajouter l'`id` de la clé Header Auth dans le nœud Webhook avant
+  import), `update:workflow --active=true` + redémarrage. 403 sans jeton,
+  18 scénarios patients OK, et bout en bout API (`ASSISTANT_RUNTIME=n8n`) →
+  formulaire public → n8n → rendez-vous / escalade en base.
+- Corrigé à cette occasion : « c'est où ? » non reconnu comme une question
+  d'adresse ; et **un rendez-vous pris en plusieurs messages créait une ligne
+  `appointments` par message** (`RuntimeService.persist` complète désormais le
+  rendez-vous sans date en cours de la conversation — vaut aussi pour le moteur
+  à règles).
 - Reste : flux des 5 autres métiers (même gabarit), étape « modèle de langage »
   facultative pour les questions libres (choix du fournisseur, hébergé UE).
 
