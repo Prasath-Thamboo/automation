@@ -1,6 +1,4 @@
-import { readFileSync } from "node:fs";
 import { findJargon } from "@velekya/copy/blacklist";
-import { FLOWS, buildWorkflow, serialize, workflowPath } from "./build";
 import type { FlowReply, FlowRequest } from "./common";
 import { handle } from "./dentiste";
 
@@ -240,24 +238,3 @@ describe("flux dentiste — vocabulaire et contrat", () => {
   });
 });
 
-describe("flux n8n généré", () => {
-  const flow = FLOWS.find((f) => f.slug === "dentiste")!;
-
-  it("est à jour (sinon : pnpm -F @velekya/n8n-flows build:flows)", () => {
-    expect(readFileSync(workflowPath(flow), "utf8")).toBe(serialize(buildWorkflow(flow)));
-  });
-
-  it("le code du nœud s'exécute comme dans n8n", () => {
-    const wf = buildWorkflow(flow) as { nodes: Array<{ type: string; parameters: { jsCode?: string } }> };
-    const code = wf.nodes.find((n) => n.type === "n8n-nodes-base.code")!.parameters.jsCode!;
-    const run = (body: unknown) =>
-      (new Function("$input", code) as ($input: unknown) => Array<{ json: FlowReply }>)({
-        first: () => ({ json: { headers: {}, body } }),
-      })[0]!.json;
-
-    expect(run(req("J'ai une rage de dents")).kind).toBe("escalate");
-    expect(run(req("Je voudrais un rendez-vous")).kind).toBe("appointment");
-    expect(run(req("Vous faites les implants ?")).kind).toBe("reply");
-    expect(run({ nope: true }).kind).toBe("escalate");
-  });
-});

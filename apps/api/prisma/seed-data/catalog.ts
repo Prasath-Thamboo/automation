@@ -122,6 +122,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Prendre les réservations", "Répondre au téléphone", "Répondre aux questions habituelles"],
     monthlyPriceEur: 89,
     position: 2,
+    defaultSwitches: [
+      {
+        key: "reservations",
+        label: "Il note les réservations",
+        help: "Coupé : chaque demande de réservation vous est transmise directement.",
+        enabled: true,
+      },
+      {
+        key: "complet",
+        label: "Complet aujourd'hui",
+        help: "Allumé : il répond aux demandes pour aujourd'hui que vous êtes complet et propose un autre jour. Pensez à l'éteindre le lendemain.",
+        enabled: false,
+      },
+    ],
     content: {
       assistantName: "Marco",
       assistantRole: "votre assistant de salle",

@@ -84,6 +84,7 @@ Message reçu (Webhook, Header Auth)  →  Logique <métier> (Code)  →  Répon
 | Métier | Fichier à importer | Chemin du webhook |
 |---|---|---|
 | Cabinet dentaire | `packages/n8n-flows/flows/dentiste.workflow.json` | `/webhook/velekya-dentiste` |
+| Restaurant | `packages/n8n-flows/flows/restaurateur.workflow.json` | `/webhook/velekya-restaurateur` |
 
 Modifier un flux : édite `src/<métier>.ts`, puis
 `pnpm -F @velekya/n8n-flows build:flows` et committe le JSON régénéré. Un test
@@ -95,12 +96,11 @@ n8n : il serait écrasé au prochain import.
 1. n8n → Credentials → **Header Auth**, nommé `Velekya — X-Velekya-Token` :
    Name = `X-Velekya-Token`, Value = la valeur de `N8N_TOKEN` côté API
    (`dev-n8n-token` en local).
-2. Workflows → **Import from File** → `dentiste.workflow.json`. Sur le nœud
+2. Workflows → **Import from File** → `<métier>.workflow.json`. Sur le nœud
    « Message reçu », sélectionne la clé créée à l'étape 1. **Active** le flux.
-3. Back-office → Métiers → Cabinet dentaire → **Flux n8n générique** : colle
-   l'URL de production (`<N8N_BASE_URL>/webhook/velekya-dentiste`). Les boutons
-   par défaut (`rendez_vous`, `nouveaux_patients`) sont déjà semés par
-   `pnpm db:seed`.
+3. Back-office → Métiers → le métier → **Flux n8n générique** : colle l'URL de
+   production (`<N8N_BASE_URL>/webhook/velekya-<métier>`). Les boutons par
+   défaut du métier sont déjà semés par `pnpm db:seed`.
 4. Côté API : `ASSISTANT_RUNTIME=n8n`.
 
 ### Flux « Cabinet dentaire »
@@ -125,6 +125,31 @@ Boutons : `rendez_vous` coupé → chaque demande de rendez-vous est transmise ;
 `nouveaux_patients` coupé → réponse polie « pas de nouveaux patients ».
 Prix, urgences explicites et demande d'un humain n'arrivent jamais au flux
 (garde-fous de l'API).
+
+### Flux « Restaurant »
+
+Il lit `establishment`, `specifics` (`capacite`, `horaires`, `carte`,
+`groupes_max` — saisis au « premier jour »), `instructions` et les boutons.
+Le cahier de réservations n'est pas consulté : une réservation est **notée**
+et le restaurant la confirme.
+
+| Le client… | Le flux |
+|---|---|
+| demande une table | note la réservation dès qu'il a **jour + heure + nombre de personnes**, sur plusieurs messages si besoin (« ce soir » → « 4 » → « 20h »), une question à la fois, en heure de Paris → `appointment` **`propose`**. Demande ensuite le nom (« À quel nom ? ») sauf s'il est déjà donné (« au nom de Durand ») |
+| est plus nombreux que `groupes_max` (à défaut `capacite`) | **transmet** au restaurant |
+| demande pour aujourd'hui alors que le bouton `complet` est allumé | répond « complet aujourd'hui » et propose un autre jour |
+| signale une allergie en réservant | réservation notée, allergie reprise dans le résumé |
+| demande si un plat est sans gluten, végétarien… | **transmet** (jamais de garantie), sauf consigne du patron qui y répond |
+| annule, modifie, veut la liste d'attente | **transmet** (avec le souhait : jour, heure, nombre) |
+| privatisation, mariage, séminaire | **transmet** |
+| se plaint (malade, déçu, remboursement) | **transmet**, sans discuter |
+| demande horaires, adresse, carte | répond depuis la fiche (lien de la carte s'il y en a un), sinon transmet |
+| paiement, tickets resto, à emporter, remise | **transmet** (sauf consigne du patron) |
+| autre chose | consigne du patron si elle correspond, sinon **transmet** |
+
+Boutons : `reservations` coupé → chaque demande est transmise ; `complet`
+(éteint par défaut, **seul `true` compte**) → « complet aujourd'hui » pour les
+demandes du jour, à éteindre le lendemain.
 
 ## 1. Messages entrants (API → flux)
 

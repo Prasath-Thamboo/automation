@@ -29,6 +29,12 @@ export const FLOWS: FlowDefinition[] = [
     source: "dentiste.ts",
     ids: { workflow: "velekyaDentiste01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e01" },
   },
+  {
+    slug: "restaurateur",
+    name: "Velekya — Restaurant (générique)",
+    source: "restaurateur.ts",
+    ids: { workflow: "velekyaRestaurant01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e02" },
+  },
 ];
 
 /** Nom de la clé d'en-tête attendue, partagé avec l'API (`n8n.runtime.ts`). */

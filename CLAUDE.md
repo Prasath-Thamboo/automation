@@ -581,6 +581,22 @@ pnpm dev                        # api (:3333) + web (:3000)
   - Vérifié : turbo 30/30, e2e 57/57. Rotation réelle non jouée sur la base de
     dev (couverte par les tests avec vrai chiffrement).
 
+- **Lot 20 — Flux métier : restaurant : fait.**
+  - `packages/n8n-flows/src/restaurateur.ts` (+ tests) → `flows/restaurateur.workflow.json`,
+    webhook `/webhook/velekya-restaurateur`. Même gabarit que le dentiste.
+  - Réservation notée en `propose` dès jour + heure + nombre (sur plusieurs
+    messages, une question à la fois), puis « À quel nom ? ». Groupe au-delà de
+    `groupes_max` (sinon `capacite`), allergies / régimes, annulation,
+    modification, liste d'attente, privatisation, réclamation, paiement, à
+    emporter, remise → transmis. Horaires (`horaires`), adresse, carte (`carte`)
+    depuis la fiche.
+  - Boutons semés : `reservations` (allumé) et `complet` (éteint ; seul `true`
+    compte → « complet aujourd'hui » pour les demandes du jour).
+  - Test « flux généré à jour / s'exécute comme dans n8n » déplacé dans
+    `build.test.ts`, joué pour **chaque** flux de `FLOWS`.
+  - Non importé dans n8n à ce stade ; boutons semés seulement pour les
+    nouvelles embauches (absents = défauts du flux, donc sans effet).
+
 ### Notes Lot 18
 
 - **e2e 57/57** contre la pile (migration appliquée). La CSP a révélé que
@@ -610,7 +626,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   `appointments` par message** (`RuntimeService.persist` complète désormais le
   rendez-vous sans date en cours de la conversation — vaut aussi pour le moteur
   à règles).
-- Reste : flux des 5 autres métiers (même gabarit), étape « modèle de langage »
+- Reste : flux des 4 autres métiers (même gabarit ; restaurant fait au Lot 20), étape « modèle de langage »
   facultative pour les questions libres (choix du fournisseur, hébergé UE).
 
 ### Notes Lot 16
