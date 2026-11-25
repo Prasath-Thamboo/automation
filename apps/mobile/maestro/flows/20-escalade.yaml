@@ -8,7 +8,8 @@ tags:
   - escalade
 ---
 - runFlow: ../common/login.yaml
-- tapOn: "À valider"
+- tapOn:
+    id: "onglet-valider"
 
 # Cas « rien à valider » : on s'arrête là.
 - runFlow:
@@ -25,12 +26,14 @@ tags:
       - startRecording: escalade-15s
       # Ouvre la première question en attente
       - tapOn:
-          text: "Demandé.*"
+          id: "escalade-item"
           index: 0
       - assertVisible: "Réponses rapides"
       # Réponse toute prête, envoi en un seul tap
-      - tapOn: "C'est noté, je m'en occupe."
+      - tapOn:
+          id: "reponse-rapide-0"
       - assertVisible: "C'est envoyé. Il reprend la main."
       - stopRecording
       # Retour automatique sur la liste
-      - assertVisible: "À valider"
+      - assertVisible:
+          id: "onglet-valider"

@@ -46,7 +46,7 @@ export default function ValiderScreen() {
             }}
             asChild
           >
-            <Pressable style={[s.card, { gap: 4 }]}>
+            <Pressable testID="escalade-item" style={[s.card, { gap: 4 }]}>
               <Text style={{ fontSize: t.fontSize.base, color: t.color.ink }}>{e.question}</Text>
               <Text style={s.muted}>
                 {e.assistantName} · {ex.askedAt} {new Date(e.createdAt).toLocaleString("fr-FR")}

@@ -10,8 +10,10 @@ appId: fr.velekya.app
     id: "champ-email"
 - inputText: ${MAESTRO_TEST_EMAIL}
 - hideKeyboard
-- tapOn: "Recevoir mon lien de connexion"
+- tapOn:
+    id: "btn-recevoir-lien"
 - assertVisible: "C'est envoyé."
 # Le lien magique arrive par email ; on ouvre le deep link directement.
 - openLink: "velekya://verifier?token=${output.magicToken}"
-- assertVisible: "Aujourd'hui"
+- assertVisible:
+    id: "onglet-aujourdhui"

@@ -108,7 +108,7 @@ export default function EquipeScreen() {
           <View key={a.id} style={s.card}>
             <Text style={s.h2}>{a.name}</Text>
             <Text style={s.body}>{a.role}</Text>
-            <Text style={[s.muted, { marginTop: 4 }]}>État : {STATE_LABEL[a.state] ?? a.state}</Text>
+            <Text testID="etat-employe" style={[s.muted, { marginTop: 4 }]}>État : {STATE_LABEL[a.state] ?? a.state}</Text>
 
             {a.onboarding !== "termine" ? (
               <Text style={[s.muted, { marginTop: t.space[3] }]}>
@@ -117,6 +117,7 @@ export default function EquipeScreen() {
             ) : (
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: t.space[3] }}>
                 <Pressable
+                  testID={paused ? "btn-reprendre" : "btn-pause"}
                   onPress={() => toggle(a.id, paused)}
                   disabled={busyId === a.id}
                   style={{
@@ -174,6 +175,7 @@ export default function EquipeScreen() {
                       {sw.help ? <Text style={s.muted}>{sw.help}</Text> : null}
                     </View>
                     <Switch
+                      testID={`interrupteur-${sw.key}`}
                       value={sw.enabled}
                       disabled={busyId === `${a.id}:${sw.key}`}
                       onValueChange={(v) => void setSwitch(a.id, sw.key, v)}
@@ -212,7 +214,7 @@ export default function EquipeScreen() {
         </Pressable>
       </Link>
 
-      <Pressable onPress={() => void signOut()} style={{ padding: t.space[4], alignItems: "center" }}>
+      <Pressable testID="btn-deconnexion" onPress={() => void signOut()} style={{ padding: t.space[4], alignItems: "center" }}>
         <Text style={{ color: t.color.inkFaint, fontSize: 15 }}>Se déconnecter</Text>
       </Pressable>
     </ScrollView>

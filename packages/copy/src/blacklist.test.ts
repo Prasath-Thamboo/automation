@@ -27,10 +27,13 @@ const roots = [
  * Fichiers non concernés par la règle :
  *  - ceux qui *définissent* la liste noire (ils contiennent les termes par nature) ;
  *  - le back-office (`apps/web/app/admin`) : §2 autorise le vocabulaire technique
- *    dans l'interface interne, qui n'est jamais vue par le client.
+ *    dans l'interface interne, qui n'est jamais vue par le client ;
+ *  - les fichiers de test (`*.test.ts(x)`, `*.spec.ts(x)`) : jamais rendus au client,
+ *    ils manipulent des URL et identifiants techniques.
  */
 const isExcluded = (file: string) =>
   /[\\/]blacklist\.(ts|test\.ts)$/.test(file) ||
+  /\.(test|spec)\.tsx?$/.test(file) ||
   /[\\/]scanner\.ts$/.test(file) ||
   /[\\/]apps[\\/]web[\\/]app[\\/]admin[\\/]/.test(file);
 

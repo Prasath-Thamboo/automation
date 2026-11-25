@@ -5,24 +5,34 @@ tags:
   - equipe
 ---
 - runFlow: ../common/login.yaml
-- tapOn: "Mon équipe"
+- tapOn:
+    id: "onglet-equipe"
 
 - runFlow:
     when:
-      visible: "Le mettre en pause"
+      visible:
+        id: "btn-pause"
     commands:
-      - tapOn: "Le mettre en pause"
-      - assertVisible: "Le remettre au travail"
+      - tapOn:
+          id: "btn-pause"
+          index: 0
+      - assertVisible:
+          id: "btn-reprendre"
       - assertVisible:
           text: "État : en pause"
       # On le remet au travail (état d'origine)
-      - tapOn: "Le remettre au travail"
-      - assertVisible: "Le mettre en pause"
+      - tapOn:
+          id: "btn-reprendre"
+          index: 0
+      - assertVisible:
+          id: "btn-pause"
       - assertVisible:
           text: "État : au travail"
 
 - runFlow:
     when:
-      notVisible: "Le mettre en pause"
+      notVisible:
+        id: "btn-pause"
     commands:
-      - assertVisible: "Mon équipe"
+      - assertVisible:
+          id: "onglet-equipe"

@@ -77,6 +77,7 @@ export default function ConnexionScreen() {
       </View>
 
       <Pressable
+        testID="btn-recevoir-lien"
         onPress={submit}
         disabled={status === "sending"}
         style={[s.primaryBtn, { opacity: status === "sending" ? 0.6 : 1 }]}

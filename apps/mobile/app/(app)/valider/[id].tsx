@@ -64,9 +64,10 @@ export default function AnswerEscalationScreen() {
       <View style={{ gap: 8 }}>
         <Text style={s.muted}>Réponses rapides</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-          {ex.quickReplies.map((q) => (
+          {ex.quickReplies.map((q, i) => (
             <Pressable
               key={q}
+              testID={`reponse-rapide-${i}`}
               disabled={sending}
               onPress={() => void send(q)}
               style={{
@@ -96,6 +97,7 @@ export default function AnswerEscalationScreen() {
       </View>
 
       <Pressable
+        testID="btn-envoyer-reponse"
         onPress={() => void send(answer)}
         disabled={sending || answer.trim().length === 0}
         style={[

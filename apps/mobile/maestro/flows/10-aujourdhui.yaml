@@ -9,10 +9,13 @@ tags:
 - assertVisible: "À valider"
 - assertVisible: "Ce qui vous attend"
 # Navigation entre les onglets
-- tapOn: "Carnet de bord"
-- tapOn: "Mon équipe"
+- tapOn:
+    id: "onglet-carnet"
+- tapOn:
+    id: "onglet-equipe"
 - assertVisible:
-    text: "État :"
+    id: "etat-employe"
     optional: true
-- tapOn: "Aujourd'hui"
-- assertVisible: "Aujourd'hui"
+- tapOn:
+    id: "onglet-aujourdhui"
+- assertVisible: "Ce qu'il a fait"

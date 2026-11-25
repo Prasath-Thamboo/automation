@@ -85,6 +85,10 @@ Message reçu (Webhook, Header Auth)  →  Logique <métier> (Code)  →  Répon
 |---|---|---|
 | Cabinet dentaire | `packages/n8n-flows/flows/dentiste.workflow.json` | `/webhook/velekya-dentiste` |
 | Restaurant | `packages/n8n-flows/flows/restaurateur.workflow.json` | `/webhook/velekya-restaurateur` |
+| Garage automobile | `packages/n8n-flows/flows/garagiste.workflow.json` | `/webhook/velekya-garagiste` |
+| Salon de coiffure | `packages/n8n-flows/flows/salon-de-coiffure.workflow.json` | `/webhook/velekya-salon-de-coiffure` |
+| Agence immobilière | `packages/n8n-flows/flows/agence-immobiliere.workflow.json` | `/webhook/velekya-agence-immobiliere` |
+| Artisan du bâtiment | `packages/n8n-flows/flows/artisan-batiment.workflow.json` | `/webhook/velekya-artisan-batiment` |
 
 Modifier un flux : édite `src/<métier>.ts`, puis
 `pnpm -F @velekya/n8n-flows build:flows` et committe le JSON régénéré. Un test
@@ -150,6 +154,95 @@ et le restaurant la confirme.
 Boutons : `reservations` coupé → chaque demande est transmise ; `complet`
 (éteint par défaut, **seul `true` compte**) → « complet aujourd'hui » pour les
 demandes du jour, à éteindre le lendemain.
+
+### Flux « Garage automobile »
+
+Il lit `establishment`, `specifics` (`prestations`, `horaires`, `vehicule_pret`,
+`marques` — saisis au « premier jour »), `instructions` et les boutons. Le
+planning de l'atelier n'est pas consulté : un dépôt de véhicule est **noté**
+et le garage le confirme. Jamais de diagnostic, de prix ni de délai.
+
+| Le client… | Le flux |
+|---|---|
+| signale un danger (plus de freins, fumée, odeur d'essence, voyant rouge, surchauffe, accident) | **transmet** en priorité + consigne « ne roulez pas » (et 112 si danger immédiat) |
+| a un véhicule immobilisé (ne démarre plus, crevaison, dépannage) | **transmet**, le garage rappelle |
+| demande un rendez-vous | note le dépôt dès qu'il a **jour + heure**, sur plusieurs messages si besoin, en heure de Paris → `appointment` **`propose`**, motif repris (prestation nommée, sinon la panne décrite), rappel de la carte grise. Demande ensuite « Pour quelle intervention ? » si le motif manque |
+| décrit une panne (bruit, voyant, fuite, vibrations, démarrage difficile) | pose **une** question de préparation (couleur du voyant, type de bruit…), puis propose le dépôt |
+| demande « vous faites les pneus ? », « vous prenez les Dacia ? » | répond oui si c'est dans `prestations` / `marques` (ou « toutes marques »), sinon **transmet** (absent ≠ non) |
+| demande un véhicule de prêt | répond depuis `vehicule_pret` (oui / non), sinon transmet |
+| demande un devis | **transmet** (véhicule et intervention repris), demande marque, nom du véhicule, année et kilométrage s'ils manquent |
+| demande un délai, où en est la réparation, si la voiture est prête | **transmet** |
+| annule, déplace, se plaint | **transmet** (avec le nouveau créneau souhaité) |
+| demande horaires, adresse, documents à apporter | répond depuis la fiche, sinon transmet |
+| paiement, autre chose | consigne du patron si elle correspond, sinon **transmet** |
+
+Boutons : `rendez_vous` coupé → chaque demande est transmise ;
+`atelier_complet` (éteint par défaut, **seul `true` compte**) → pour une
+demande sans date ou dans la semaine en cours, il répond « complet cette
+semaine » et propose à partir du lundi suivant ; à éteindre le lundi.
+Les messages qui parlent de prix (« devis », « combien », « tarif ») sont
+interceptés par l'API avant le flux (garde-fou), sauf s'ils demandent aussi un
+rendez-vous.
+
+### Flux « Salon de coiffure »
+
+Il lit `establishment`, `specifics` (`prestations` — une par ligne, avec durée
+et tarif affiché —, `coiffeurs`, `horaires`, `instagram`), `instructions` et les
+boutons. L'agenda n'est pas consulté : un rendez-vous est **noté** et le salon
+le confirme.
+
+| La cliente… | Le flux |
+|---|---|
+| demande un rendez-vous | le note dès qu'il a **prestation + jour + heure**, sur plusieurs messages, une question à la fois → `appointment` **`propose`** ; coiffeur demandé repris (`coiffeurs`). Demande ensuite le nom, et un numéro si le canal ne le donne pas (Instagram, formulaire, email) — le numéro reste dans la conversation, jamais dans le carnet de bord |
+| est une nouvelle cliente | réservation notée avec la mention ; bouton `nouvelles_clientes` coupé → réponse polie « pas de nouvelles clientes » |
+| demande « vous faites les balayages ? », une durée, la liste des prestations | répond depuis `prestations` (la ligne saisie), sinon **transmet** (absent ≠ non) |
+| demande un conseil (couleur, coupe, allergie, cheveux abîmés) | **transmet** au coiffeur |
+| signale une réaction après une couleur (brûlure, démangeaisons) | consignes (rincer, pharmacien / médecin, 15 si gonflement) + **transmet** en priorité |
+| annule, déplace, veut la liste d'attente | **transmet** (avec le nouveau créneau souhaité) |
+| se plaint, demande une remise, parle mariage ou coiffure à domicile | **transmet** |
+| demande horaires, adresse, l'équipe, le compte Instagram | répond depuis la fiche, sinon transmet |
+
+### Flux « Agence immobilière »
+
+Il lit `establishment`, `specifics` (`secteur`, `agents`, `questions_quali`),
+`instructions` et les boutons. Il ne connaît **pas** le portefeuille de biens :
+disponibilité, caractéristiques et adresse d'un bien restent au conseiller.
+
+| Le contact… | Le flux |
+|---|---|
+| veut visiter un bien | pose **une fois** les questions de qualification (`questions_quali` si renseignées ; sinon budget + accord de principe pour un achat, situation + garant + date pour une location), puis demande jour + heure → `appointment` **`propose`** avec budget / financement / situation dans le résumé ; enfin nom (+ numéro selon le canal). Questions sautées si déjà répondues dans le message |
+| demande si le bien est toujours disponible | fait confirmer par le conseiller, et enchaîne sur la visite |
+| demande l'adresse d'un bien | « communiquée à la confirmation de la visite » — jamais avant |
+| demande surface, étage, charges, DPE… | **transmet** au conseiller (sauf consigne du patron) |
+| veut faire une offre, négocier | **transmet** |
+| pose une question de financement (prêt, taux, frais de notaire) | **transmet**, jamais d'avis |
+| veut vendre, louer, faire estimer son bien | note la demande pour un conseiller + demande type de bien, commune et surface |
+| annule, déplace, se plaint | **transmet** |
+| demande secteur, conseillers, horaires, adresse de l'agence | répond depuis la fiche |
+
+Boutons : `visites` coupé → chaque demande de visite est transmise ;
+`qualification` coupée → la visite est notée sans questions.
+
+### Flux « Artisan du bâtiment »
+
+Il lit `establishment`, `specifics` (`specialites`, `zone`, `urgences` ;
+`rythme_relance` sert au flux planifié de relance des devis), `instructions` et
+les boutons.
+
+| Le client… | Le flux |
+|---|---|
+| sent le gaz | **URGENT** : ne rien allumer, quitter les lieux, Urgence Sécurité Gaz 0 800 47 33 33 / 112 + transmet |
+| signale étincelles, fils à nu, effondrement | **URGENT** : couper le courant / s'éloigner, 18 / 112 + transmet |
+| a une fuite, plus d'eau chaude, une porte claquée… | **URGENT** : transmet tout de suite (+ « coupez l'arrivée d'eau ») et demande nom, adresse, numéro. `urgences` = non → dit honnêtement que l'entreprise ne fait pas de dépannage |
+| demande des travaux | une question à la fois : nature → **commune** → **délai souhaité** → passage pour le **métré** (jour + heure → `appointment` **`propose`**) → nom + adresse exacte du chantier. Hors des `specialites` : noté mais signalé au patron |
+| accepte un devis (« bon pour accord ») | **transmet** comme une bonne nouvelle ; hésitation / refus transmis aussi |
+| demande une date de démarrage, une durée de chantier | **transmet**, jamais d'engagement |
+| signale une malfaçon | **transmet**, jamais d'avis technique |
+| demande « vous faites le carrelage ? », la zone, les horaires | répond depuis la fiche (absent ≠ non → transmet) |
+
+Boutons : `rendez_vous` coupé → la demande complète (nature, commune, délai) est
+transmise sans proposer de passage ; `carnet_plein` (éteint par défaut, **seul
+`true` compte**) → il prévient que les délais de démarrage sont plus longs.
 
 ## 1. Messages entrants (API → flux)
 

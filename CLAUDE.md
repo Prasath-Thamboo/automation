@@ -434,10 +434,9 @@ pnpm dev                        # api (:3333) + web (:3000)
   `@nestjs/testing` / `axe-core` (e2e) inutilisées. Le catalogue reste une
   **vitrine** : son appel à l'action mène au questionnaire. Fixtures e2e
   `submitAssessment` / `staffSendsQuote` / `hireViaQuote` / `activateAssistant`.
-  - **Textes à revoir** (non modifiés, choix commerciaux) : offre « Prêt à
-    l'emploi » de `/tarifs` (`offers.ts`), bloc « deux voies » de la landing
-    (`landing.ts`), FAQ (délai « quelques minutes », « 14 jours d'essai »), CGV
-    (« souscription en ligne », `legal.ts`).
+  - ~~Textes à revoir~~ : redevenus cohérents avec le Lot 16 (libre-service +
+    essai de 14 jours) et le Lot 21 (les 6 métiers ont leur flux) — relus le
+    2026-11-25, aucun changement nécessaire.
 
 - **Lot 14 — Un flux n8n par client, piloté par boutons : fait.**
   - Modèle : `Assistant.workflowUrl` (webhook du flux de ce client) +
@@ -511,10 +510,8 @@ pnpm dev                        # api (:3333) + web (:3000)
     de l'essai via la file `billing`) → employé créé depuis la fiche publiée
     (nom, rôle, tâches, limites) → premier jour. `trialDays` exposé dans la
     fiche publique.
-  - **Pas de carte enregistrée** : le rail de paiement ne fait que du paiement
-    facture par facture. Essai sans carte ; la 1re facture se règle depuis « Mes
-    documents ». Prélèvement automatique (Stripe SetupIntent / off-session) = à
-    ajouter derrière `PaymentProvider`.
+  - Essai sans carte ; la 1re facture se règle depuis « Mes documents », ou est
+    prélevée si le client a enregistré une carte (Lot 22).
   - Web : fiche métier → « Essayer X 14 jours gratuitement » →
     `/employes-virtuels/[slug]/souscrire` (connexion requise, `?suite=`) ; le
     questionnaire reste en appel secondaire. Essai affiché dans « Mes documents »,
@@ -597,6 +594,80 @@ pnpm dev                        # api (:3333) + web (:3000)
   - Non importé dans n8n à ce stade ; boutons semés seulement pour les
     nouvelles embauches (absents = défauts du flux, donc sans effet).
 
+- **Lot 21 — Flux métier : garage, salon, agence, artisan : fait.** Les 6 métiers
+  du catalogue ont leur flux générique (`FLOWS` dans `build.ts`). Détail par
+  métier : `docs/n8n/README.md`.
+  - `packages/n8n-flows/src/garagiste.ts` (+ tests) → `flows/garagiste.workflow.json`,
+    webhook `/webhook/velekya-garagiste`. Même gabarit que les précédents.
+  - Danger sur la route (freins, fumée, essence, voyant rouge, surchauffe,
+    accident) → transmis en priorité + « ne roulez pas » ; véhicule immobilisé →
+    transmis, à rappeler. Dépôt noté en `propose` dès jour + heure, motif repris
+    (prestation, sinon panne décrite), puis « Pour quelle intervention ? » s'il
+    manque. Panne décrite → une question de préparation (jamais de diagnostic).
+    Prestations / marques / véhicule de prêt depuis la fiche (absent ≠ non →
+    transmis). Devis, délai, avancement, annulation, déplacement, réclamation →
+    transmis. Spécificités : `prestations`, `horaires`, `vehicule_pret`, `marques`.
+  - Boutons semés : `rendez_vous` (allumé) et `atelier_complet` (éteint ; seul
+    `true` compte → « complet cette semaine », propose le lundi suivant).
+  - Test anti-jargon : les `*.test.ts(x)` / `*.spec.ts(x)` ne sont plus scannés
+    (faux positif « api.velekya.fr » dans `csp.test.ts`).
+  - **Salon de coiffure** (`coiffure.ts`, webhook `velekya-salon-de-coiffure`) :
+    rendez-vous noté dès prestation + jour + heure, coiffeur repris, nom (+ numéro
+    si le canal ne le donne pas, jamais dans le résumé) ; conseils, réaction après
+    couleur (consignes santé), remise, mariage → transmis. Boutons `rendez_vous`,
+    `nouvelles_clientes`.
+  - **Agence immobilière** (`agence.ts`, webhook `velekya-agence-immobiliere`) :
+    qualification posée une seule fois (achat : budget + financement ; location :
+    situation + garant ; ou `questions_quali`), puis visite notée ; adresse d'un
+    bien jamais avant confirmation ; offre, financement, détail d'un bien →
+    transmis ; estimation notée pour un conseiller. `slotOf()` ignore « le 3
+    pièces », surfaces et budgets. Boutons `visites`, `qualification`.
+  - **Artisan du bâtiment** (`artisan.ts`, webhook `velekya-artisan-batiment`) :
+    gaz / électricité / bâti → URGENT + consignes ; dépannage → transmis tout de
+    suite (respecte `urgences` = non) ; travaux : nature → commune → délai →
+    métré → coordonnées, état relu dans la conversation (`factsOf`) ; devis
+    accepté → transmis comme bonne nouvelle. Boutons `rendez_vous`, `carnet_plein`.
+  - 193 tests `n8n-flows`. **Validé dans le n8n 1.80 local** (2026-11-25) : les
+    6 flux importés (`import:workflow`, clé Header Auth `velekyaToken01`) et
+    actifs ; 403 sans jeton ; scénarios types OK par appel direct des webhooks
+    (pas rejoué de bout en bout via l'API, contrat identique au dentiste).
+  - **`testID` mobiles** (dette Lot 11/18 soldée) : `onglet-*` (via
+    `tabBarButtonTestID`), `btn-recevoir-lien`, `escalade-item`,
+    `reponse-rapide-<n>`, `btn-envoyer-reponse`, `btn-pause` / `btn-reprendre`,
+    `etat-employe`, `interrupteur-<clé>`, `btn-deconnexion`. Les flows Maestro
+    ciblent ces id plutôt que les libellés.
+
+- **Lot 22 — Carte enregistrée et prélèvement automatique : fait.**
+  - Modèle `SavedCard` (`saved_cards` : `setupRef` unique, `customerRef`,
+    `methodRef`, `brand`, `last4`, `expMonth`/`expYear`, `status`
+    en_attente|active|retiree). Migration `20261125100000_saved_cards`. Jamais de
+    numéro de carte : références du fournisseur + de quoi afficher.
+  - `PaymentProvider` gagne (facultatifs) `startCardSetup`, `completeCardSetup`,
+    `chargeSavedCard`, `detachCard` ; `WebhookOutcome.result` gagne
+    `setup_succeeded` (+ `setupRef`). `fake` : carte « Visa 4242 » confirmée sur
+    place, prélèvement toujours réussi. `stripe` : Checkout `mode: "setup"`, puis
+    PaymentIntent `off_session` + `confirm` (clé d'idempotence par facture,
+    `metadata.automatic = "1"`) ; refus (`authentication_required`, carte
+    expirée…) → échec avec raison lisible, jamais d'exception.
+  - `BillingService` : `startCardSetup` / `confirmFakeCardSetup` /
+    `completeCardSetup` (idempotent ; la nouvelle carte remplace l'ancienne,
+    détachée) / `removeSavedCard`. `runMonthlyBilling` prélève la carte active ;
+    échec → `markPaymentFailed` (facture impayée, email + push, le client règle
+    depuis « Mes documents ») ; `processing` → webhook. Un évènement de webhook
+    sans correspondance est acquitté (plus de renvoi en boucle). Audit
+    `saved_card.added|removed` sans donnée de carte.
+  - Routes `POST /me/saved-card/setup | /:ref/confirm (fake) | /remove`,
+    titulaire ou admin. `DocumentsBundle.savedCard`. Suppression de compte →
+    carte retirée ; export RGPD → `savedCards` ; purge → lignes effacées.
+  - Web : section « Prélèvement automatique » de `/mon-equipe/documents`
+    (`saved-card.tsx`, retour `?carte=ok|annule`). Copy `savedCardCopy`. CGV :
+    clause de paiement réécrite. **Mobile : rien** (aucun moyen de paiement dans
+    l'app, décision Lot 9).
+  - Tests : `saved-card.test.ts` (14), e2e `prelevement.spec.ts` (2). Env Stripe :
+    voir `DEPLOYMENT.md` (évènements `payment_intent.*` à ajouter au webhook).
+  - Vérifié : turbo 30/30, API 153 tests, e2e 59/59. Non testé contre un vrai
+    compte Stripe (mode test à faire avant mise en ligne).
+
 ### Notes Lot 18
 
 - **e2e 57/57** contre la pile (migration appliquée). La CSP a révélé que
@@ -610,8 +681,9 @@ pnpm dev                        # api (:3333) + web (:3000)
 - Vérifié : `turbo run lint typecheck test build` vert (30 tâches, 132 tests
   API dont 6 `retention`, 6 tests web `csp`).
 - Durées par défaut = proposition (CNIL : prospects 3 ans) → à faire valider.
-- Restent en dette : `testID` mobile,
-  Maestro en CI (1er build EAS), `style-src 'unsafe-inline'`.
+- Restent en dette : Maestro en CI (1er build EAS), `style-src 'unsafe-inline'`
+  (Next et React posent des attributs `style` en ligne ; risque faible, scripts
+  déjà sous nonce). `testID` mobile : soldé au Lot 21.
 
 ### Notes Lot 17
 
@@ -626,7 +698,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   `appointments` par message** (`RuntimeService.persist` complète désormais le
   rendez-vous sans date en cours de la conversation — vaut aussi pour le moteur
   à règles).
-- Reste : flux des 4 autres métiers (même gabarit ; restaurant fait au Lot 20), étape « modèle de langage »
+- Les 6 métiers ont leur flux (Lots 17, 20, 21). Reste : étape « modèle de langage »
   facultative pour les questions libres (choix du fournisseur, hébergé UE).
 
 ### Notes Lot 16
@@ -636,9 +708,7 @@ pnpm dev                        # api (:3333) + web (:3000)
   tourne (verrou Prisma, cf. Notes Lot 2) — `nest build` seul passe.
 - Vérifié : lint + typecheck + test verts (126 tests API dont 4
   `catalog-subscribe`), build web OK.
-- **Textes à revoir** (choix commerciaux) : landing « Pas d'entretien, pas de
-  période d'essai… » (`landing.ts`, métaphore qui contredit désormais l'essai de
-  14 jours).
+- ~~Textes à revoir~~ : « pas de période d'essai » retiré de la landing au Lot 17.
 
 ### Notes Lot 15
 
@@ -658,8 +728,9 @@ pnpm dev                        # api (:3333) + web (:3000)
 
 ### Notes Lot 13
 
-- **Workflows n8n pas encore construits** : le contrat est prêt côté API ; il
-  reste à créer un workflow par métier (6 + `sur-mesure`) dans n8n.
+- ~~Workflows n8n pas encore construits~~ : les 6 flux génériques métier sont
+  dans `packages/n8n-flows` (Lots 17, 20, 21). Un flux `sur-mesure` reste propre
+  à chaque client (construit par l'équipe, Lot 14).
 - Pas d'e2e contre un vrai n8n : les tests unitaires (`n8n.runtime.test.ts`)
   simulent `fetch`.
 

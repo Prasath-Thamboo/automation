@@ -35,6 +35,30 @@ export const FLOWS: FlowDefinition[] = [
     source: "restaurateur.ts",
     ids: { workflow: "velekyaRestaurant01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e02" },
   },
+  {
+    slug: "garagiste",
+    name: "Velekya — Garage automobile (générique)",
+    source: "garagiste.ts",
+    ids: { workflow: "velekyaGarage01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e03" },
+  },
+  {
+    slug: "salon-de-coiffure",
+    name: "Velekya — Salon de coiffure (générique)",
+    source: "coiffure.ts",
+    ids: { workflow: "velekyaCoiffure01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e04" },
+  },
+  {
+    slug: "agence-immobiliere",
+    name: "Velekya — Agence immobilière (générique)",
+    source: "agence.ts",
+    ids: { workflow: "velekyaAgence01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e05" },
+  },
+  {
+    slug: "artisan-batiment",
+    name: "Velekya — Artisan du bâtiment (générique)",
+    source: "artisan.ts",
+    ids: { workflow: "velekyaArtisan01", webhook: "6f1d2c3e-7a43-4c1b-9f0e-5d2a8b7c1e06" },
+  },
 ];
 
 /** Nom de la clé d'en-tête attendue, partagé avec l'API (`n8n.runtime.ts`). */

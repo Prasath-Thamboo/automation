@@ -42,10 +42,10 @@ export default function AppLayout() {
           tabBarStyle: { backgroundColor: t.color.white },
         }}
       >
-        <Tabs.Screen name="aujourdhui" options={{ title: "Aujourd'hui" }} />
-        <Tabs.Screen name="valider" options={{ title: "À valider" }} />
-        <Tabs.Screen name="carnet" options={{ title: "Carnet de bord" }} />
-        <Tabs.Screen name="equipe" options={{ title: "Mon équipe" }} />
+        <Tabs.Screen name="aujourdhui" options={{ title: "Aujourd'hui", tabBarButtonTestID: "onglet-aujourdhui" }} />
+        <Tabs.Screen name="valider" options={{ title: "À valider", tabBarButtonTestID: "onglet-valider" }} />
+        <Tabs.Screen name="carnet" options={{ title: "Carnet de bord", tabBarButtonTestID: "onglet-carnet" }} />
+        <Tabs.Screen name="equipe" options={{ title: "Mon équipe", tabBarButtonTestID: "onglet-equipe" }} />
         <Tabs.Screen name="conversation/[id]" options={{ href: null, title: "Conversation" }} />
         <Tabs.Screen name="valider/[id]" options={{ href: null, title: "À valider" }} />
         <Tabs.Screen name="former/[assistantId]" options={{ href: null, title: "Le former" }} />

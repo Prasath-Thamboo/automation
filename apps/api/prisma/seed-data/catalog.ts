@@ -202,6 +202,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Prendre les rendez-vous", "Qualifier une demande", "Préparer les devis"],
     monthlyPriceEur: 89,
     position: 3,
+    defaultSwitches: [
+      {
+        key: "rendez_vous",
+        label: "Il note les demandes de rendez-vous",
+        help: "Coupé : chaque demande de rendez-vous vous est transmise directement.",
+        enabled: true,
+      },
+      {
+        key: "atelier_complet",
+        label: "Atelier complet cette semaine",
+        help: "Allumé : il répond que l'atelier est complet cette semaine et propose la semaine suivante. Pensez à l'éteindre le lundi.",
+        enabled: false,
+      },
+    ],
     content: {
       assistantName: "Karim",
       assistantRole: "votre assistant d'atelier",
@@ -267,6 +281,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Prendre les rendez-vous", "Rappeler les clients", "Répondre sur Instagram"],
     monthlyPriceEur: 89,
     position: 4,
+    defaultSwitches: [
+      {
+        key: "rendez_vous",
+        label: "Elle note les demandes de rendez-vous",
+        help: "Coupé : chaque demande de rendez-vous vous est transmise directement.",
+        enabled: true,
+      },
+      {
+        key: "nouvelles_clientes",
+        label: "Elle accepte les nouvelles clientes",
+        help: "Coupé : elle répond poliment que le salon ne prend pas de nouvelles clientes en ce moment.",
+        enabled: true,
+      },
+    ],
     content: {
       assistantName: "Chloé",
       assistantRole: "votre assistante d'accueil",
@@ -334,6 +362,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Qualifier une demande", "Planifier les visites", "Relancer les dossiers"],
     monthlyPriceEur: 89,
     position: 5,
+    defaultSwitches: [
+      {
+        key: "visites",
+        label: "Elle note les demandes de visite",
+        help: "Coupé : chaque demande de visite vous est transmise directement.",
+        enabled: true,
+      },
+      {
+        key: "qualification",
+        label: "Elle pose les questions de qualification avant une visite",
+        help: "Coupé : elle note la visite sans demander le budget, le financement ou la situation.",
+        enabled: true,
+      },
+    ],
     content: {
       assistantName: "Inès",
       assistantRole: "votre assistante d'agence",
@@ -399,6 +441,20 @@ export const catalogSeed: CatalogSeed[] = [
     needs: ["Répondre au téléphone", "Noter les demandes", "Relancer les devis"],
     monthlyPriceEur: 89,
     position: 6,
+    defaultSwitches: [
+      {
+        key: "rendez_vous",
+        label: "Il propose un passage pour le métré",
+        help: "Coupé : il note la demande de travaux et vous la transmet, sans proposer de passage.",
+        enabled: true,
+      },
+      {
+        key: "carnet_plein",
+        label: "Planning plein",
+        help: "Allumé : il prévient les nouveaux clients que les délais de démarrage sont plus longs que d'habitude.",
+        enabled: false,
+      },
+    ],
     content: {
       assistantName: "Thomas",
       assistantRole: "votre assistant de chantier",
