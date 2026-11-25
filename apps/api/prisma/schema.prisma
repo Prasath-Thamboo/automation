@@ -575,6 +575,38 @@ model Payment {
   @@map("payments")
 }
 
+enum SavedCardStatus {
+  en_attente
+  active
+  retiree
+}
+
+/// Lot 22 — carte enregistrée pour le prélèvement automatique des factures
+/// mensuelles. Aucune donnée de carte n'est stockée ici : seulement les
+/// références du fournisseur et ce qu'il faut pour l'afficher (marque, 4
+/// derniers chiffres, expiration). Une seule carte `active` par organisation.
+model SavedCard {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @db.Uuid
+  provider       String
+  status         SavedCardStatus @default(en_attente)
+  /// Session d'enregistrement chez le fournisseur (Stripe Checkout « setup »).
+  setupRef       String          @unique
+  customerRef    String?
+  methodRef      String?
+  brand          String?
+  last4          String?
+  expMonth       Int?
+  expYear        Int?
+  activatedAt    DateTime?       @db.Timestamptz(6)
+  removedAt      DateTime?       @db.Timestamptz(6)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(6)
+
+  @@index([organizationId, status])
+  @@map("saved_cards")
+}
+
 /// Journal des évènements de webhook, pour l'idempotence (§10 Lot 4).
 model WebhookEvent {
   id          String    @id

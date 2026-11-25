@@ -78,7 +78,7 @@ export class AccountService {
   /** Export complet des données de l'organisation (§9.4 — droit RGPD, dans le produit). */
   async exportData(user: SessionUser): Promise<Record<string, unknown>> {
     const orgId = user.organizationId;
-    const [org, memberships, assistants, instructions, conversations, messages, escalations, quotes, invoices, creditNotes, payments, subscription, helpRequests] =
+    const [org, memberships, assistants, instructions, conversations, messages, escalations, quotes, invoices, creditNotes, payments, subscription, helpRequests, savedCards] =
       await Promise.all([
         this.prisma.organization.findUnique({ where: { id: orgId } }),
         this.prisma.membership.findMany({ where: { organizationId: orgId }, include: { user: true } }),
@@ -96,6 +96,11 @@ export class AccountService {
         this.prisma.payment.findMany({ where: { organizationId: orgId } }),
         this.prisma.subscription.findMany({ where: { organizationId: orgId } }),
         this.prisma.helpRequest.findMany({ where: { organizationId: orgId } }),
+        // Lot 22 — ce que nous savons d'une carte : marque, 4 derniers chiffres, expiration.
+        this.prisma.savedCard.findMany({
+          where: { organizationId: orgId },
+          select: { status: true, brand: true, last4: true, expMonth: true, expYear: true, activatedAt: true, removedAt: true },
+        }),
       ]);
 
     await this.audit.record({
@@ -119,6 +124,7 @@ export class AccountService {
       payments,
       subscription,
       helpRequests,
+      savedCards,
     };
   }
 
@@ -130,6 +136,7 @@ export class AccountService {
     const now = new Date();
 
     await this.billing.cancelSubscription(orgId);
+    await this.billing.removeSavedCard(orgId, user.id);
     await this.prisma.$transaction([
       this.prisma.assistant.updateMany({ where: { organizationId: orgId }, data: { deletedAt: now } }),
       this.prisma.membership.updateMany({ where: { organizationId: orgId }, data: { deletedAt: now } }),

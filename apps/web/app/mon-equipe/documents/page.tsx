@@ -6,6 +6,7 @@ import { subscribeCopy } from "@velekya/copy";
 import { sessionApi } from "@/lib/api";
 import { getCurrentUser } from "@/lib/session";
 import { PayButton } from "./pay-button";
+import { SavedCardSection } from "./saved-card";
 
 export const metadata: Metadata = { title: "Mes documents", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -32,11 +33,18 @@ const SUB_STATUS: Record<string, string> = {
   canceled: "Résilié",
 };
 
-export default async function DocumentsPage() {
+export default async function DocumentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ carte?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!user) redirect("/connexion");
 
-  const { subscription, invoices, creditNotes } = await (await sessionApi()).me.documents();
+  const { subscription, invoices, creditNotes, savedCard } = await (await sessionApi()).me.documents();
+  const { carte } = await searchParams;
+  const returned = carte === "ok" || carte === "annule" ? carte : null;
+  const canManage = user.role === "owner" || user.role === "admin";
 
   return (
     <section className="mx-auto max-w-content px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
@@ -59,6 +67,10 @@ export default async function DocumentsPage() {
             </p>
           ) : null}
         </div>
+      ) : null}
+
+      {subscription && subscription.status !== "canceled" ? (
+        <SavedCardSection card={savedCard} canManage={canManage} returned={returned} />
       ) : null}
 
       <h2 className="mt-10 text-xl font-bold text-ink-900">Factures</h2>

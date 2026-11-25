@@ -36,7 +36,7 @@ et valeurs de dev : `.env.example`. Points d'attention en production :
 | `HELP_DESK_EMAIL` | Boîte de l'équipe qui reçoit les questions « Une question ? » transmises (défaut : `MAIL_FROM`) |
 | `S3_ENDPOINT` / `S3_REGION` / `S3_BUCKET` / `S3_ACCESS_KEY_ID` / `S3_SECRET_ACCESS_KEY` / `S3_FORCE_PATH_STYLE` | stockage objet UE |
 | `PAYMENT_PROVIDER` | `stripe` |
-| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | clés live ; endpoint webhook = `POST /api/v1/webhooks/payments` |
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | clés live ; endpoint webhook = `POST /api/v1/webhooks/payments`, abonné à `checkout.session.completed`, `checkout.session.async_payment_failed`, `payment_intent.succeeded`, `payment_intent.payment_failed` (ces deux derniers : prélèvements automatiques des cartes enregistrées, Lot 22). Activer la carte comme moyen de paiement « hors session » dans le tableau de bord Stripe. |
 | `VAT_RATE_PCT` | taux de TVA applicable (défaut 20) |
 | `SELLER_NAME` / `SELLER_LEGAL` / `SELLER_ADDRESS` | **identité vendeur réelle** (figée dans chaque facture) — cf. §5 |
 | `BILLING_PROVIDER` | `out-of-app` (Stripe hors application, décision Lot 9) |

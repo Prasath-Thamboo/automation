@@ -54,7 +54,7 @@ export {
 export { channelPlace, channelLabels, channelsCopy, publicForm } from "./channels";
 export { switchesCopy } from "./switches";
 export { helpCopy } from "./help";
-export { subscribeCopy } from "./subscribe";
+export { subscribeCopy, savedCardCopy } from "./subscribe";
 
 import { glossary } from "./glossary";
 

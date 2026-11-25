@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Param,
@@ -10,9 +11,11 @@ import {
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import {
   startPaymentSchema,
+  type CardSetupInfo,
   type CheckoutInfo,
   type DocumentsBundle,
   type PaymentOutcome,
+  type SavedCardView,
   type SessionUser,
   type StartPayment,
 } from "@velekya/types";
@@ -60,5 +63,39 @@ export class BillingController {
     @Param("ref") ref: string,
   ): Promise<PaymentOutcome> {
     return this.billing.confirmFakePayment(user.organizationId, ref);
+  }
+
+  // ── Lot 22 : carte enregistrée ────────────────────────────────────────────
+
+  @Post("saved-card/setup")
+  @ApiOkResponse({ description: "Ouvre l'enregistrement d'une carte pour le prélèvement automatique." })
+  startCardSetup(@CurrentUser() user: SessionUser): Promise<CardSetupInfo> {
+    requireOwner(user);
+    return this.billing.startCardSetup(user.organizationId, user.email);
+  }
+
+  @Post("saved-card/:ref/confirm")
+  @ApiOkResponse({ description: "Confirme l'enregistrement d'une carte (mode démonstration uniquement)." })
+  confirmCardSetup(
+    @CurrentUser() user: SessionUser,
+    @Param("ref") ref: string,
+  ): Promise<SavedCardView | null> {
+    requireOwner(user);
+    return this.billing.confirmFakeCardSetup(user.organizationId, ref);
+  }
+
+  @Post("saved-card/remove")
+  @ApiOkResponse({ description: "Retire la carte enregistrée." })
+  async removeSavedCard(@CurrentUser() user: SessionUser): Promise<{ ok: true }> {
+    requireOwner(user);
+    await this.billing.removeSavedCard(user.organizationId, user.id);
+    return { ok: true };
+  }
+}
+
+/** Le moyen de paiement engage l'entreprise : titulaire (ou administrateur) seulement. */
+function requireOwner(user: SessionUser): void {
+  if (user.role !== "owner" && user.role !== "admin") {
+    throw new ForbiddenException("Seul le titulaire du compte peut gérer le moyen de paiement.");
   }
 }

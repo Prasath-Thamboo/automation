@@ -31,6 +31,7 @@ function setup(opts: { deletedOrgs?: string[]; users?: string[]; activity?: numb
     helpRequest: many(0),
     assistant: many(0),
     mission: many(0),
+    savedCard: many(0),
     notificationPreference: many(0),
     organization: {
       findMany: vi.fn().mockResolvedValue((opts.deletedOrgs ?? []).map((id) => ({ id }))),
@@ -126,6 +127,7 @@ describe("RetentionService.run", () => {
       data: { email: anonymizedEmail("u-1"), fullName: null, deletedAt: NOW },
     });
     expect(prisma.assistant.deleteMany).toHaveBeenCalledWith({ where: { organizationId: "org-1" } });
+    expect(prisma.savedCard.deleteMany).toHaveBeenCalledWith({ where: { organizationId: "org-1" } });
     expect(prisma.organization.update).toHaveBeenCalledWith({
       where: { id: "org-1" },
       data: { name: "Compte supprimé", slug: "supprime-org-1", purgedAt: NOW },

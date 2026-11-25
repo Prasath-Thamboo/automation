@@ -53,6 +53,8 @@ import {
   adminInvoiceListSchema,
   assistantDetailSchema,
   checkoutInfoSchema,
+  cardSetupInfoSchema,
+  savedCardViewSchema,
   conversationDetailSchema,
   documentsBundleSchema,
   mobileBillingViewSchema,
@@ -94,6 +96,8 @@ import {
   type CreateProfession,
   type CreditNoteDoc,
   type DocumentsBundle,
+  type CardSetupInfo,
+  type SavedCardView,
   type EscalationItem,
   type Health,
   type IssueCreditNote,
@@ -366,6 +370,22 @@ export function createApiClient(options: ApiClientOptions) {
           paymentOutcomeSchema,
           { method: "POST" },
         );
+      },
+      /** Lot 22 — ouvre l'enregistrement d'une carte (prélèvement automatique). */
+      startCardSetup(): Promise<CardSetupInfo> {
+        return request("/me/saved-card/setup", cardSetupInfoSchema, { method: "POST" });
+      },
+      /** Lot 22 — mode démonstration : confirme l'enregistrement sur place. */
+      confirmCardSetup(setupRef: string): Promise<SavedCardView | null> {
+        return request(
+          `/me/saved-card/${encodeURIComponent(setupRef)}/confirm`,
+          savedCardViewSchema.nullable(),
+          { method: "POST" },
+        );
+      },
+      /** Lot 22 — retire la carte enregistrée. */
+      removeSavedCard(): Promise<{ ok: true }> {
+        return request("/me/saved-card/remove", okSchema, { method: "POST" });
       },
 
       // ── Mon équipe (§6) ──────────────────────────────────────────────────
@@ -765,6 +785,8 @@ export type {
   UpdateQuote,
   AcceptQuote,
   DocumentsBundle,
+  CardSetupInfo,
+  SavedCardView,
   InvoiceDoc,
   CreditNoteDoc,
   SubscriptionSummary,

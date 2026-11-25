@@ -99,7 +99,8 @@ export const conditionsGenerales: LegalPage = {
     {
       heading: "Prix et paiement",
       paragraphs: [
-        "Les prix affichés sont mensuels et toutes taxes comprises. Le paiement s'effectue par carte bancaire, facture par facture, chaque mois. Pour une formule prête à l'emploi, la première facture est émise à la fin de l'essai gratuit ; une résiliation pendant l'essai n'entraîne aucun paiement.",
+        "Les prix affichés sont mensuels et toutes taxes comprises. Le paiement s'effectue par carte bancaire. Pour une formule prête à l'emploi, la première facture est émise à la fin de l'essai gratuit ; une résiliation pendant l'essai n'entraîne aucun paiement.",
+        "Vous pouvez enregistrer une carte depuis votre espace : chaque facture mensuelle est alors prélevée sur cette carte le jour de son émission, et vous recevez la facture par email. Sans carte enregistrée, ou si le prélèvement n'aboutit pas, vous êtes prévenu et vous réglez la facture depuis votre espace. Vous pouvez retirer ou remplacer la carte à tout moment ; nous ne conservons jamais son numéro, seulement les références de notre prestataire de paiement.",
         "Les factures sont numérotées de façon séquentielle et ne sont jamais modifiées après émission : une erreur est corrigée par un avoir.",
       ],
     },

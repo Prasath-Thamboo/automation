@@ -7,14 +7,16 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { Prisma, type Invoice } from "@prisma/client";
+import { Prisma, type Invoice, type SavedCard } from "@prisma/client";
 import type {
+  CardSetupInfo,
   CheckoutInfo,
   CreditNoteDoc,
   DocumentsBundle,
   InvoiceDoc,
   InvoiceKind,
   PaymentOutcome,
+  SavedCardView,
   SubscriptionStatus,
   SubscriptionSummary,
 } from "@velekya/types";
@@ -109,7 +111,8 @@ export class BillingService {
    * Lot 16 — abonnement « prêt à l'emploi » souscrit en libre-service : pas de
    * mise en service, essai gratuit de `trialDays` jours. La première facture
    * mensuelle part à la fin de l'essai (file `billing`) ; résilier avant = rien
-   * à payer. Pas de carte enregistrée : le client règle chaque facture.
+   * à payer. Sans carte enregistrée (Lot 22), le client règle chaque facture
+   * depuis « Mes documents » ; avec, elle est prélevée à son émission.
    */
   async startCatalogSubscription(input: {
     organizationId: string;
@@ -288,10 +291,19 @@ export class BillingService {
       update: {},
     });
 
-    if (outcome.result === "succeeded" && outcome.paymentRef) {
-      await this.markPaymentSucceeded(outcome.paymentRef, outcome.eventId);
-    } else if (outcome.result === "failed" && outcome.paymentRef) {
-      await this.markPaymentFailed(outcome.paymentRef, outcome.failureReason ?? "paiement refusé");
+    try {
+      if (outcome.result === "succeeded" && outcome.paymentRef) {
+        await this.markPaymentSucceeded(outcome.paymentRef, outcome.eventId);
+      } else if (outcome.result === "failed" && outcome.paymentRef) {
+        await this.markPaymentFailed(outcome.paymentRef, outcome.failureReason ?? "paiement refusé");
+      } else if (outcome.result === "setup_succeeded" && outcome.setupRef) {
+        await this.completeCardSetup(outcome.setupRef);
+      }
+    } catch (error) {
+      // Un évènement qui ne correspond à rien chez nous ne doit pas être renvoyé
+      // indéfiniment par le fournisseur : on le note et on l'acquitte.
+      if (!(error instanceof NotFoundException)) throw error;
+      this.logger.warn(`Évènement ${outcome.type} sans correspondance (${outcome.eventId}), ignoré.`);
     }
 
     await this.prisma.webhookEvent.update({
@@ -455,37 +467,196 @@ export class BillingService {
       periodEnd,
     });
 
-    const email = await this.orgOwnerEmail(sub.organizationId);
-    const created = await this.provider.createPayment({
-      amountCents: invoice.totalCents,
-      currency: invoice.currency,
-      invoiceNumber: invoice.number,
-      organizationId: sub.organizationId,
-      customerEmail: email ?? "",
-      description: `Abonnement ${invoice.number}`,
-      returnUrl: `${webBaseUrl(this.env)}/mon-equipe/documents`,
-    });
-    await this.prisma.payment.create({
-      data: {
-        organizationId: sub.organizationId,
-        invoiceId: invoice.id,
+    // Lot 22 — carte enregistrée : la facture est prélevée tout de suite.
+    const card = await this.activeCard(sub.organizationId);
+    if (card?.methodRef && this.provider.chargeSavedCard) {
+      await this.chargeCard(card, invoice);
+    } else {
+      const email = await this.orgOwnerEmail(sub.organizationId);
+      const created = await this.provider.createPayment({
         amountCents: invoice.totalCents,
         currency: invoice.currency,
-        status: "en_attente",
-        provider: this.provider.name,
-        providerRef: created.ref,
-      },
-    });
+        invoiceNumber: invoice.number,
+        organizationId: sub.organizationId,
+        customerEmail: email ?? "",
+        description: `Abonnement ${invoice.number}`,
+        returnUrl: `${webBaseUrl(this.env)}/mon-equipe/documents`,
+      });
+      await this.prisma.payment.create({
+        data: {
+          organizationId: sub.organizationId,
+          invoiceId: invoice.id,
+          amountCents: invoice.totalCents,
+          currency: invoice.currency,
+          status: "en_attente",
+          provider: this.provider.name,
+          providerRef: created.ref,
+        },
+      });
 
-    // En mode démo, le rail encaisse tout de suite.
-    if (this.provider.name === "fake") {
-      await this.markPaymentSucceeded(created.ref, `fake_auto_${invoice.number}`);
+      // En mode démo, le rail encaisse tout de suite.
+      if (this.provider.name === "fake") {
+        await this.markPaymentSucceeded(created.ref, `fake_auto_${invoice.number}`);
+      }
     }
 
     await this.queue.enqueueBillingJob(
       { type: "monthly", subscriptionId: sub.id },
       periodEnd.getTime() - Date.now(),
     );
+  }
+
+  // ── Lot 22 : carte enregistrée, prélèvement automatique ──────────────────
+
+  /** Ouvre l'enregistrement d'une carte (remplace la carte actuelle une fois confirmé). */
+  async startCardSetup(organizationId: string, email: string): Promise<CardSetupInfo> {
+    if (!this.provider.startCardSetup) {
+      throw new UnprocessableEntityException(
+        "L'enregistrement d'une carte n'est pas disponible pour le moment. Vous pouvez régler chaque facture depuis cette page.",
+      );
+    }
+    const current = await this.activeCard(organizationId);
+    const started = await this.provider.startCardSetup({
+      organizationId,
+      customerEmail: email,
+      customerRef: current?.customerRef ?? null,
+      returnUrl: `${webBaseUrl(this.env)}/mon-equipe/documents`,
+    });
+    await this.prisma.savedCard.create({
+      data: {
+        organizationId,
+        provider: this.provider.name,
+        setupRef: started.ref,
+        customerRef: started.customerRef,
+      },
+    });
+    return { provider: this.provider.name, setupRef: started.ref, checkoutUrl: started.checkoutUrl };
+  }
+
+  /** Mode `fake` uniquement : le client confirme l'enregistrement lui-même. */
+  async confirmFakeCardSetup(organizationId: string, setupRef: string): Promise<SavedCardView | null> {
+    if (this.provider.name !== "fake") {
+      throw new ForbiddenException("La confirmation manuelle n'est pas disponible.");
+    }
+    const pending = await this.prisma.savedCard.findFirst({ where: { setupRef, organizationId } });
+    if (!pending) throw new NotFoundException("Cet enregistrement de carte est introuvable.");
+    await this.completeCardSetup(setupRef);
+    return this.savedCardFor(organizationId);
+  }
+
+  /**
+   * Termine un enregistrement (webhook ou confirmation de démo) : la nouvelle carte
+   * devient la seule active, l'ancienne est retirée chez le fournisseur. Idempotent.
+   */
+  async completeCardSetup(setupRef: string): Promise<void> {
+    const row = await this.prisma.savedCard.findUnique({ where: { setupRef } });
+    if (!row) throw new NotFoundException("Cet enregistrement de carte est introuvable.");
+    if (row.status !== "en_attente") return;
+    const details = await this.provider.completeCardSetup?.(setupRef);
+    if (!details) return;
+
+    const now = new Date();
+    const previous = await this.prisma.savedCard.findMany({
+      where: { organizationId: row.organizationId, status: "active", id: { not: row.id } },
+    });
+    await this.prisma.$transaction([
+      this.prisma.savedCard.updateMany({
+        where: { id: { in: previous.map((p) => p.id) } },
+        data: { status: "retiree", removedAt: now },
+      }),
+      this.prisma.savedCard.update({
+        where: { id: row.id },
+        data: {
+          status: "active",
+          activatedAt: now,
+          customerRef: details.customerRef ?? row.customerRef,
+          methodRef: details.methodRef,
+          brand: details.brand,
+          last4: details.last4,
+          expMonth: details.expMonth,
+          expYear: details.expYear,
+        },
+      }),
+    ]);
+    for (const old of previous) await this.detachQuietly(old);
+
+    await this.audit.record({
+      organizationId: row.organizationId,
+      action: "saved_card.added",
+      target: `saved_card:${row.id}`,
+      metadata: { provider: row.provider, replaced: previous.length },
+    });
+  }
+
+  /** Retire la carte : les prochaines factures se règlent depuis « Mes documents ». */
+  async removeSavedCard(organizationId: string, actorUserId?: string): Promise<void> {
+    const cards = await this.prisma.savedCard.findMany({
+      where: { organizationId, status: { in: ["active", "en_attente"] } },
+    });
+    if (cards.length === 0) return;
+    await this.prisma.savedCard.updateMany({
+      where: { id: { in: cards.map((c) => c.id) } },
+      data: { status: "retiree", removedAt: new Date() },
+    });
+    for (const card of cards) await this.detachQuietly(card);
+    await this.audit.record({
+      organizationId,
+      actorUserId,
+      action: "saved_card.removed",
+      metadata: { count: cards.length },
+    });
+  }
+
+  async savedCardFor(organizationId: string): Promise<SavedCardView | null> {
+    const card = await this.activeCard(organizationId);
+    return card ? toSavedCardView(card) : null;
+  }
+
+  private activeCard(organizationId: string): Promise<SavedCard | null> {
+    return this.prisma.savedCard.findFirst({
+      where: { organizationId, status: "active" },
+      orderBy: { activatedAt: "desc" },
+    });
+  }
+
+  /** Prélève la carte enregistrée pour une facture. Échec → facture impayée, client prévenu. */
+  private async chargeCard(card: SavedCard, invoice: Invoice): Promise<void> {
+    const charge = await this.provider.chargeSavedCard!({
+      amountCents: invoice.totalCents,
+      currency: invoice.currency,
+      invoiceNumber: invoice.number,
+      organizationId: invoice.organizationId,
+      description: `Abonnement ${invoice.number}`,
+      customerRef: card.customerRef,
+      methodRef: card.methodRef!,
+    });
+    await this.prisma.payment.create({
+      data: {
+        organizationId: invoice.organizationId,
+        invoiceId: invoice.id,
+        amountCents: invoice.totalCents,
+        currency: invoice.currency,
+        status: "en_attente",
+        method: "carte",
+        provider: this.provider.name,
+        providerRef: charge.ref,
+      },
+    });
+    if (charge.status === "succeeded") {
+      await this.markPaymentSucceeded(charge.ref, `auto_${invoice.number}`);
+    } else if (charge.status === "failed") {
+      await this.markPaymentFailed(charge.ref, charge.failureReason ?? "prélèvement refusé");
+    }
+    // `processing` : le résultat arrivera par webhook.
+  }
+
+  private async detachQuietly(card: SavedCard): Promise<void> {
+    if (!card.methodRef || !this.provider.detachCard) return;
+    try {
+      await this.provider.detachCard(card.methodRef);
+    } catch (error) {
+      this.logger.warn(`Retrait de carte chez le fournisseur impossible : ${(error as Error).message}`);
+    }
   }
 
   /** Avoir (§4.3) : la facture n'est jamais modifiée, on émet un document distinct. */
@@ -566,7 +737,7 @@ export class BillingService {
   // ── Lectures ─────────────────────────────────────────────────────────────
 
   async documentsFor(organizationId: string): Promise<DocumentsBundle> {
-    const [sub, invoices, creditNotes] = await Promise.all([
+    const [sub, invoices, creditNotes, savedCard] = await Promise.all([
       this.prisma.subscription.findFirst({
         where: { organizationId },
         orderBy: { createdAt: "desc" },
@@ -581,11 +752,13 @@ export class BillingService {
         include: { invoice: { select: { number: true } } },
         orderBy: { issuedAt: "desc" },
       }),
+      this.savedCardFor(organizationId),
     ]);
     return {
       subscription: sub ? toSubSummary(sub) : null,
       invoices: invoices.map(toInvoiceDoc),
       creditNotes: creditNotes.map(toCreditNoteDoc),
+      savedCard,
     };
   }
 
@@ -630,6 +803,16 @@ function addMonths(date: Date, months: number): Date {
   const d = new Date(date);
   d.setUTCMonth(d.getUTCMonth() + months);
   return d;
+}
+
+function toSavedCardView(card: SavedCard): SavedCardView {
+  return {
+    brand: card.brand,
+    last4: card.last4,
+    expMonth: card.expMonth,
+    expYear: card.expYear,
+    activatedAt: (card.activatedAt ?? card.createdAt).toISOString(),
+  };
 }
 
 function toSubSummary(sub: {

@@ -79,6 +79,25 @@ export interface DocumentsBundle {
   subscription: SubscriptionSummary | null;
   invoices: InvoiceDoc[];
   creditNotes: CreditNoteDoc[];
+  /** Lot 22 — carte enregistrée pour le prélèvement automatique, `null` si aucune. */
+  savedCard: SavedCardView | null;
+}
+
+/** Lot 22 — carte enregistrée, telle qu'affichée au client (jamais son numéro). */
+export interface SavedCardView {
+  brand: string | null;
+  last4: string | null;
+  expMonth: number | null;
+  expYear: number | null;
+  activatedAt: string;
+}
+
+/** Lot 22 — retour de l'ouverture d'un enregistrement de carte. */
+export interface CardSetupInfo {
+  provider: string;
+  setupRef: string;
+  /** Présent pour un fournisseur qui redirige (Stripe). Absent en mode `fake`. */
+  checkoutUrl: string | null;
 }
 
 /**
@@ -196,10 +215,25 @@ export const subscriptionSummarySchema: z.ZodType<SubscriptionSummary> = z.objec
   canceledAt: z.string().nullable(),
 });
 
+export const savedCardViewSchema: z.ZodType<SavedCardView> = z.object({
+  brand: z.string().nullable(),
+  last4: z.string().nullable(),
+  expMonth: z.number().int().nullable(),
+  expYear: z.number().int().nullable(),
+  activatedAt: z.string(),
+});
+
 export const documentsBundleSchema: z.ZodType<DocumentsBundle> = z.object({
   subscription: subscriptionSummarySchema.nullable(),
   invoices: z.array(invoiceDocSchema),
   creditNotes: z.array(creditNoteDocSchema),
+  savedCard: savedCardViewSchema.nullable(),
+});
+
+export const cardSetupInfoSchema: z.ZodType<CardSetupInfo> = z.object({
+  provider: z.string(),
+  setupRef: z.string(),
+  checkoutUrl: z.string().nullable(),
 });
 
 export const billingManageHandoffSchema: z.ZodType<BillingManageHandoff> = z.object({

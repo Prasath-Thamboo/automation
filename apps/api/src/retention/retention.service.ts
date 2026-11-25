@@ -139,6 +139,8 @@ export class RetentionService {
       this.prisma.mission.deleteMany({ where: { organizationId: orgId } }),
       this.prisma.helpRequest.deleteMany({ where: { organizationId: orgId } }),
       this.prisma.pushToken.deleteMany({ where: { organizationId: orgId } }),
+      // Lot 22 — références de carte (déjà retirées chez le fournisseur à la suppression).
+      this.prisma.savedCard.deleteMany({ where: { organizationId: orgId } }),
       this.prisma.needsAssessment.updateMany({
         where: { organizationId: orgId },
         data: { email: anonymizedEmail(orgId), answers: {} },
