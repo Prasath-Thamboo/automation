@@ -61,7 +61,7 @@ Prérequis : Node ≥ 22, pnpm 11, Docker.
 ```bash
 pnpm install
 cp .env.example .env            # ajuster SESSION_SECRET
-pnpm db:up                      # postgres, redis, minio, mailpit (docker compose)
+pnpm db:up                      # postgres, redis, mailpit (docker compose)
 pnpm db:migrate:deploy          # applique les migrations Prisma
 pnpm db:seed                    # compte de démo : patron@demo.velekya.local
 pnpm dev                        # api (:3333) + web (:3000)

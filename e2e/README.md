@@ -6,7 +6,7 @@ du cahier des charges.
 ## Prérequis
 
 ```bash
-pnpm db:up                     # postgres, redis, minio, mailpit
+pnpm db:up                     # postgres, redis, mailpit
 pnpm db:migrate:deploy
 pnpm db:seed                   # 6 métiers publiés (dont « dentiste »)
 pnpm --filter @velekya/e2e pw:install   # navigateurs Playwright (une fois)

@@ -39,8 +39,13 @@ services:
       timeout: 5s
       retries: 10
 
+  # Stockage objet : prévu, pas encore utilisé par le code. Profil facultatif
+  # (`docker compose --profile stockage up -d minio minio-init`). Les images
+  # minio/minio et minio/mc ont été retirées de Docker Hub : à remplacer (ou par
+  # le S3 de l'hébergeur UE) le jour où le stockage est branché.
   minio:
     image: minio/minio:latest
+    profiles: ["stockage"]
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -60,6 +65,7 @@ services:
   # Crée le bucket au démarrage, puis s'arrête.
   minio-init:
     image: minio/mc:latest
+    profiles: ["stockage"]
     depends_on:
       minio:
         condition: service_healthy

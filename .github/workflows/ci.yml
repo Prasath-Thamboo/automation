@@ -49,6 +49,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Le client Prisma n'est généré qu'au build : le typecheck en a besoin avant.
+      - name: Client Prisma
+        run: pnpm --filter @velekya/api exec prisma generate
+
       - name: Lint
         run: pnpm lint
 
@@ -84,8 +88,11 @@ jobs:
           sed -i 's#^PUSH_ENABLED=.*#PUSH_ENABLED=false#' .env
           sed -i 's#^RATE_LIMIT_DISABLED=.*#RATE_LIMIT_DISABLED=true#' .env
 
-      - name: Services (postgres, redis, minio, mailpit)
-        run: docker compose up -d postgres redis minio minio-init mailpit
+      - name: Client Prisma
+        run: pnpm --filter @velekya/api exec prisma generate
+
+      - name: Services (postgres, redis, mailpit)
+        run: docker compose up -d --wait postgres redis mailpit
 
       - name: Migrations + seed
         run: |
@@ -129,7 +136,7 @@ jobs:
   #         sed -i 's#^SESSION_SECRET=.*#SESSION_SECRET=ci-session-secret-0000000000000000000000000000#' .env
   #         sed -i 's#^PUSH_ENABLED=.*#PUSH_ENABLED=false#' .env
   #         sed -i 's#^RATE_LIMIT_DISABLED=.*#RATE_LIMIT_DISABLED=true#' .env
-  #         docker compose up -d postgres redis minio minio-init mailpit
+  #         docker compose up -d --wait postgres redis mailpit
   #         pnpm db:migrate:deploy && pnpm db:seed
   #         pnpm build && (node apps/api/dist/main.js &)
   #     - name: Maestro
