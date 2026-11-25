@@ -47,6 +47,7 @@ describe("flux garage — sécurité d'abord", () => {
     "Il y a de la fumée qui sort du capot",
     "Le voyant rouge d'huile vient de s'allumer",
     "Ça sent l'odeur d'essence dans l'habitacle",
+    "Urgent, mes freins lâchent",
   ])("transmet tout de suite avec une consigne de sécurité : %s", (text) => {
     const r = handle(req(text), NOW);
     expect(r.kind).toBe("escalate");
@@ -257,5 +258,31 @@ describe("flux garage — vocabulaire", () => {
       expect(findJargon(s)).toEqual([]);
       expect(s.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("flux garage — rejeu de bout en bout (2026-11-25)", () => {
+  it("« je voudrais faire une vidange » vaut demande de rendez-vous", () => {
+    const first = "Bonjour, je voudrais faire une vidange";
+    const a = handle(req(first), NOW);
+    expect(a).toMatchObject({ kind: "appointment", slotISO: null });
+    expect(a.kind === "appointment" && a.text).toContain("Quel jour");
+  });
+
+  it("une date seule, juste après une prestation demandée, complète le rendez-vous", () => {
+    const h = chat(["client", "Bonjour, je voudrais une vidange"], ["assistant", "Bonjour ! Que puis-je faire pour vous ?"]);
+    const r = handle(req("mardi à 9h", { history: h }), NOW);
+    expect(r).toMatchObject({ kind: "appointment", slotISO: "2026-12-01T08:00:00.000Z" });
+    expect(r.kind === "appointment" && r.text).toContain("vidange");
+  });
+
+  it("« ça coûte combien » est une demande de devis, sans chiffre", () => {
+    const r = handle(req("Ça coûte combien une vidange ?"), NOW);
+    expect(r).toMatchObject({ kind: "escalate", question: "Un client demande un devis." });
+  });
+
+  it("« vous faites les vidanges ? » reste une question, pas un rendez-vous", () => {
+    const r = handle(req("Vous faites les vidanges ?"), NOW);
+    expect(r.kind).toBe("reply");
   });
 });

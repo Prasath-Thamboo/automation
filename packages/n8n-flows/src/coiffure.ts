@@ -16,8 +16,8 @@
  * Boutons lus : `rendez_vous`, `nouvelles_clientes` (absents = allumés).
  * Libellés par défaut dans `apps/api/prisma/seed-data/catalog.ts`.
  *
- * Rappel : les messages qui parlent de prix (« combien », « tarif ») sont
- * traités par l'API avant d'arriver ici (garde-fou « prix »).
+ * Prix : le flux les traite lui-même (`asksPrice`, transmis sans chiffre) ;
+ * l'API ne filtre plus les prix ni les urgences avant un flux de métier.
  */
 import {
   appointment,
@@ -39,6 +39,7 @@ import {
   type FlowReply,
   type FlowRequest,
   type Slot,
+  asksPrice,
 } from "./common";
 
 /** Réaction après une couleur, un soin : santé d'abord, puis le salon. */
@@ -124,6 +125,9 @@ const SERVICES: Service[] = [
 /** Questions par lesquelles elle fait avancer un rendez-vous. */
 const BOOKING_QUESTION = /quel jour|quelle heure|quelle prestation|que je note un rendez vous/;
 const ASKED_NAME = /a quel nom/;
+const ASKED_PHONE = /un numero/;
+/** Le rendez-vous vient d'être noté, en attente de confirmation par le salon. */
+const CONFIRM_PENDING = /vous confirme le rendez vous/;
 const PHONE_RE = /(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}/;
 /** Canaux où le salon a déjà le numéro de la cliente. */
 const CHANNELS_WITH_NUMBER = new Set(["sms", "telephone", "whatsapp"]);
@@ -168,6 +172,16 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
       quote,
       "Je suis désolée de l'apprendre. Je transmets votre message au salon, qui revient vers vous personnellement très vite.",
       "Réclamation d'une cliente : transmise au salon.",
+    );
+  }
+
+  // ── Prix : jamais de chiffre inventé, la demande est transmise ──
+  if (asksPrice(t)) {
+    return escalate(
+      "Une cliente demande un tarif.",
+      quote,
+      "Je transmets votre question au salon, qui vous indique le tarif très vite.",
+      "Question de tarif : transmise au salon.",
     );
   }
 
@@ -226,9 +240,29 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
     const name = cleanName(req.text);
     if (name) {
       const phone = PHONE_RE.test(req.text);
+      const phoneBefore = (req.history ?? []).some((m) => m.author === "client" && PHONE_RE.test(m.text));
+      if (!phone && !phoneBefore && ASKED_PHONE.test(lastAssistant)) {
+        return reply(
+          `Merci ${name}, c'est noté. Et un numéro pour la confirmation ?`,
+          `Rendez-vous noté au nom de ${name}, numéro demandé pour la confirmation.`,
+          "rendez_vous",
+        );
+      }
       return reply(
         `Merci ${name}, c'est noté. Le salon vous confirme le rendez-vous très vite${phone ? " par message" : ""}.`,
         `Rendez-vous noté au nom de ${name}${phone ? " (numéro laissé dans la conversation)" : ""}, à confirmer.`,
+        "rendez_vous",
+      );
+    }
+  }
+
+  // ── 7 bis. Le numéro, envoyé à part après le nom ──
+  if (PHONE_RE.test(req.text) && (ASKED_PHONE.test(lastAssistant) || CONFIRM_PENDING.test(lastAssistant))) {
+    const rest = norm(req.text.replace(PHONE_RE, "")).replace(/[^a-z]/g, "");
+    if (rest.length <= 25) {
+      return reply(
+        "Merci, c'est noté. Le salon vous confirme le rendez-vous très vite par message.",
+        "Numéro laissé dans la conversation pour la confirmation du rendez-vous.",
         "rendez_vous",
       );
     }

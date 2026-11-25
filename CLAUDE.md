@@ -415,8 +415,10 @@ pnpm dev                        # api (:3333) + web (:3000)
     `POST` JSON vers le flux de l'employé (Lot 14), en-tête `X-Velekya-Token`
     (`N8N_TOKEN`), délai `N8N_TIMEOUT_MS`.
     Réponse validée par Zod (`n8nReplySchema` : reply | appointment | escalate).
-  - Garde-fous gardés côté API : prix / urgence / humain → moteur à règles, sans
-    appel n8n ; réponse invalide, erreur ou délai dépassé → escalade.
+  - Garde-fous gardés côté API : humain → moteur à règles, sans appel n8n ;
+    prix / urgence → idem pour un flux sur mesure, mais confiés au flux générique
+    de métier (filet : urgence non escaladée → escalade) — assoupli au Lot 23 ;
+    réponse invalide, erreur ou délai dépassé → escalade.
   - `RuntimeAssistant` gagne `professionSlug`. Aucune coordonnée du client final
     n'est envoyée à n8n.
   - Contrat + structure de workflow : `docs/n8n/README.md`. Local :
@@ -667,6 +669,23 @@ pnpm dev                        # api (:3333) + web (:3000)
     voir `DEPLOYMENT.md` (évènements `payment_intent.*` à ajouter au webhook).
   - Vérifié : turbo 30/30, API 153 tests, e2e 59/59. Non testé contre un vrai
     compte Stripe (mode test à faire avant mise en ligne).
+
+- **Lot 23 — Rejeu de bout en bout des 6 flux métier : fait.**
+  - Les 6 flux génériques rejoués via l'API (`ASSISTANT_RUNTIME=n8n`, formulaire
+    public → API → n8n → base), 34 conversations ; rendez-vous `propose` et
+    escalades vérifiés en base.
+  - **Garde-fou assoupli** (`n8n.runtime.ts`) : pour un flux de métier
+    (`workflowScope = "metier"`), seule la demande d'un humain reste interceptée ;
+    urgence et prix vont au flux (consignes gaz / freins / douleur conservées). Filet :
+    urgence non escaladée par le flux → escalade du moteur à règles ; flux en échec →
+    réponse dédiée urgence / prix. Flux sur mesure : inchangé.
+  - Flux : `asksPrice` commun (`common.ts`, rendez-vous prioritaire) dans les 6 flux ;
+    garage « je voudrais faire une vidange » + date seule après une prestation,
+    « freins lâchent » ; salon : numéro envoyé à part après le nom ; artisan :
+    « mardi en fin de matinée » (heure indicative, `approxTime`), plus de boucle sur
+    l'heure, « j'accepte votre devis ». 206 tests `n8n-flows`, 157 API.
+  - Flux réimportés dans le n8n local. e2e web non relancés (moteur `rules` en e2e,
+    non concerné).
 
 ### Notes Lot 18
 

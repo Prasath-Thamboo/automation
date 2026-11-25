@@ -45,12 +45,13 @@ import {
   type FlowRequest,
   type Slot,
   type Ymd,
+  asksPrice,
 } from "./common";
 
 // ── Sécurité et urgences ─────────────────────────────────────────────────────
 
 const DANGER = [
-  "plus de frein", "n ai plus de frein", "ne freine plus", "freine plus", "freins ne repondent",
+  "plus de frein", "n ai plus de frein", "ne freine plus", "freine plus", "freins ne repondent", "freins lachent", "frein lache", "freins ont lache", "plus de freinage",
   "pedale de frein molle", "pedale molle", "pedale s enfonce", "fumee", "odeur d essence", "fuite d essence",
   "odeur de brule", "ca brule", "flamme", "voyant rouge", "voyant d huile", "voyant de temperature",
   "surchauffe", "temperature monte", "moteur chauffe", "plus de direction", "direction tres dure",
@@ -123,6 +124,10 @@ const PAYMENT = ["carte bancaire", "carte bleue", "cb", "cheque", "especes", "pa
 /** « Vous faites… ? », « Vous prenez les… ? » */
 const CAN_YOU =
   /\b(vous faites|faites vous|vous proposez|proposez vous|vous changez|changez vous|vous reparez|reparez vous|vous montez|vous prenez|prenez vous|vous travaillez sur|vous vous occupez|est ce que vous (faites|reparez|changez|prenez|montez|proposez))\b/;
+
+/** « Je voudrais faire une vidange » : une envie de prestation vaut demande de rendez-vous. */
+const WANT =
+  /\b(je voudrais|je voudrai|j aimerais|je souhaite|je souhaiterais|je dois faire|il faut que je fasse|il faudrait faire|j ai besoin d)\b/;
 
 // ── Prestations, pannes, véhicules ───────────────────────────────────────────
 
@@ -299,7 +304,7 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
   }
 
   // ── 8. Prix, devis : jamais de chiffre, le garage prépare le devis ──
-  if (has(t, QUOTE) && !has(t, BOOK)) {
+  if ((has(t, QUOTE) || asksPrice(t)) && !has(t, BOOK)) {
     const motif = motifOf(allClient);
     return escalate(
       "Un client demande un devis.",
@@ -331,9 +336,12 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
   // ── 10. Rendez-vous (dépôt du véhicule) ──
   const bookingInProgress = BOOKING_QUESTION.test(lastAssistant);
   const aboutCar = Boolean(serviceOf(t) || symptomOf(t));
+  // Prestation demandée juste avant (« une vidange » → « mardi à 9h »).
+  const serviceBefore = Boolean(serviceOf(norm(recentClient.join(" "))));
   const wantsBooking =
     has(t, BOOK) ||
-    (aboutCar && Boolean(slotHere.day) && !CAN_YOU.test(t)) ||
+    (Boolean(serviceOf(t)) && WANT.test(t) && !CAN_YOU.test(t)) ||
+    ((aboutCar || serviceBefore) && Boolean(slotHere.day) && !CAN_YOU.test(t)) ||
     (bookingInProgress &&
       !has(t, HOURS) &&
       !asksAddress(t) &&

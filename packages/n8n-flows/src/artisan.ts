@@ -19,9 +19,8 @@
  * éteint : seul `true` prévient que les délais sont plus longs). Libellés par
  * défaut dans `apps/api/prisma/seed-data/catalog.ts`.
  *
- * Rappel : les messages qui parlent de prix (« devis », « combien ») sont
- * traités par l'API avant d'arriver ici (garde-fou « prix ») ; ce flux traite
- * aussi les réponses aux devis, par sécurité, s'ils lui parviennent.
+ * Prix : le flux les traite lui-même (`asksPrice`, transmis sans chiffre) ;
+ * l'API ne filtre plus les prix ni les urgences avant un flux de métier.
  */
 import {
   appointment,
@@ -42,6 +41,7 @@ import {
   yesNo,
   type FlowReply,
   type FlowRequest,
+  asksPrice,
 } from "./common";
 
 // ── Sécurité et urgences ─────────────────────────────────────────────────────
@@ -71,6 +71,8 @@ const COMPLAINT = [
 ];
 
 const QUOTE_ACCEPT = ["bon pour accord", "j accepte le devis", "nous acceptons le devis", "devis accepte", "je valide le devis", "devis valide", "devis signe", "ok pour le devis", "d accord pour le devis", "on part sur le devis", "je signe le devis"];
+/** « J’accepte votre devis », « je valide ce devis »… */
+const QUOTE_ACCEPT_RE = /\b(j accepte|nous acceptons|je valide|nous validons|on valide|ok pour|d accord pour|je signe|on part sur) (le |votre |ce |vos |les )?devis\b/;
 const QUOTE_HESITATE = ["pas encore decide", "on reflechit", "je reflechis", "nous reflechissons", "trop cher", "autre entreprise", "autre artisan", "on ne donne pas suite", "pas donner suite", "je refuse le devis", "devis refuse"];
 
 const CANCEL = ["annuler", "annulation", "decommander", "ne serai pas la", "ne pourrai pas etre la", "empeche"];
@@ -119,6 +121,7 @@ const ASK_COMMUNE = /dans quelle commune se trouvent les travaux/;
 const ASK_WHEN = /pour quand souhaitez vous les travaux/;
 const ASK_VISIT = /passer voir le chantier pour le metre/;
 const ASK_CONTACT = /a quel nom, et quelle est l adresse exacte du chantier/;
+const ASK_HOUR = /a quelle heure l artisan peut il passer/;
 const ASK_URGENT_CONTACT = /votre nom, votre adresse et un numero/;
 const PHONE_RE = /(?:\+33\s?|0)[1-9](?:[\s.-]?\d{2}){4}/;
 const CHANNELS_WITH_NUMBER = new Set(["sms", "telephone", "whatsapp"]);
@@ -196,7 +199,7 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
   }
 
   // ── 5. Réponse à un devis envoyé ──
-  if (has(t, QUOTE_ACCEPT)) {
+  if (has(t, QUOTE_ACCEPT) || QUOTE_ACCEPT_RE.test(t)) {
     return escalate(
       "Bonne nouvelle : un client accepte un devis.",
       quote,
@@ -210,6 +213,16 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
       quote,
       "Merci pour votre réponse, je la transmets à l'artisan.",
       "Réponse à un devis (pas accepté pour l'instant) : transmise à l'artisan.",
+    );
+  }
+
+  // ── Prix : jamais de chiffre inventé, la demande est transmise ──
+  if (asksPrice(t)) {
+    return escalate(
+      "Un client demande un prix.",
+      quote,
+      "Je transmets votre demande à l'artisan : il ne chiffre qu'après avoir vu le chantier, et revient vers vous très vite.",
+      "Question de prix : transmise à l'artisan.",
     );
   }
 
@@ -385,6 +398,27 @@ function workRequest(req: FlowRequest, now: Date, c: WorkContext): FlowReply {
   }
 
   const slot = facts.visitText ? parseSlot(facts.visitText, now) : null;
+  // « Mardi en fin de matinée » suffit pour un métré : heure indicative, l'artisan confirme.
+  const approx = slot?.day && !slot.time && slot.part ? approxTime(norm(facts.visitText ?? ""), slot.part) : null;
+  if (slot && approx) slot.time = approx.time;
+  if (slot?.day && !slot.time) {
+    const givesContact = PHONE_RE.test(req.text);
+    // Coordonnées données, ou heure déjà demandée une fois : on note le jour, sans boucler.
+    if (ASK_CONTACT.test(c.lastAssistant) || givesContact) {
+      return appointment(
+        `Merci, j'ai tout noté pour ${humanDay(slot.day)}. L'artisan vous confirme très vite l'heure de son passage.`,
+        `Passage pour le métré ${humanDay(slot.day)}, heure à convenir. Coordonnées du chantier dans la conversation. ${recap}.${outside}`,
+        null,
+      );
+    }
+    if (ASK_HOUR.test(c.lastAssistant)) {
+      return appointment(
+        `C'est noté pour ${humanDay(slot.day)} : l'artisan vous précisera l'heure en vous confirmant son passage. À quel nom, et quelle est l'adresse exacte du chantier${c.hasNumber ? "" : " (avec un numéro pour vous joindre)"} ?`,
+        `Passage pour le métré ${humanDay(slot.day)}, heure à convenir. ${recap}.${outside}`,
+        null,
+      );
+    }
+  }
   if (!slot || !slot.day || !slot.time) {
     // La question reprend toujours « passer voir le chantier pour le métré » : c'est ce qui relie la réponse suivante.
     const partial = slot?.day
@@ -407,7 +441,9 @@ function workRequest(req: FlowRequest, now: Date, c: WorkContext): FlowReply {
   }
 
   // 4. Créneau donné → noté ; puis coordonnées.
-  const when = `${humanDay(slot.day)} à ${humanTime(slot.time)}`;
+  const when = approx
+    ? `${humanDay(slot.day)} ${approx.label} (vers ${humanTime(slot.time)})`
+    : `${humanDay(slot.day)} à ${humanTime(slot.time)}`;
   if (!ASK_CONTACT.test(c.lastAssistant)) {
     return appointment(
       `C'est noté : passage pour le métré ${when}. L'artisan vous le confirme très vite. À quel nom, et quelle est l'adresse exacte du chantier${c.hasNumber ? "" : " (avec un numéro pour vous joindre)"} ?`,
@@ -438,6 +474,16 @@ interface WorkFacts {
 }
 
 /** Relit la conversation : chaque message client qui suit une de ses questions en est la réponse. */
+/** Heure indicative d'un moment de la journée (« en fin de matinée » → 11h). */
+export function approxTime(t: string, part: "matin" | "apres-midi" | "soir"): { time: { h: number; min: number }; label: string } {
+  if (/\bfin de matinee\b/.test(t)) return { time: { h: 11, min: 0 }, label: "en fin de matinée" };
+  if (/\bdebut d apres midi\b/.test(t)) return { time: { h: 14, min: 0 }, label: "en début d'après-midi" };
+  if (/\bfin d apres midi\b/.test(t)) return { time: { h: 17, min: 0 }, label: "en fin d'après-midi" };
+  if (part === "matin") return { time: { h: 9, min: 0 }, label: "dans la matinée" };
+  if (part === "apres-midi") return { time: { h: 14, min: 0 }, label: "dans l'après-midi" };
+  return { time: { h: 18, min: 0 }, label: "en fin de journée" };
+}
+
 export function factsOf(history: FlowRequest["history"], current: string): WorkFacts {
   const turns = [...history, { author: "client" as const, text: current }];
   const facts: WorkFacts = { nature: null, commune: null, when: null, visitText: null };

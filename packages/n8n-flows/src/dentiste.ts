@@ -36,6 +36,7 @@ import {
   yesNo,
   type FlowReply,
   type FlowRequest,
+  asksPrice,
 } from "./common";
 
 
@@ -159,6 +160,16 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
       quote,
       `Je ne peux pas donner de conseil médical, mais je transmets votre question au praticien, qui vous répond rapidement. ${EMERGENCY_NOTE}`,
       "Question médicale d'un patient : transmise au praticien.",
+    );
+  }
+
+  // ── Prix : jamais de chiffre inventé, la demande est transmise ──
+  if (asksPrice(t)) {
+    return escalate(
+      "Un patient demande un tarif.",
+      quote,
+      "Je transmets votre question au cabinet, qui vous indique le tarif très vite.",
+      "Question de tarif : transmise au cabinet.",
     );
   }
 

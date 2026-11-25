@@ -37,6 +37,7 @@ import {
   type FlowReply,
   type FlowRequest,
   type Slot,
+  asksPrice,
 } from "./common";
 
 const COMPLAINT = [
@@ -148,6 +149,16 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
       quote,
       "Je suis désolé de l'apprendre. Je transmets votre message au restaurant, qui revient vers vous personnellement très vite.",
       "Réclamation d'un client : transmise au restaurant.",
+    );
+  }
+
+  // ── Prix : jamais de chiffre inventé, la demande est transmise ──
+  if (asksPrice(t)) {
+    return escalate(
+      "Un client demande un prix.",
+      quote,
+      "Je transmets votre question au restaurant, qui vous répond très vite.",
+      "Question de prix : transmise au restaurant.",
     );
   }
 

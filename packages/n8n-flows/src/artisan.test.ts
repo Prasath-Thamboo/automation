@@ -193,3 +193,43 @@ describe("flux artisan — vocabulaire", () => {
     }
   });
 });
+
+describe("flux artisan — rejeu de bout en bout (2026-11-25)", () => {
+  it("« mardi en fin de matinée » : passage noté vers 11h, puis coordonnées", () => {
+    const [, , , d, e] = play([
+      "Bonjour, je voudrais refaire ma salle de bain",
+      "À Séné",
+      "D'ici trois mois",
+      "Mardi en fin de matinée si possible",
+      "Luc Petit, 3 rue des Lilas, 06 98 76 54 32",
+    ]);
+    // Mardi 1er décembre 2026, 11h Paris = 10h UTC.
+    expect(d).toMatchObject({ kind: "appointment", slotISO: "2026-12-01T10:00:00.000Z", status: "propose" });
+    expect(textOf(d!)).toContain("en fin de matinée");
+    expect(e).toMatchObject({ kind: "reply", capability: "rendez_vous" });
+  });
+
+  it("jour sans heure, puis coordonnées : le jour est noté, sans redemander l'heure", () => {
+    const out = play(["Je voudrais poser du carrelage", "Vannes", "Au plus vite", "Jeudi", "Luc Petit, 06 98 76 54 32"]);
+    const e = out[4]!;
+    expect(e).toMatchObject({ kind: "appointment", slotISO: null });
+    expect(textOf(e)).not.toContain("À quelle heure");
+    expect(textOf(e)).toContain("jeudi 26 novembre");
+  });
+
+  it("jour sans heure, deux fois : il note le jour et passe aux coordonnées", () => {
+    const out = play(["Je voudrais poser du carrelage", "Vannes", "Au plus vite", "Jeudi", "Comme vous voulez"]);
+    expect(textOf(out[4]!)).toContain("À quel nom");
+    expect(out[4]).toMatchObject({ kind: "appointment", slotISO: null });
+  });
+
+  it("« J'accepte votre devis » : transmis comme une bonne nouvelle", () => {
+    const r = handle(req("J'accepte votre devis pour la salle de bain"), NOW);
+    expect(r).toMatchObject({ kind: "escalate", question: "Bonne nouvelle : un client accepte un devis." });
+  });
+
+  it("« Combien pour refaire une salle de bain ? » : transmis, sans chiffre", () => {
+    const r = handle(req("Combien pour refaire une salle de bain ?"), NOW);
+    expect(r).toMatchObject({ kind: "escalate", question: "Un client demande un prix." });
+  });
+});

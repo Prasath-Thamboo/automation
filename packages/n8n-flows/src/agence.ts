@@ -18,8 +18,8 @@
  * Boutons lus : `visites`, `qualification` (absents = allumés). Libellés par
  * défaut dans `apps/api/prisma/seed-data/catalog.ts`.
  *
- * Rappel : les messages qui parlent de prix (« prix », « combien ») sont
- * traités par l'API avant d'arriver ici (garde-fou « prix »).
+ * Prix : le flux les traite lui-même (`asksPrice`, transmis sans chiffre) ;
+ * l'API ne filtre plus les prix ni les urgences avant un flux de métier.
  */
 import {
   appointment,
@@ -41,6 +41,7 @@ import {
   type FlowReply,
   type FlowRequest,
   type Slot,
+  asksPrice,
 } from "./common";
 
 const COMPLAINT = [
@@ -186,6 +187,16 @@ export function handle(req: FlowRequest, now: Date): FlowReply {
       quote,
       "Avec plaisir ! Je note votre demande pour un conseiller de l'agence. Pour préparer le rendez-vous d'estimation : de quel type de bien s'agit-il, dans quelle commune, et quelle surface environ ?",
       "Demande d'estimation : notée pour un conseiller.",
+    );
+  }
+
+  // ── Prix : jamais de chiffre inventé, la demande est transmise ──
+  if (asksPrice(t)) {
+    return escalate(
+      "Un contact pose une question de prix.",
+      quote,
+      "Je transmets votre question au conseiller, qui vous répond très vite.",
+      "Question de prix : transmise au conseiller.",
     );
   }
 

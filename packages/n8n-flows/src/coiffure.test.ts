@@ -178,3 +178,30 @@ describe("flux salon — vocabulaire", () => {
     }
   });
 });
+
+describe("flux salon — rejeu de bout en bout (2026-11-25)", () => {
+  const ask = "Parfait, je note une coupe jeudi 26 novembre à 14h avec Sarah. Le salon vous confirme le rendez-vous très vite. À quel nom, et un numéro pour la confirmation ?";
+
+  it("nom seul → redemande le numéro ; numéro envoyé à part → noté, sans escalade", () => {
+    const h1 = chat(["client", "Une coupe femme jeudi à 14h avec Sarah"], ["assistant", ask]);
+    const a = handle(req("Sophie Bernard", { history: h1 }), NOW);
+    expect(a).toMatchObject({ kind: "reply", capability: "rendez_vous" });
+    expect(textOf(a)).toContain("un numéro");
+
+    const h2 = [...h1, ...chat(["client", "Sophie Bernard"], ["assistant", textOf(a)])];
+    const b = handle(req("06 12 34 56 78", { history: h2 }), NOW);
+    expect(b).toMatchObject({ kind: "reply", capability: "rendez_vous" });
+    expect(b.kind === "reply" && b.summary).not.toContain("06");
+  });
+
+  it("numéro envoyé après un « c'est noté » : remercie, sans escalade", () => {
+    const h = chat(["client", "Sophie"], ["assistant", "Merci Sophie, c'est noté. Le salon vous confirme le rendez-vous très vite."]);
+    const r = handle(req("Mon numéro : 06 12 34 56 78", { history: h }), NOW);
+    expect(r.kind).toBe("reply");
+  });
+
+  it("une demande de prix est transmise, sans chiffre", () => {
+    const r = handle(req("Combien coûte un balayage ?"), NOW);
+    expect(r).toMatchObject({ kind: "escalate", question: "Une cliente demande un tarif." });
+  });
+});

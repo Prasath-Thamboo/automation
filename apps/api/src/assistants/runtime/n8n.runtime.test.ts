@@ -10,7 +10,7 @@ const runtime = new N8nRuntime(env, new RuleBasedRuntime());
 
 const FLOW = "http://n8n.test/webhook/client-42";
 
-function ctx(workflowUrl: string | null = FLOW): RuntimeContext {
+function ctx(workflowUrl: string | null = FLOW, scope: "client" | "metier" = "client"): RuntimeContext {
   return {
     assistant: {
       id: "a1",
@@ -18,7 +18,7 @@ function ctx(workflowUrl: string | null = FLOW): RuntimeContext {
       role: "votre assistante",
       professionSlug: null,
       workflowUrl,
-      workflowScope: workflowUrl ? "client" : null,
+      workflowScope: workflowUrl ? scope : null,
       jobDescription: { limits: ["Ne jamais donner un prix"] },
       establishment: { openingHours: "Lun-Ven 9h-18h" },
       specifics: {},
@@ -67,7 +67,37 @@ describe("N8nRuntime", () => {
     expect(reply).toMatchObject({ kind: "appointment", status: "confirme" });
   });
 
-  it("garde-fous : prix, urgence, humain ne partent jamais vers n8n", async () => {
+  it("flux de métier : urgence et prix lui sont confiés, avec ses propres consignes", async () => {
+    const fetch = mockFetch({ kind: "escalate", question: "URGENT — odeur de gaz.", context: "", ackText: "Quittez les lieux et appelez le 0 800 47 33 33.", summary: "Gaz." });
+    const urgent = await runtime.handle(ctx(FLOW, "metier"), { channel: "sms", text: "Urgent, ça sent le gaz" });
+    expect(urgent).toMatchObject({ kind: "escalate", ackText: expect.stringContaining("0 800 47 33 33") });
+
+    mockFetch({ kind: "escalate", question: "Un devis accepté.", context: "", ackText: "Bonne nouvelle, je transmets.", summary: "Devis accepté." });
+    const devis = await runtime.handle(ctx(FLOW, "metier"), { channel: "sms", text: "J'accepte votre devis" });
+    expect(devis).toMatchObject({ kind: "escalate", question: "Un devis accepté." });
+    expect(fetch).toHaveBeenCalled();
+  });
+
+  it("flux de métier : une urgence non transmise par le flux est escaladée quand même", async () => {
+    mockFetch({ kind: "reply", text: "Nous sommes ouverts de 9h à 18h.", capability: "questions", summary: "Horaires." });
+    const reply = await runtime.handle(ctx(FLOW, "metier"), { channel: "sms", text: "C'est urgent, vous êtes ouverts ?" });
+    expect(reply).toMatchObject({ kind: "escalate", question: "Un client signale une urgence." });
+  });
+
+  it("flux de métier : la demande d'un humain ne part jamais vers n8n", async () => {
+    const fetch = mockFetch({});
+    const reply = await runtime.handle(ctx(FLOW, "metier"), { channel: "sms", text: "Je veux parler au patron" });
+    expect(reply.kind).toBe("escalate");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("flux de métier en échec : une urgence garde sa réponse dédiée", async () => {
+    mockFetch({ message: "boom" }, 500);
+    const reply = await runtime.handle(ctx(FLOW, "metier"), { channel: "sms", text: "C'est urgent !" });
+    expect(reply).toMatchObject({ kind: "escalate", question: "Un client signale une urgence." });
+  });
+
+  it("flux sur mesure — garde-fous : prix, urgence, humain ne partent jamais vers n8n", async () => {
     const fetch = mockFetch({});
     for (const text of ["Combien coûte un détartrage ?", "C'est urgent !", "Je veux parler au patron"]) {
       const reply = await runtime.handle(ctx(), { channel: "sms", text });

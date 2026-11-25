@@ -11,8 +11,15 @@ import type {
 import { detectIntent } from "./intent";
 import { RuleBasedRuntime } from "./rule-based.runtime";
 
-/** Intentions toujours traitées ici, jamais confiées au flux (§9.3). */
+/** Intentions traitées ici, jamais confiées à un flux sur mesure (§9.3). */
 const GUARDED_INTENTS = new Set(["urgence", "prix", "humain"]);
+
+/**
+ * Pour un flux générique de métier (`packages/n8n-flows`, testé), seule la
+ * demande d'un humain reste interceptée : le flux traite lui-même urgences et
+ * prix, avec les consignes propres au métier (gaz, freins, douleur…).
+ */
+const GUARDED_INTENTS_METIER = new Set(["humain"]);
 
 const MAX_TEXT = 1600;
 const text = z.string().trim().min(1).max(MAX_TEXT);
@@ -58,9 +65,12 @@ interface N8nRequest {
  * tout le reste : canaux, escalades, notifications, facturation.
  *
  * Garde-fous structurels conservés côté API :
- * - prix, urgence, demande d'un humain → moteur à règles (escalade), sans
- *   appeler n8n ;
- * - réponse invalide, erreur ou délai dépassé → escalade (on n'invente pas).
+ * - demande d'un humain → moteur à règles (escalade), sans appeler n8n ;
+ * - prix, urgence → idem pour un flux sur mesure ; un flux générique de métier
+ *   les traite lui-même, mais une urgence qu'il n'aurait pas transmise est
+ *   escaladée quand même ;
+ * - réponse invalide, erreur ou délai dépassé → escalade (on n'invente pas ;
+ *   une urgence ou un prix repasse par le moteur à règles).
  */
 @Injectable()
 export class N8nRuntime implements AssistantRuntime {
@@ -74,9 +84,14 @@ export class N8nRuntime implements AssistantRuntime {
 
   async handle(ctx: RuntimeContext, input: RuntimeInput): Promise<RuntimeReply> {
     const url = ctx.assistant.workflowUrl;
-    if (!url || GUARDED_INTENTS.has(detectIntent(input.text))) {
+    const intent = detectIntent(input.text);
+    const guarded = ctx.assistant.workflowScope === "metier" ? GUARDED_INTENTS_METIER : GUARDED_INTENTS;
+    if (!url || guarded.has(intent)) {
       return this.rules.handle(ctx, input);
     }
+    // En cas d'échec du flux, une urgence ou un prix garde sa réponse dédiée.
+    const onFailure = (): Promise<RuntimeReply> | RuntimeReply =>
+      GUARDED_INTENTS.has(intent) ? this.rules.handle(ctx, input) : fallback(input.text);
 
     const body: N8nRequest = {
       version: 2,
@@ -95,12 +110,16 @@ export class N8nRuntime implements AssistantRuntime {
         this.logger.warn(
           `Réponse n8n invalide (assistant ${ctx.assistant.id}) : ${parsed.error.issues[0]?.message ?? "?"}`,
         );
-        return fallback(input.text);
+        return onFailure();
+      }
+      // Filet : une urgence doit toujours remonter au patron.
+      if (intent === "urgence" && parsed.data.kind !== "escalate") {
+        return this.rules.handle(ctx, input);
       }
       return parsed.data;
     } catch (err) {
       this.logger.warn(`Appel n8n en échec (assistant ${ctx.assistant.id}) : ${(err as Error).message}`);
-      return fallback(input.text);
+      return onFailure();
     }
   }
 

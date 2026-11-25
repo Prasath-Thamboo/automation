@@ -127,8 +127,8 @@ transmet au cabinet.
 
 Boutons : `rendez_vous` coupé → chaque demande de rendez-vous est transmise ;
 `nouveaux_patients` coupé → réponse polie « pas de nouveaux patients ».
-Prix, urgences explicites et demande d'un humain n'arrivent jamais au flux
-(garde-fous de l'API).
+Prix : transmis sans chiffre (`asksPrice`, commun aux six flux). Seule la
+demande d'un humain est interceptée par l'API avant le flux.
 
 ### Flux « Restaurant »
 
@@ -181,8 +181,7 @@ Boutons : `rendez_vous` coupé → chaque demande est transmise ;
 demande sans date ou dans la semaine en cours, il répond « complet cette
 semaine » et propose à partir du lundi suivant ; à éteindre le lundi.
 Les messages qui parlent de prix (« devis », « combien », « tarif ») sont
-interceptés par l'API avant le flux (garde-fou), sauf s'ils demandent aussi un
-rendez-vous.
+transmis comme demande de devis, sauf s'ils demandent aussi un rendez-vous.
 
 ### Flux « Salon de coiffure »
 
@@ -300,8 +299,15 @@ sans jargon.
 
 ### Garde-fous côté API (non contournables)
 
-- Un message qui parle de **prix**, d'**urgence** ou demande **un humain**
-  n'est jamais envoyé au flux : le moteur à règles l'escalade.
+- Un message qui demande **un humain** n'est jamais envoyé au flux : le moteur
+  à règles l'escalade.
+- **Prix** et **urgence** : jamais envoyés à un flux **sur mesure** (moteur à
+  règles). Un flux **générique de métier** (`workflowScope: "metier"`,
+  `packages/n8n-flows`, testé) les reçoit et répond avec ses propres consignes
+  (gaz, freins, douleur…) ; si sa réponse à une urgence n'est pas une escalade,
+  l'API escalade quand même. En cas d'échec du flux, urgence et prix gardent la
+  réponse dédiée du moteur à règles. (Assoupli le 2026-11-25 : le garde-fou
+  global faisait perdre les consignes de sécurité des flux.)
 - Si la réponse est **invalide**, si le flux répond en **erreur** ou dépasse
   `N8N_TIMEOUT_MS` (15 s par défaut), le message est **transmis au patron**. Le
   client reçoit un accusé de réception.

@@ -112,6 +112,27 @@ export function has(t: string, words: readonly string[]): boolean {
   });
 }
 
+/**
+ * Demande de prix (texte déjà normalisé). Le flux répond lui-même : l'API ne
+ * filtre plus les prix avant un flux générique de métier. Comme l'ancien
+ * garde-fou, une demande de rendez-vous ou de réservation passe avant.
+ * « Combien de temps / de personnes » n'est pas une question de prix.
+ */
+const PRICE = [
+  "prix", "tarif", "coute", "couter", "coutent", "cout ", "combien ca", "combien cela", "combien pour",
+  "combien coute", "combien vous prenez", "combien je vous dois", "combien est ce", "combien faut il",
+  "c est combien", "ca fait combien", "ca revient a combien", "a combien",
+];
+const BOOKING_HINT = [
+  "rendez vous", "rdv", "reserver", "reservation", "creneau", "disponibilite", "prendre date",
+  "une table", "je voudrais venir", "passer vous voir",
+];
+
+export function asksPrice(t: string): boolean {
+  const s = `${t} `;
+  return has(s, PRICE) && !has(s, BOOKING_HINT);
+}
+
 export function cut(s: string, max: number): string {
   const t = s.trim();
   return t.length > max ? `${t.slice(0, max - 1)}…` : t;
