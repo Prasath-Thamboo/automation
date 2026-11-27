@@ -10,7 +10,12 @@ import { test, expect, webLogin, uniqueEmail } from "../fixtures/velekya";
  * suivie, pas régression).
  */
 
-const RULESET = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
+// Les animations d'apparition (opacité 0 → 1) faussent la mesure de contraste si
+// axe passe pendant la transition : on audite l'état final, comme le voit un
+// visiteur qui a demandé moins d'animations.
+test.use({ reducedMotion: "reduce" });
+
+const RULESET =["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 const BLOCKING = new Set(["serious", "critical"]);
 
 async function audit(page: import("@playwright/test").Page, path: string) {
