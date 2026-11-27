@@ -6,7 +6,7 @@ import { helpLink } from "./help-links";
 const STATUS_STYLE: Record<HelpRequestItem["status"], string> = {
   repondue: "bg-primary-50 text-primary-700",
   sans_reponse: "bg-ink-100 text-ink-700",
-  transmise: "bg-accent-100 text-accent-700",
+  transmise: "bg-accent-100 text-primary-900",
   traitee: "bg-primary-50 text-primary-700",
 };
 

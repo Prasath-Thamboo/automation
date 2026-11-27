@@ -23,14 +23,14 @@ export default function TarifsPage() {
               key={offer.id}
               className={`flex flex-col rounded-xl p-7 sm:p-8 ${
                 offer.highlight
-                  ? "border-2 border-primary-600 bg-white shadow-lift ring-8 ring-primary-50"
+                  ? "border-2 border-primary-900 bg-white shadow-lift ring-8 ring-primary-50"
                   : "border border-ink-100 bg-white shadow-soft"
               }`}
             >
               <h2 className="text-2xl text-ink-900">{offer.name}</h2>
               <p className="mt-2 text-base text-ink-700">{offer.tagline}</p>
               <p className="mt-6 flex flex-wrap items-baseline gap-1">
-                <span className="font-heading text-4xl font-bold text-ink-950">
+                <span className="font-heading text-4xl font-semibold text-ink-950">
                   {offer.monthlyPrice}
                 </span>
                 <span className="text-base text-ink-500">{offer.monthlySuffix}</span>

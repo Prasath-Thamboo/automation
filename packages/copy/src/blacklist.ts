@@ -1,5 +1,5 @@
 /**
- * Liste noire de jargon (§2 du cahier des charges).
+ * Liste noire de jargon (§2 du cahier des charges, charte graphique v2.0 §6).
  * Aucun de ces termes ne doit apparaître dans une interface vue par le client :
  * textes de `@velekya/copy` et JSX de `apps/web`.
  *
@@ -9,6 +9,8 @@
 /** Termes interdits. Comparaison sur mots entiers, insensible à la casse. */
 export const JARGON_BLACKLIST = [
   "agent IA",
+  "IA",
+  "intelligence artificielle",
   "agent",
   "LLM",
   "prompt",

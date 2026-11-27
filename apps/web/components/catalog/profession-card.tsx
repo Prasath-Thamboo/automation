@@ -8,7 +8,7 @@ export function ProfessionCard({ profession }: { profession: Card }) {
       href={`/employes-virtuels/${profession.slug}`}
       className="card-link group flex h-full flex-col"
     >
-      <span className="self-start rounded-full bg-accent-50 px-3 py-0.5 text-sm font-bold text-accent-700">
+      <span className="self-start rounded-full bg-accent-50 px-3 py-0.5 text-sm font-bold text-primary-900">
         {profession.sector}
       </span>
       <h2 className="mt-4 text-2xl text-ink-900">{profession.name}</h2>
@@ -20,14 +20,14 @@ export function ProfessionCard({ profession }: { profession: Card }) {
         <p className="text-base text-ink-700">
           À partir de
           <br />
-          <span className="font-heading text-2xl font-bold text-ink-950">
+          <span className="font-heading text-2xl font-semibold text-ink-950">
             {profession.monthlyPriceEur} €
           </span>
           <span className="text-ink-500">/mois</span>
         </p>
         <span
           aria-hidden
-          className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary-600 text-white transition-transform duration-200 group-hover:translate-x-1"
+          className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary-900 text-white transition-transform duration-200 group-hover:translate-x-1"
         >
           <ArrowRight className="h-5 w-5" />
         </span>

@@ -40,7 +40,7 @@ export function Hero() {
           />
           <div className="relative rounded-xl border border-ink-100 bg-white p-6 shadow-lift sm:p-7">
             <div className="flex items-center justify-between gap-3">
-              <p className="font-heading text-xl font-bold text-ink-900">{heroVisual.title}</p>
+              <p className="font-heading text-xl font-semibold text-ink-900">{heroVisual.title}</p>
               <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700">
                 <span aria-hidden className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-500 opacity-60" />

@@ -27,8 +27,17 @@ pipeline, IA générative, chatbot.
 
 **Velekya** — toujours avec une majuscule initiale, jamais en capitales, jamais suivi d'un
 suffixe (pas de « Velekya AI », « Velekya App »…). Baseline officielle :
-**« Velekya — votre employé virtuel, 24h/24, 7j/7. »**
+**« Velekya, votre employé virtuel, 24h/24, 7j/7. »**
 On ne décline pas la marque (pas de « l'IA de Velekya », pas de mascotte, pas de logo robot).
+
+**Charte graphique v2.0** : `brand/Charte graphique Velekya, version 2.0.pdf` + SVG du logo
+dans `brand/` (ils font référence). Bleu nuit `#0F1F2E` (principale : titres, navigation,
+fonds sombres), bordeaux `#9E1F3F` (accent : boutons d'action et éléments graphiques —
+**jamais comme couleur de texte**), blanc glacé `#F4F8F8` (fond), ardoise `#1B2A38`
+(texte), vert `#16A34A` / rouge `#E5484D` (états — en pastille ; le texte d'état utilise
+`success` / `danger`, plus soutenus, pour tenir 4,5:1). Titres Poppins SemiBold, corps
+Inter. Coins 12px, ombres très légères. Tout changement de couleur / logo / police est à
+valider par le fondateur.
 Identifiants techniques : préfixe `@velekya/` (paquets), `velekya` (DB), `VELEKYA_` (env non
 préfixées `NEXT_PUBLIC_`/`EXPO_PUBLIC_`).
 
@@ -686,6 +695,25 @@ pnpm dev                        # api (:3333) + web (:3000)
     l'heure, « j'accepte votre devis ». 206 tests `n8n-flows`, 157 API.
   - Flux réimportés dans le n8n local. e2e web non relancés (moteur `rules` en e2e,
     non concerné).
+
+- **Charte graphique v2.0 : faite (2026-11-27).**
+  - Tokens : `packages/config/src/tokens.ts` (mobile) et `apps/web/tailwind.config.ts`
+    (web) — mêmes noms de classes, valeurs de la charte : `primary-*` = bleu nuit,
+    `accent-*` = bordeaux, `ink-*` = ardoise, `paper` = blanc glacé. Boutons d'action
+    `bg-accent-600 hover:bg-accent-700`, coins `rounded-lg` (12px). Variables `--tnd-*`
+    (`globals.css`) et `packages/ui/src/styles.css` alignées.
+  - Polices : `@fontsource/poppins` (600, latin) + `@fontsource-variable/inter` ;
+    `font-synthesis-weight: none` sur les titres (pas de faux gras).
+  - Logo : `components/logo.tsx` (`Logo`, `LogoMark`, SVG inline, `invert` = fond
+    sombre). En-tête et pied de page bleu nuit. `app/icon.svg` = symbole petit format ;
+    `opengraph-image.tsx` refait. Ajoutés dans `brand/` : `velekya-symbole-bordeaux.svg`
+    (symbole avec arc, dérivé du logo complet) et `velekya-logotype.svg`.
+  - Mobile : `@velekya/ui-native` gagne `action` (bordeaux, boutons), `border`,
+    `darkBackground`… ; icônes régénérées par `node brand/generate-app-icons.mjs`
+    (Chromium de Playwright) — `generate-placeholders.mjs` supprimé. Splash et icône
+    adaptative sur fond bleu nuit.
+  - Emails, devis, factures : couleurs de la charte (logo pas encore intégré).
+  - Anti-jargon : « IA » et « intelligence artificielle » ajoutés (charte §6).
 
 ### Notes Lot 18
 

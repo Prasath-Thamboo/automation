@@ -117,7 +117,7 @@ export function QuotePublicView({
           Ce devis a expiré. Écrivez-nous à bonjour@velekya.fr pour en obtenir un nouveau.
         </p>
       ) : (
-        <div className="mt-10 rounded-lg border border-primary-600 p-6">
+        <div className="mt-10 rounded-lg border border-primary-900 p-6">
           <h2 className="text-xl font-bold text-ink-900">Accepter ce devis</h2>
           <p className="mt-2 text-sm text-ink-500">
             En acceptant, vous validez ce périmètre et les conditions générales. La date, votre nom
@@ -128,11 +128,11 @@ export function QuotePublicView({
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base font-normal bg-white focus:border-primary-600 focus:outline-none focus:ring-4 focus:ring-primary-100"
+              className="mt-1 min-h-touch w-full rounded-md border-2 border-ink-400 px-4 py-3 text-base font-normal bg-white focus:border-primary-900 focus:outline-none focus:ring-4 focus:ring-primary-100"
             />
           </label>
           <label className="mt-3 flex items-start gap-2 text-base text-ink-700">
-            <input type="checkbox" checked={cgv} onChange={(e) => setCgv(e.target.checked)} className="mt-1 accent-primary-600" />
+            <input type="checkbox" checked={cgv} onChange={(e) => setCgv(e.target.checked)} className="mt-1 accent-primary-900" />
             <span>
               J&apos;accepte les{" "}
               <Link href="/cgv" className="font-semibold text-primary-700">
@@ -147,7 +147,7 @@ export function QuotePublicView({
               type="button"
               disabled={busy || decided || name.trim().length < 2}
               onClick={() => void accept()}
-              className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-primary-700"
+              className="min-h-touch rounded-lg bg-accent-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-accent-700"
             >
               {busy ? "…" : "J'accepte"}
             </button>

@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="mx-auto max-w-content px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-ink-100 pb-4">
-        <Link href="/admin" className="font-heading text-lg font-bold text-ink-900 no-underline">
+        <Link href="/admin" className="font-heading text-lg font-semibold text-ink-900 no-underline">
           Velekya · back-office
         </Link>
         {(

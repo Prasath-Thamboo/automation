@@ -26,14 +26,14 @@ export function renderQuoteDocument(q: PublicQuote): string {
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${escape(q.number)}</title>
 <style>
   :root{color-scheme:light}
-  body{font-family:"Inter","Segoe UI",system-ui,sans-serif;color:#1c1a17;line-height:1.5;max-width:760px;margin:40px auto;padding:0 24px}
+  body{font-family:"Inter","Segoe UI",system-ui,sans-serif;color:#1B2A38;line-height:1.5;max-width:760px;margin:40px auto;padding:0 24px}
   h1{font-size:24px;margin:0}
-  h2{font-size:16px;margin:28px 0 8px;border-bottom:1px solid #e7e3da;padding-bottom:4px}
+  h2{font-size:16px;margin:28px 0 8px;border-bottom:1px solid #E4EAEF;padding-bottom:4px}
   .head{display:flex;justify-content:space-between;align-items:baseline}
-  .muted{color:#6b665c;font-size:14px}
+  .muted{color:#56677A;font-size:14px}
   ul{margin:6px 0;padding-left:20px}
   table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
-  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #e7e3da}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #E4EAEF}
   td.num,th.num{text-align:right;white-space:nowrap}
   .totals{margin-top:16px;font-size:15px}
   .totals strong{font-size:20px}

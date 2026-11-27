@@ -33,7 +33,7 @@ export default async function AdminMissionsPage({
         <Link
           href="/admin/missions"
           className={`rounded-md border px-2.5 py-1 no-underline ${
-            filter ? "border-ink-100 text-ink-600" : "border-primary-600 font-semibold text-primary-700"
+            filter ? "border-ink-100 text-ink-600" : "border-primary-900 font-semibold text-primary-700"
           }`}
         >
           Toutes
@@ -44,7 +44,7 @@ export default async function AdminMissionsPage({
             href={`/admin/missions?status=${s}`}
             className={`rounded-md border px-2.5 py-1 no-underline ${
               filter === s
-                ? "border-primary-600 font-semibold text-primary-700"
+                ? "border-primary-900 font-semibold text-primary-700"
                 : "border-ink-100 text-ink-600"
             }`}
           >

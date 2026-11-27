@@ -80,7 +80,7 @@ export function AssistantChat({ assistantId, name }: { assistantId: string; name
         <button
           type="submit"
           disabled={pending || !draft.trim()}
-          className="min-h-touch rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-primary-700"
+          className="min-h-touch rounded-lg bg-accent-600 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50 shadow-soft transition-colors hover:bg-accent-700"
         >
           Envoyer
         </button>

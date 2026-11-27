@@ -15,7 +15,7 @@ export function TwoPaths() {
           </span>
           <h2 className="mt-6 text-2xl text-white">{ready.title}</h2>
           <p className="mt-4 flex-1 text-lg text-primary-50">{ready.body}</p>
-          <Cta href="/employes-virtuels" variant="light" arrow className="mt-8 self-start">
+          <Cta href="/employes-virtuels" variant="primary" arrow className="mt-8 self-start">
             {ready.cta}
           </Cta>
         </article>

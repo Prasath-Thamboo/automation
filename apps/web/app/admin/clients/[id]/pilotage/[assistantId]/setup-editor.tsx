@@ -12,7 +12,7 @@ import {
 
 const input = "rounded-md border border-ink-100 px-2 py-1 text-sm";
 const button =
-  "rounded-md border border-primary-600 px-3 py-1 text-sm font-semibold text-primary-700 disabled:opacity-60";
+  "rounded-md border border-primary-900 px-3 py-1 text-sm font-semibold text-primary-700 disabled:opacity-60";
 
 function Feedback({ state }: { state: SetupActionState }) {
   if (state.error) return <p className="text-sm text-red-700">{state.error}</p>;

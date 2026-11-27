@@ -80,7 +80,7 @@ export default async function ProfessionPage({ params }: { params: Promise<Param
                   aria-hidden
                   className="absolute -left-[33px] top-1.5 h-4 w-4 rounded-full border-4 border-white bg-primary-500 shadow-soft"
                 />
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-0.5 font-heading font-bold tabular-nums text-primary-700">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-0.5 font-heading font-semibold tabular-nums text-primary-700">
                   <Clock className="h-4 w-4" />
                   {m.time}
                 </span>
@@ -97,7 +97,7 @@ export default async function ProfessionPage({ params }: { params: Promise<Param
             <ul className="mt-5 space-y-3">
               {content.canDo.map((c, i) => (
                 <li key={i} className="flex gap-3 text-base text-ink-900">
-                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-600 text-white">
+                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary-900 text-white">
                     <Check className="h-4 w-4" />
                   </span>
                   {c}
@@ -142,10 +142,10 @@ export default async function ProfessionPage({ params }: { params: Promise<Param
         </section>
 
         {/* 7. Son contrat */}
-        <section id="contrat" className={`${block} scroll-mt-28 border-2 border-primary-600`}>
+        <section id="contrat" className={`${block} scroll-mt-28 border-2 border-primary-900`}>
           <h2 className={sectionTitle}>Son contrat</h2>
           <p className="mt-5 text-lg text-ink-900">
-            <span className="font-heading text-4xl font-bold text-ink-950">{p.monthlyPriceEur} €</span>
+            <span className="font-heading text-4xl font-semibold text-ink-950">{p.monthlyPriceEur} €</span>
             <span className="text-ink-500">/mois, TTC</span>
           </p>
           <p className="mt-1 text-base text-ink-700">

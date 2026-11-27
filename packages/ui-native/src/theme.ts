@@ -12,11 +12,22 @@ export const theme = {
     inkFaint: color.ink[500],
     paper: color.paper,
     white: color.white,
-    primary: color.primary[600],
+    /** Bleu nuit : navigation, contours, éléments actifs. */
+    primary: color.primary[900],
+    /** Texte d'accentuation (liens, libellés de boutons secondaires). */
     primaryStrong: color.primary[700],
-    accent: color.accent[500],
+    /** Bordeaux : boutons d'action et éléments graphiques, jamais du texte. */
+    accent: color.accent[600],
+    action: color.accent[600],
+    actionPressed: color.accent[700],
+    border: color.ink[100],
+    borderStrong: color.ink[300],
+    success: color.success,
     danger: color.danger,
     warning: color.warning,
+    /** Mode sombre (charte §2). */
+    darkBackground: color.dark.background,
+    darkText: color.dark.text,
   },
   space,
   radius,

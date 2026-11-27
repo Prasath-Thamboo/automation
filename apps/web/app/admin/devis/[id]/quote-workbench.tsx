@@ -75,7 +75,7 @@ export function QuoteWorkbench({ quote }: { quote: AdminQuote }) {
       </details>
 
       {editable ? (
-        <form action={save} className="space-y-4 rounded-lg border border-primary-600 p-5">
+        <form action={save} className="space-y-4 rounded-lg border border-primary-900 p-5">
           <h2 className="text-lg font-bold text-ink-900">Ajuster</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-semibold text-ink-700">
@@ -112,7 +112,7 @@ export function QuoteWorkbench({ quote }: { quote: AdminQuote }) {
           </label>
           {state.error ? <p className="text-sm text-danger">{state.error}</p> : null}
           {state.ok ? <p className="inline-flex min-h-touch items-center text-base font-semibold text-primary-700">Recalculé.</p> : null}
-          <button type="submit" disabled={saving} className="min-h-touch rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60">
+          <button type="submit" disabled={saving} className="min-h-touch rounded-md bg-primary-900 px-5 py-2 text-base font-semibold text-white disabled:opacity-60">
             {saving ? "…" : "Recalculer le devis"}
           </button>
         </form>
@@ -135,7 +135,7 @@ export function QuoteWorkbench({ quote }: { quote: AdminQuote }) {
                   setNotice(r.error ?? "Devis envoyé au client.");
                 })
               }
-              className="mt-3 min-h-touch rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60"
+              className="mt-3 min-h-touch rounded-md bg-primary-900 px-5 py-2 text-base font-semibold text-white disabled:opacity-60"
             >
               Envoyer au client
             </button>

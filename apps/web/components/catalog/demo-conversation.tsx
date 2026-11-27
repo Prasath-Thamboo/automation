@@ -45,7 +45,7 @@ export function DemoConversation({ demo, assistantName }: { demo: Demo; assistan
         <button
           type="button"
           onClick={play}
-          className="mt-4 inline-flex min-h-touch items-center rounded-full bg-primary-600 px-5 py-2 text-base font-bold text-white hover:bg-primary-700 shadow-soft transition-colors"
+          className="mt-4 inline-flex min-h-touch items-center rounded-lg bg-accent-600 px-5 py-2 text-base font-semibold text-white hover:bg-accent-700 shadow-soft transition-colors"
         >
           Voir la conversation
         </button>
@@ -73,7 +73,7 @@ export function DemoConversation({ demo, assistantName }: { demo: Demo; assistan
         <button
           type="button"
           onClick={play}
-          className="mt-4 inline-flex min-h-touch items-center rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 hover:bg-primary-50 bg-white transition-colors"
+          className="mt-4 inline-flex min-h-touch items-center rounded-lg border-2 border-primary-900 px-5 py-2 text-base font-semibold text-primary-900 hover:bg-primary-50 bg-white transition-colors"
         >
           Rejouer
         </button>

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 /**
  * Liens de navigation principale. La page courante est marquée visuellement
- * (fond vert) ET pour les lecteurs d'écran (`aria-current`) : on sait toujours
+ * (fond éclairci + trait bordeaux) ET pour les lecteurs d'écran (`aria-current`) : on sait toujours
  * où l'on est.
  */
 export function NavLinks({ links }: { links: readonly { href: string; label: string }[] }) {
@@ -21,8 +21,8 @@ export function NavLinks({ links }: { links: readonly { href: string; label: str
               aria-current={active ? "page" : undefined}
               className={`inline-flex min-h-touch items-center whitespace-nowrap rounded-full px-2.5 text-sm font-semibold no-underline transition-colors sm:px-4 sm:text-base ${
                 active
-                  ? "bg-primary-100 text-primary-800"
-                  : "text-ink-700 hover:bg-ink-50 hover:text-ink-900"
+                  ? "bg-white/15 text-white underline decoration-accent-500 decoration-2 underline-offset-8"
+                  : "text-primary-100 hover:bg-white/10 hover:text-white"
               }`}
             >
               {l.label}

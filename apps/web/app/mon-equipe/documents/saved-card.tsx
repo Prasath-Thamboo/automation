@@ -62,7 +62,7 @@ export function SavedCardSection({
             type="button"
             disabled={pending}
             onClick={() => run("save")}
-            className={`${button} bg-primary-600 text-white shadow-soft hover:bg-primary-700`}
+            className={`${button} bg-accent-600 text-white shadow-soft hover:bg-accent-700`}
           >
             {pending && action === "save" ? c.adding : card ? c.replace : c.add}
           </button>

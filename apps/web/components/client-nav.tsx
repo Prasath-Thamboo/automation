@@ -42,7 +42,7 @@ export function ClientNav() {
                 aria-current={active ? "page" : undefined}
                 className={`inline-flex min-h-[56px] items-center border-b-4 px-3 text-base font-bold no-underline transition-colors sm:px-4 ${
                   active
-                    ? "border-primary-600 text-primary-800"
+                    ? "border-primary-900 text-primary-800"
                     : "border-transparent text-ink-700 hover:border-ink-200 hover:text-ink-900"
                 }`}
               >

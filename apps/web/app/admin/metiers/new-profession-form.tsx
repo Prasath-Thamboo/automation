@@ -44,7 +44,7 @@ export function NewProfessionForm() {
       <button
         type="submit"
         disabled={pending}
-        className="min-h-touch rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60 sm:col-span-2 sm:justify-self-start"
+        className="min-h-touch rounded-md bg-primary-900 px-5 py-2 text-base font-semibold text-white disabled:opacity-60 sm:col-span-2 sm:justify-self-start"
       >
         {pending ? "Création…" : "Créer le métier"}
       </button>

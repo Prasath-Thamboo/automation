@@ -5,8 +5,8 @@
  */
 export const site = {
   name: "Velekya",
-  /** Baseline officielle, à utiliser telle quelle (§1). */
-  baseline: "Velekya — votre employé virtuel, 24h/24, 7j/7.",
+  /** Baseline officielle, à utiliser telle quelle (charte v2.0 §1). */
+  baseline: "Velekya, votre employé virtuel, 24h/24, 7j/7.",
   description:
     "Velekya vous prépare un employé virtuel qui répond à vos clients, prend vos rendez-vous et gère vos demandes courantes. 24h/24, 7j/7, sans engagement.",
   url: "https://velekya.fr",

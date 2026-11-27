@@ -19,9 +19,9 @@ export function Solution() {
           const Icon = icons[i % icons.length] ?? Check;
           return (
             <li key={step.title} className="relative flex flex-col items-start md:items-center md:text-center">
-              <span className="relative grid h-16 w-16 place-items-center rounded-full bg-primary-600 text-white shadow-glow ring-8 ring-paper">
+              <span className="relative grid h-16 w-16 place-items-center rounded-full bg-primary-900 text-white shadow-glow ring-8 ring-paper">
                 <Icon className="h-7 w-7" />
-                <span className="absolute -right-1 -top-1 grid h-7 w-7 place-items-center rounded-full bg-white font-heading text-base font-bold text-primary-700 shadow-soft">
+                <span className="absolute -right-1 -top-1 grid h-7 w-7 place-items-center rounded-full bg-white font-heading text-base font-semibold text-primary-700 shadow-soft">
                   {i + 1}
                 </span>
               </span>

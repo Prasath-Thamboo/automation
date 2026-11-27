@@ -6,10 +6,11 @@ type Variant = "primary" | "secondary" | "light";
 type Size = "md" | "lg";
 
 const styles: Record<Variant, string> = {
-  primary: "bg-primary-600 text-white shadow-glow hover:bg-primary-700",
+  // Charte §7 : boutons bordeaux sur fond clair ou sombre.
+  primary: "bg-accent-600 text-white hover:bg-accent-700",
   secondary:
-    "border-2 border-primary-600 bg-white text-primary-700 hover:bg-primary-50",
-  light: "bg-white text-primary-800 shadow-lift hover:bg-primary-50",
+    "border-2 border-primary-900 bg-white text-primary-900 hover:bg-primary-50",
+  light: "bg-white text-primary-900 hover:bg-primary-50",
 };
 
 const sizes: Record<Size, string> = {
@@ -18,7 +19,7 @@ const sizes: Record<Size, string> = {
 };
 
 /**
- * Lien d'appel à l'action. Bouton « pilule », texte 18px minimum, cible 52px
+ * Lien d'appel à l'action. Bouton à coins de 12px (charte §5), texte 18px minimum, cible 52px
  * minimum (§9.5). `arrow` ajoute une flèche décorative pour guider l'œil.
  */
 export function Cta({
@@ -41,7 +42,7 @@ export function Cta({
     <Link
       href={href}
       {...rest}
-      className={`group inline-flex items-center justify-center gap-2 rounded-full text-center font-bold no-underline transition duration-200 hover:-translate-y-0.5 ${sizes[size]} ${styles[variant]} ${className}`}
+      className={`group inline-flex items-center justify-center gap-2 rounded-lg text-center font-semibold no-underline transition duration-200 hover:-translate-y-0.5 ${sizes[size]} ${styles[variant]} ${className}`}
     >
       {children}
       {arrow ? (

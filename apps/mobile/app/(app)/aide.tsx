@@ -37,7 +37,7 @@ const chip = {
   justifyContent: "center",
   borderRadius: 999,
   borderWidth: 1,
-  borderColor: "#d8d3c8",
+  borderColor: "#d2dae2",
   backgroundColor: t.color.white,
   paddingHorizontal: t.space[4],
   paddingVertical: t.space[2],
@@ -117,7 +117,7 @@ export default function AideScreen() {
               style={{
                 alignSelf: "flex-end",
                 maxWidth: "85%",
-                backgroundColor: "#ece8df",
+                backgroundColor: "#e4eaef",
                 borderRadius: t.radius.md,
                 padding: t.space[3],
               }}

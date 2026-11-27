@@ -54,7 +54,7 @@ export function WorkflowEditor({ workflow }: { workflow: AdminProfessionWorkflow
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
+            className="rounded-md bg-primary-900 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50"
           >
             Enregistrer
           </button>

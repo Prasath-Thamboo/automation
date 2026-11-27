@@ -68,7 +68,7 @@ export function ProfessionEditor({ profession }: { profession: AdminProfession }
           type="button"
           disabled={pending || !profession.hasDraft}
           onClick={() => run(() => publishProfession(id), "Brouillon publié.")}
-          className="min-h-touch rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="min-h-touch rounded-md bg-primary-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
         >
           Publier le brouillon
         </button>
@@ -78,7 +78,7 @@ export function ProfessionEditor({ profession }: { profession: AdminProfession }
           onClick={() =>
             run(() => setVisibility(id, !profession.published), "Visibilité mise à jour.")
           }
-          className="min-h-touch rounded-md border border-primary-600 px-4 py-2 text-sm font-semibold text-primary-700 disabled:opacity-50"
+          className="min-h-touch rounded-md border border-primary-900 px-4 py-2 text-sm font-semibold text-primary-700 disabled:opacity-50"
         >
           {profession.published ? "Masquer du catalogue" : "Rendre visible"}
         </button>
@@ -210,7 +210,7 @@ function SubmitBtn({ pending, label }: { pending: boolean; label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="min-h-touch justify-self-start rounded-md bg-primary-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60"
+      className="min-h-touch justify-self-start rounded-md bg-primary-900 px-5 py-2 text-base font-semibold text-white disabled:opacity-60"
     >
       {pending ? "Enregistrement…" : label}
     </button>

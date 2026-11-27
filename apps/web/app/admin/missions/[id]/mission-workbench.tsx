@@ -31,8 +31,8 @@ export function StatusControls({ mission }: { mission: AdminMissionDetail }) {
             }
             className={`min-h-touch rounded-md border px-3 py-1.5 text-sm font-semibold disabled:opacity-50 ${
               s === mission.status
-                ? "border-primary-600 bg-primary-50 text-primary-700"
-                : "border-ink-100 text-ink-700 hover:border-primary-600"
+                ? "border-primary-900 bg-primary-50 text-primary-700"
+                : "border-ink-100 text-ink-700 hover:border-primary-900"
             }`}
           >
             {STATUS[s]}
@@ -91,7 +91,7 @@ export function ChecklistEditor({
         <button
           type="submit"
           disabled={pending}
-          className="min-h-touch rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-60"
+          className="min-h-touch rounded-md bg-primary-900 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-60"
         >
           {pending ? "…" : "Enregistrer la check-list"}
         </button>

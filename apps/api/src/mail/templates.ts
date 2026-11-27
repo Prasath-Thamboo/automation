@@ -19,11 +19,11 @@ export function magicLinkEmail(to: string, link: string, ttlMinutes: number): Ou
   ].join("\n");
 
   const html = `<!doctype html>
-<html lang="fr"><body style="font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #1c1a17; line-height: 1.5;">
+<html lang="fr"><body style="font-family: system-ui, -apple-system, Segoe UI, sans-serif; color: #1B2A38; line-height: 1.5;">
   <p>Bonjour,</p>
   <p>Voici votre lien pour vous connecter à votre espace Velekya :</p>
-  <p><a href="${link}" style="display:inline-block; background:#26714b; color:#fff; padding:12px 20px; border-radius:10px; text-decoration:none; font-weight:600;">Ouvrir mon espace</a></p>
-  <p style="color:#6b665c; font-size:14px;">Ce lien est valable ${ttlMinutes} minutes et ne fonctionne qu'une fois. Si vous n'avez rien demandé, ignorez cet email.</p>
+  <p><a href="${link}" style="display:inline-block; background:#9E1F3F; color:#fff; padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:600;">Ouvrir mon espace</a></p>
+  <p style="color:#56677A; font-size:14px;">Ce lien est valable ${ttlMinutes} minutes et ne fonctionne qu'une fois. Si vous n'avez rien demandé, ignorez cet email.</p>
   <p>— Velekya</p>
 </body></html>`;
 

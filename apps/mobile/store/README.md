@@ -25,8 +25,9 @@ iOS. Seuil de repli : une abstraction `BillingProvider`
   écran (`GET /me/account/export`, partagé via la feuille de partage système).
 - **État du contrat dans l'app** : `GET /me/billing` → `app/(app)/compte.tsx`.
   Texte de renvoi vers le web, sans lien sur iOS.
-- **Icône + écran de lancement** : visuels *provisoires* générés par
-  `assets/generate-placeholders.mjs` (aplat marque, sans texte). Déclarés dans
+- **Icône + écran de lancement** : visuels définitifs (charte v2.0, symbole sur
+  fond bleu nuit) générés depuis les SVG de `brand/` par
+  `node brand/generate-app-icons.mjs`. Déclarés dans
   `app.json` (`icon`, `splash`, `android.adaptiveIcon`, icône de notification).
 - **`app.json`** : `version` 1.0.0, `buildNumber` / `versionCode` 1,
   `usesNonExemptEncryption: false`, App Group `group.fr.velekya.app`
@@ -43,10 +44,10 @@ iOS. Seuil de repli : une abstraction `BillingProvider`
       `submit.*.ios.appleId` / `ascAppId` / `appleTeamId` et
       `submit.*.android.serviceAccountKeyPath` (`eas.json`).
 - [ ] **`extra.eas.projectId`** (`app.json`) : ID du projet EAS réel.
-- [ ] **Visuels définitifs** : remplacer `assets/icon.png`,
-      `assets/adaptive-icon.png`, `assets/splash-icon.png`,
-      `assets/notification-icon.png` par l'identité de marque (pas de robot,
-      pas de déclinaison du logo — §Marque).
+- [x] **Visuels définitifs** : `assets/icon.png`, `assets/adaptive-icon.png`,
+      `assets/splash-icon.png`, `assets/notification-icon.png` générés depuis
+      la charte v2.0 (`node brand/generate-app-icons.mjs`). Vérifier le rendu
+      sur appareil au 1er build EAS.
 - [ ] **Captures d'écran** FR sur build `preview` (voir `listing-fr.md`).
 - [ ] **Cible native du widget** : ajouter `@bacons/apple-targets` (iOS) + le
       module Android, exposer le module natif `VelekyaWidgetBridge`

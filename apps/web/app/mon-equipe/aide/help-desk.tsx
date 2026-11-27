@@ -149,7 +149,7 @@ export function HelpDesk({ topics }: { topics: HelpTopic[] }) {
                     type="button"
                     onClick={() => transmit(r.id)}
                     disabled={pending}
-                    className="min-h-touch rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white shadow-soft hover:bg-primary-700 disabled:opacity-50"
+                    className="min-h-touch rounded-lg bg-accent-600 px-5 py-2 text-sm font-semibold text-white shadow-soft hover:bg-accent-700 disabled:opacity-50"
                   >
                     {helpCopy.transmit}
                   </button>
@@ -186,7 +186,7 @@ export function HelpDesk({ topics }: { topics: HelpTopic[] }) {
         <button
           type="submit"
           disabled={pending || draft.trim().length < 3}
-          className="min-h-[52px] rounded-full bg-primary-600 px-6 py-3 text-base font-bold text-white shadow-soft transition-colors hover:bg-primary-700 disabled:opacity-50"
+          className="min-h-[52px] rounded-lg bg-accent-600 px-6 py-3 text-base font-semibold text-white shadow-soft transition-colors hover:bg-accent-700 disabled:opacity-50"
         >
           {pending ? helpCopy.asking : helpCopy.ask}
         </button>

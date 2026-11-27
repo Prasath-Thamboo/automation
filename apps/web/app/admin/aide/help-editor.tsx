@@ -12,7 +12,7 @@ import {
 
 const input = "w-full rounded-md border border-ink-100 px-2 py-1 text-sm";
 const button =
-  "rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50";
+  "rounded-md bg-primary-900 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-50";
 
 // Liste locale : `@velekya/types` (CommonJS) ne se charge pas dans un composant
 // client sous `next dev` (voir notes du Lot 12).

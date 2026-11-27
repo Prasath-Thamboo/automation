@@ -40,7 +40,7 @@ export default async function SouscrirePage({ params }: { params: Promise<{ slug
 
       <div className="card mt-8">
         <p className="text-lg text-ink-900">
-          <span className="font-heading text-3xl font-bold">{euro(profession.monthlyPriceEur)}</span>
+          <span className="font-heading text-3xl font-semibold">{euro(profession.monthlyPriceEur)}</span>
           <span className="text-ink-600"> {subscribeCopy.perMonth}</span>
         </p>
         <p className="mt-3 rounded-md bg-primary-50 p-4 text-base text-primary-800">

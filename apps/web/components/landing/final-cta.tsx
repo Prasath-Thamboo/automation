@@ -20,7 +20,7 @@ export function FinalCta() {
           <h2 className="mx-auto max-w-3xl text-3xl text-white sm:text-4xl">{finalCta.title}</h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-primary-50 sm:text-xl">{finalCta.body}</p>
           <div className="mt-10 flex flex-col items-center gap-4">
-            <Cta href="/employes-virtuels" variant="light" size="lg" arrow>
+            <Cta href="/employes-virtuels" variant="primary" size="lg" arrow>
               {finalCta.cta}
             </Cta>
             <p className="flex items-center gap-2 text-base text-primary-100">

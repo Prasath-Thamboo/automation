@@ -8,42 +8,56 @@
  * - contrastes AA
  * - cibles tactiles 44px minimum
  * - métaphore de l'embauche : chaleureux, humain, jamais "tech"
+ * - charte graphique v2.0 : brand/Charte graphique Velekya, version 2.0.pdf
  */
 
 export const color = {
-  // Neutres chauds (papier, encre)
+  // Charte graphique v2.0 (brand/). Neutres froids autour de l'ardoise #1B2A38.
   ink: {
-    900: "#1c1a17",
-    700: "#3d3a34",
-    500: "#6b665c",
-    300: "#a8a296",
-    100: "#e7e3da",
-    50: "#f6f3ec",
+    900: "#1b2a38", // Ardoise — texte courant
+    700: "#364757",
+    500: "#56677a",
+    300: "#a8b5c2",
+    100: "#e4eaef",
+    50: "#eff3f6",
   },
-  paper: "#fbf9f4",
+  paper: "#f4f8f8", // Blanc glacé — fond des pages et des écrans
   white: "#ffffff",
 
-  // Primaire : vert "au travail" (calme, positif, non corporate)
+  // Principale : bleu nuit (titres, navigation, fonds sombres, liens).
   primary: {
-    700: "#1f5c3d",
-    600: "#26714b",
-    500: "#2f8a5b",
-    100: "#d8ece0",
-    50: "#eef6f1",
+    900: "#0f1f2e", // Bleu nuit
+    700: "#1f3a52",
+    600: "#2b4d6b",
+    500: "#4a6a88",
+    100: "#dfe8f0",
+    50: "#eef3f7",
   },
 
-  // Accent : terracotta (chaleur humaine, CTA secondaires)
+  // Accent : bordeaux. Boutons d'action et éléments graphiques uniquement —
+  // jamais comme couleur de texte (charte §2).
   accent: {
-    600: "#b4531f",
-    500: "#d06a30",
-    100: "#f6e2d5",
+    700: "#7e1832",
+    600: "#9e1f3f", // Bordeaux
+    500: "#b8345a",
+    100: "#f8e4e9",
   },
 
-  // États
-  success: "#26714b",
-  warning: "#a9781a",
-  danger: "#b23b3b",
-  info: "#2c5f8a",
+  // États. Les teintes de la charte (#16A34A, #E5484D) n'atteignent pas 4,5:1
+  // sur blanc glacé : elles servent aux pastilles / icônes (`*Solid`), le
+  // texte utilise une teinte plus soutenue.
+  success: "#15803d",
+  successSolid: "#16a34a", // Vert validation
+  warning: "#8a6212",
+  danger: "#c22f35",
+  dangerSolid: "#e5484d", // Rouge signal
+  info: "#1f3a52",
+
+  // Mode sombre de l'application (charte §2).
+  dark: {
+    background: "#08131f",
+    text: "#f4f8f8",
+  },
 } as const;
 
 /** Espacement en points (px web / dp mobile). Échelle de 4. */
@@ -61,9 +75,10 @@ export const space = {
   16: 64,
 } as const;
 
+/** Coins : boutons et cartes à 12 px (charte §5). */
 export const radius = {
   sm: 6,
-  md: 10,
+  md: 12,
   lg: 16,
   full: 9999,
 } as const;
@@ -93,10 +108,10 @@ export const lineHeight = {
 } as const;
 
 export const fontFamily = {
-  /** Titres : humaniste, chaleureux. */
-  heading: '"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif',
-  /** Corps : lisible, neutre. */
-  body: '"Inter", "Segoe UI", system-ui, sans-serif',
+  /** Titres et logotype : Poppins SemiBold (charte §4). */
+  heading: '"Poppins", Arial, system-ui, sans-serif',
+  /** Corps : Inter 400 / 500 (charte §4). */
+  body: '"Inter", Arial, system-ui, sans-serif',
 } as const;
 
 /** Cible tactile minimale (px / dp). */

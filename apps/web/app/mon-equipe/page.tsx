@@ -18,7 +18,7 @@ const STATE_LABEL: Record<AssistantCard["state"], string> = {
   en_pause: glossary.states.paused,
 };
 const STATE_STYLE: Record<AssistantCard["state"], string> = {
-  en_formation: "bg-accent-100 text-accent-700",
+  en_formation: "bg-accent-100 text-primary-900",
   au_travail: "bg-primary-50 text-primary-700",
   en_pause: "bg-ink-100 text-ink-700",
 };
@@ -48,7 +48,7 @@ export default async function MonEquipePage() {
 
       {assistants.length === 0 ? (
         <div className="card sm:p-10">
-          <p className="font-heading text-2xl font-bold text-ink-900">Votre équipe est encore vide.</p>
+          <p className="font-heading text-2xl font-semibold text-ink-900">Votre équipe est encore vide.</p>
           <p className="mt-3 max-w-2xl text-base text-ink-700">
             Choisissez un employé déjà formé à votre métier, ou décrivez votre besoin sur mesure.
           </p>
@@ -76,7 +76,7 @@ export default async function MonEquipePage() {
                 <div className="flex items-start justify-between gap-3">
                   <span
                     aria-hidden
-                    className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 font-heading text-2xl font-bold text-white shadow-glow"
+                    className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 font-heading text-2xl font-semibold text-white shadow-glow"
                   >
                     {a.name.slice(0, 1).toUpperCase()}
                   </span>
@@ -87,10 +87,10 @@ export default async function MonEquipePage() {
                     {STATE_LABEL[a.state]}
                   </span>
                 </div>
-                <span className="mt-5 font-heading text-2xl font-bold text-ink-900">{a.name}</span>
+                <span className="mt-5 font-heading text-2xl font-semibold text-ink-900">{a.name}</span>
                 <span className="mt-1 flex-1 text-base text-ink-700">{a.role}</span>
                 {a.onboarding !== "termine" ? (
-                  <span className="mt-5 inline-flex items-center gap-2 rounded-md bg-accent-50 px-4 py-3 text-base font-bold text-accent-700">
+                  <span className="mt-5 inline-flex items-center gap-2 rounded-md bg-accent-50 px-4 py-3 text-base font-bold text-primary-900">
                     Terminer sa mise en service
                     <ArrowRight className="h-5 w-5" />
                   </span>

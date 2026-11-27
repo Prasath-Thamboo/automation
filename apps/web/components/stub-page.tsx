@@ -10,7 +10,7 @@ export function StubPage({ title, body }: { title: string; body: string }) {
         <Cta href="/">{stub.backHome}</Cta>
         <a
           href="mailto:bonjour@velekya.fr"
-          className="inline-flex min-h-[52px] items-center justify-center rounded-full border-2 border-primary-600 bg-white px-6 py-3 text-base font-bold text-primary-700 no-underline transition-colors hover:bg-primary-50"
+          className="inline-flex min-h-[52px] items-center justify-center rounded-lg border-2 border-primary-900 bg-white px-6 py-3 text-base font-semibold text-primary-900 no-underline transition-colors hover:bg-primary-50"
         >
           bonjour@velekya.fr
         </a>

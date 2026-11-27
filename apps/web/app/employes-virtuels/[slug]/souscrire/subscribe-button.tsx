@@ -19,7 +19,7 @@ export function SubscribeButton({ slug, name }: { slug: string; name: string }) 
             if (res?.error) setError(res.error);
           })
         }
-        className="min-h-[60px] rounded-full bg-primary-600 px-8 py-4 text-lg font-bold text-white shadow-glow transition-colors hover:bg-primary-700 disabled:opacity-60"
+        className="min-h-[60px] rounded-lg bg-accent-600 px-8 py-4 text-lg font-semibold text-white shadow-glow transition-colors hover:bg-accent-700 disabled:opacity-60"
       >
         {pending ? subscribeCopy.confirming : subscribeCopy.confirm(name)}
       </button>

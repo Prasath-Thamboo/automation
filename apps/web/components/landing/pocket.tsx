@@ -32,7 +32,7 @@ export function Pocket() {
               <div className="mx-auto mb-6 h-1.5 w-20 rounded-full bg-ink-900/15" />
               <div className="rounded-lg bg-white p-4 shadow-card">
                 <div className="flex items-center gap-3">
-                  <span className="grid h-9 w-9 place-items-center rounded-md bg-primary-600 text-white">
+                  <span className="grid h-9 w-9 place-items-center rounded-md bg-primary-900 text-white">
                     <Bell className="h-5 w-5" />
                   </span>
                   <p className="flex-1 text-base font-bold text-ink-900">{v.from}</p>
@@ -40,7 +40,7 @@ export function Pocket() {
                 </div>
                 <p className="mt-3 text-base text-ink-900">{v.question}</p>
               </div>
-              <div className="ml-auto mt-4 w-fit max-w-[80%] rounded-lg rounded-br-sm bg-primary-600 px-4 py-3 text-base font-semibold text-white shadow-soft">
+              <div className="ml-auto mt-4 w-fit max-w-[80%] rounded-lg rounded-br-sm bg-primary-900 px-4 py-3 text-base font-semibold text-white shadow-soft">
                 {v.reply}
               </div>
               <div className="mt-4 w-fit max-w-[85%] rounded-lg rounded-bl-sm bg-white px-4 py-3 text-base text-ink-900 shadow-soft">

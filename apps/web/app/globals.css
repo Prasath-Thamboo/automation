@@ -7,30 +7,36 @@
  * Valeurs alignées sur apps/web/tailwind.config.ts (surcharges web).
  */
 :root {
-  --tnd-ink-900: #171c22;
-  --tnd-ink-700: #363e48;
-  --tnd-ink-500: #56606d;
-  --tnd-ink-400: #7d8692;
-  --tnd-ink-300: #a5adb8;
-  --tnd-ink-100: #e6e9ee;
-  --tnd-paper: #f8f6f1;
-  --tnd-primary-800: #104a33;
-  --tnd-primary-700: #145c3f;
-  --tnd-primary-600: #18744f;
-  --tnd-primary-500: #1f9163;
-  --tnd-primary-100: #d8f2e4;
-  --tnd-primary-50: #edf9f2;
-  --tnd-accent-600: #b4461a;
-  --tnd-accent-500: #e36a2e;
-  --tnd-accent-50: #fff5ee;
-  --tnd-info: #1f5f99;
-  --tnd-danger: #b3261e;
-  --tnd-focus: #1f5f99;
+  /* Charte graphique v2.0 (brand/). */
+  --tnd-ink-900: #1b2a38; /* Ardoise */
+  --tnd-ink-700: #364757;
+  --tnd-ink-500: #56677a;
+  --tnd-ink-400: #7a8a9b;
+  --tnd-ink-300: #a8b5c2;
+  --tnd-ink-100: #e4eaef;
+  --tnd-paper: #f4f8f8; /* Blanc glacé */
+  --tnd-primary-900: #0f1f2e; /* Bleu nuit */
+  --tnd-primary-800: #172b3d;
+  --tnd-primary-700: #1f3a52;
+  --tnd-primary-600: #2b4d6b;
+  --tnd-primary-500: #4a6a88;
+  --tnd-primary-100: #dfe8f0;
+  --tnd-primary-50: #eef3f7;
+  --tnd-accent-700: #7e1832;
+  --tnd-accent-600: #9e1f3f; /* Bordeaux : boutons, jamais du texte */
+  --tnd-accent-500: #b8345a;
+  --tnd-accent-50: #fcf2f4;
+  --tnd-success: #15803d;
+  --tnd-success-solid: #16a34a;
+  --tnd-info: #1f3a52;
+  --tnd-danger: #c22f35;
+  --tnd-danger-solid: #e5484d;
+  --tnd-focus: #1f3a52;
 
-  --tnd-font: "Atkinson Hyperlegible Next Variable", "Segoe UI", system-ui, -apple-system,
-    "Helvetica Neue", Arial, sans-serif;
-  --tnd-font-heading: "Bricolage Grotesque Variable", "Segoe UI", system-ui, -apple-system,
-    "Helvetica Neue", Arial, sans-serif;
+  --tnd-font: "Inter Variable", Arial, "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", sans-serif;
+  --tnd-font-heading: "Poppins", Arial, "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", sans-serif;
 }
 
 html {
@@ -58,10 +64,19 @@ h2,
 h3,
 h4 {
   font-family: var(--tnd-font-heading);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.12;
   letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+/* Poppins n'est chargée qu'en SemiBold (charte §4) : jamais de gras simulé. */
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-synthesis-weight: none;
 }
 
 p,
@@ -94,7 +109,7 @@ a:hover {
 @layer components {
   /* Surtitre de section : petit, mais jamais sous 16px. */
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700;
+    @apply inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-semibold text-primary-800;
   }
 
   /* Carte standard de l'espace client et du site. */
@@ -108,8 +123,8 @@ a:hover {
   /* Fond décoratif doux (dégradés) pour les zones d'accroche. */
   .bg-glow {
     background:
-      radial-gradient(60rem 30rem at 85% -10%, rgba(31, 145, 99, 0.16), transparent 60%),
-      radial-gradient(40rem 24rem at -10% 20%, rgba(227, 106, 46, 0.12), transparent 60%),
+      radial-gradient(60rem 30rem at 85% -10%, rgba(15, 31, 46, 0.08), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 20%, rgba(158, 31, 63, 0.06), transparent 60%),
       var(--tnd-paper);
   }
 }

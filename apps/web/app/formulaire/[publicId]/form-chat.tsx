@@ -77,7 +77,7 @@ export function FormChat({ publicId, establishment }: { publicId: string; establ
               key={i}
               className={
                 line.from === "vous"
-                  ? "self-end rounded-lg bg-primary-600 px-3 py-2 text-base text-white"
+                  ? "self-end rounded-lg bg-primary-900 px-3 py-2 text-base text-white"
                   : line.from === "eux"
                     ? "self-start rounded-lg bg-ink-50 px-3 py-2 text-base text-ink-900"
                     : "self-center text-center text-sm text-ink-600"
@@ -144,7 +144,7 @@ export function FormChat({ publicId, establishment }: { publicId: string; establ
       <button
         type="submit"
         disabled={pending || !draft.trim()}
-        className="min-h-11 rounded-full bg-primary-600 px-5 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
+        className="min-h-11 rounded-lg bg-accent-600 px-5 py-2 text-base font-semibold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-accent-700"
       >
         {pending ? publicForm.sending : publicForm.send}
       </button>

@@ -35,8 +35,8 @@ function FilterChip({
       aria-current={selected ? "true" : undefined}
       className={`inline-flex min-h-touch items-center gap-1.5 rounded-full border-2 px-4 py-1.5 text-base font-semibold no-underline transition-colors ${
         selected
-          ? "border-primary-600 bg-primary-600 text-white shadow-soft"
-          : "border-ink-200 bg-white text-ink-700 hover:border-primary-600 hover:text-primary-700"
+          ? "border-primary-900 bg-primary-900 text-white shadow-soft"
+          : "border-ink-200 bg-white text-ink-700 hover:border-primary-900 hover:text-primary-700"
       }`}
     >
       {selected ? <Check className="h-4 w-4" /> : null}

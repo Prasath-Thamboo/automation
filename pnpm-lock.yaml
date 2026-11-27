@@ -79,9 +79,6 @@ importers:
       '@nestjs/cli':
         specifier: ^11.0.5
         version: 11.0.24(@types/node@22.20.1)(lightningcss@1.27.0)(prettier@3.9.6)
-      '@velekya/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@types/compression':
         specifier: ^1.7.5
         version: 1.8.1
@@ -97,6 +94,9 @@ importers:
       '@types/nodemailer':
         specifier: ^6.4.17
         version: 6.4.24
+      '@velekya/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       dotenv-cli:
         specifier: ^8.0.0
         version: 8.0.0
@@ -185,12 +185,12 @@ importers:
         specifier: ~4.4.0
         version: 4.4.0(react-native@0.76.6(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@19.0.12)(react@18.3.1))(react@18.3.1)
     devDependencies:
-      '@velekya/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@types/react':
         specifier: 19.0.12
         version: 19.0.12
+      '@velekya/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       eslint:
         specifier: ^9.17.0
         version: 9.39.5(jiti@2.7.0)
@@ -200,10 +200,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@fontsource-variable/atkinson-hyperlegible-next':
+      '@fontsource-variable/inter':
         specifier: 5.3.0
         version: 5.3.0
-      '@fontsource-variable/bricolage-grotesque':
+      '@fontsource/poppins':
         specifier: 5.3.0
         version: 5.3.0
       '@velekya/api-client':
@@ -228,9 +228,6 @@ importers:
         specifier: ^19.0.0
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@velekya/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@types/node':
         specifier: ^22.10.2
         version: 22.20.1
@@ -240,6 +237,9 @@ importers:
       '@types/react-dom':
         specifier: 19.0.4
         version: 19.0.4(@types/react@19.0.12)
+      '@velekya/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       autoprefixer:
         specifier: ^10.4.20
         version: 10.5.5(postcss@8.5.28)
@@ -316,12 +316,12 @@ importers:
 
   packages/copy:
     devDependencies:
-      '@velekya/config':
-        specifier: workspace:*
-        version: link:../config
       '@types/node':
         specifier: ^22.10.2
         version: 22.20.1
+      '@velekya/config':
+        specifier: workspace:*
+        version: link:../config
       eslint:
         specifier: ^9.17.0
         version: 9.39.5(jiti@2.7.0)
@@ -334,15 +334,15 @@ importers:
 
   packages/n8n-flows:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
       '@velekya/config':
         specifier: workspace:*
         version: link:../config
       '@velekya/copy':
         specifier: workspace:*
         version: link:../copy
-      '@types/node':
-        specifier: ^22.10.2
-        version: 22.20.1
       eslint:
         specifier: ^9.17.0
         version: 9.39.5(jiti@2.7.0)
@@ -378,15 +378,15 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
     devDependencies:
-      '@velekya/config':
-        specifier: workspace:*
-        version: link:../config
       '@types/react':
         specifier: 19.0.12
         version: 19.0.12
       '@types/react-dom':
         specifier: 19.0.4
         version: 19.0.4(@types/react@19.0.12)
+      '@velekya/config':
+        specifier: workspace:*
+        version: link:../config
       eslint:
         specifier: ^9.17.0
         version: 9.39.5(jiti@2.7.0)
@@ -1640,11 +1640,11 @@ packages:
     resolution: {integrity: sha512-4aQzz9vgxcNXFfo/iyNgDDYfsU5XGKKxWxZopw0cVotHiW+U8IJbIxMaxsINs6bHhtkG3StKNPcOrn3eBuxKPw==}
     hasBin: true
 
-  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0':
-    resolution: {integrity: sha512-UnLzNUy1RWoLDfydAatP4NaRm99X/WbQEph7q/PymJnCFIOOwKOx3pBmp5ys8trO0dM+CKGuJgeZP9fAR4mQpA==}
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
 
-  '@fontsource-variable/bricolage-grotesque@5.3.0':
-    resolution: {integrity: sha512-TLi9Q4hJjS2UvoTMRSS2nHu6c4R56lAw60NR9QYtVRCHn0XtsFpiEhNffZ8Glsoxu6wEEwLKBP8lb94J52PNBA==}
+  '@fontsource/poppins@5.3.0':
+    resolution: {integrity: sha512-cms1nM7U6SN8epIV1WMVOV8VsA645aSm3wHfzIQnkk188U341ThbJGSl2Sv54V29gnDbT2arMPfLzvVIIVCceQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -5523,6 +5523,7 @@ packages:
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
+    deprecated: This package is no longer needed on supported Node.js versions. Node.js 16+ includes AbortController and AbortSignal as built-in globals. All Node.js versions requiring this polyfill are end-of-life. Use the built-in globals instead.
 
   node-dir@0.1.17:
     resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
@@ -8731,9 +8732,9 @@ snapshots:
       chalk: 4.1.2
       js-yaml: 4.3.2
 
-  '@fontsource-variable/atkinson-hyperlegible-next@5.3.0': {}
+  '@fontsource-variable/inter@5.3.0': {}
 
-  '@fontsource-variable/bricolage-grotesque@5.3.0': {}
+  '@fontsource/poppins@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

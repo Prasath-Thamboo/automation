@@ -15,7 +15,7 @@ export function Reassurance() {
           const Icon = icons[i % icons.length] ?? Help;
           return (
             <div key={item.q} className="rounded-lg border border-ink-100 bg-paper p-6">
-              <dt className="flex items-start gap-3 font-heading text-xl font-bold text-ink-900">
+              <dt className="flex items-start gap-3 font-heading text-xl font-semibold text-ink-900">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-primary-100 text-primary-700">
                   <Icon className="h-5 w-5" />
                 </span>
@@ -29,7 +29,7 @@ export function Reassurance() {
       <p className="mt-10">
         <Link
           href="/faq"
-          className="group inline-flex min-h-[52px] items-center gap-2 rounded-full border-2 border-primary-600 bg-white px-6 text-base font-bold text-primary-700 no-underline transition-colors hover:bg-primary-50"
+          className="group inline-flex min-h-[52px] items-center gap-2 rounded-lg border-2 border-primary-900 bg-white px-6 text-base font-semibold text-primary-900 no-underline transition-colors hover:bg-primary-50"
         >
           {nav.faq}
           <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

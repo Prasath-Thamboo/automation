@@ -4,17 +4,18 @@ import preset from "@velekya/config/tailwind-preset";
 /**
  * Surcharges propres au web (le mobile garde les tokens de @velekya/config).
  *
- * Parti pris : moderne et chaleureux, mais lisible par tous — y compris les
- * patrons de plus de 60 ans.
+ * Charte graphique v2.0 (`brand/`) : bleu nuit (principale), bordeaux (accent,
+ * boutons et éléments graphiques — jamais du texte), blanc glacé (fond),
+ * ardoise (texte). Titres en Poppins SemiBold, corps en Inter.
+ *
+ * Lisible par tous, y compris les patrons de plus de 60 ans :
  * - corps de texte 18px, jamais rien sous 16px (même `text-xs` / `text-sm`) ;
- * - contrastes AA minimum (le gris le plus clair utilisé pour du texte, ink-500,
- *   fait 6:1 sur blanc) ;
+ * - contrastes AA minimum (ink-500 fait 5,4:1 sur blanc glacé) ;
  * - cibles tactiles 48px ;
- * - police de corps Atkinson Hyperlegible Next (dessinée pour les lecteurs
- *   malvoyants), titres en Bricolage Grotesque. Toutes deux auto-hébergées.
+ * - coins à 12px, ombres très légères (charte §5).
  */
 
-const sans = ["Segoe UI", "system-ui", "-apple-system", "Helvetica Neue", "Arial", "sans-serif"];
+const sans = ["Arial", "Segoe UI", "system-ui", "-apple-system", "Helvetica Neue", "sans-serif"];
 
 const config: Config = {
   presets: [preset as Config],
@@ -28,48 +29,49 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          950: "#101418",
-          900: "#171c22",
-          700: "#363e48",
-          500: "#56606d",
-          400: "#7d8692",
-          300: "#a5adb8",
-          200: "#d3d8df",
-          100: "#e6e9ee",
-          50: "#f3f5f7",
+          950: "#111c27",
+          900: "#1b2a38", // Ardoise
+          800: "#263646",
+          700: "#364757",
+          600: "#46576a",
+          500: "#56677a",
+          400: "#7a8a9b",
+          300: "#a8b5c2",
+          200: "#d2dae2",
+          100: "#e4eaef",
+          50: "#eff3f6",
         },
-        paper: "#f8f6f1",
+        paper: "#f4f8f8", // Blanc glacé
         primary: {
-          900: "#0d3a28",
-          800: "#104a33",
-          700: "#145c3f",
-          600: "#18744f",
-          500: "#1f9163",
-          300: "#7fd0a9",
-          200: "#b7e6cd",
-          100: "#d8f2e4",
-          50: "#edf9f2",
+          950: "#08131f",
+          900: "#0f1f2e", // Bleu nuit
+          800: "#172b3d",
+          700: "#1f3a52",
+          600: "#2b4d6b",
+          500: "#4a6a88",
+          300: "#9db3c7",
+          200: "#c6d4e1",
+          100: "#dfe8f0",
+          50: "#eef3f7",
         },
         accent: {
-          700: "#97391a",
-          600: "#b4461a",
-          500: "#e36a2e",
-          200: "#fbcdb1",
-          100: "#fde7d9",
-          50: "#fff5ee",
+          800: "#66132a",
+          700: "#7e1832",
+          600: "#9e1f3f", // Bordeaux
+          500: "#b8345a",
+          300: "#e3a3b4",
+          200: "#f0c9d3",
+          100: "#f8e4e9",
+          50: "#fcf2f4",
         },
-        sun: {
-          400: "#f6c445",
-          100: "#fdf1c9",
-        },
-        success: "#18744f",
+        success: { DEFAULT: "#15803d", solid: "#16a34a" }, // Vert validation
         warning: "#8a6212",
-        danger: "#b3261e",
-        info: "#1f5f99",
+        danger: { DEFAULT: "#c22f35", solid: "#e5484d" }, // Rouge signal
+        info: "#1f3a52",
       },
       fontFamily: {
-        heading: ["Bricolage Grotesque Variable", ...sans],
-        body: ["Atkinson Hyperlegible Next Variable", ...sans],
+        heading: ["Poppins", ...sans],
+        body: ["Inter Variable", ...sans],
       },
       fontSize: {
         xs: ["1rem", { lineHeight: "1.4" }],
@@ -85,15 +87,16 @@ const config: Config = {
       borderRadius: {
         sm: "8px",
         md: "12px",
-        lg: "20px",
-        xl: "28px",
-        "2xl": "36px",
+        lg: "12px",
+        xl: "16px",
+        "2xl": "24px",
       },
+      // Ombres à éviter (charte §5) : très légères, cartes uniquement.
       boxShadow: {
-        soft: "0 1px 2px rgba(16,20,24,0.04), 0 4px 16px -4px rgba(16,20,24,0.08)",
-        card: "0 1px 2px rgba(16,20,24,0.05), 0 12px 32px -12px rgba(16,20,24,0.16)",
-        lift: "0 2px 4px rgba(16,20,24,0.06), 0 24px 48px -16px rgba(16,20,24,0.22)",
-        glow: "0 12px 32px -8px rgba(24,116,79,0.45)",
+        soft: "0 1px 2px rgba(15,31,46,0.05)",
+        card: "0 2px 8px -2px rgba(15,31,46,0.10)",
+        lift: "0 4px 16px -6px rgba(15,31,46,0.14)",
+        glow: "none",
       },
       minHeight: { touch: "48px" },
       minWidth: { touch: "48px" },

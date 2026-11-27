@@ -53,7 +53,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
       </p>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
         <div
-          className="h-full bg-primary-600 transition-all"
+          className="h-full bg-accent-600 transition-all"
           style={{ width: `${((stepIndex + 1) / visibleSteps.length) * 100}%` }}
         />
       </div>
@@ -220,7 +220,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               type="button"
               onClick={() => setStep(2)}
               data-testid="pj-precedent"
-              className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
+              className="min-h-touch rounded-lg border-2 border-primary-900 px-5 py-2 text-base font-semibold text-primary-900 bg-white transition-colors hover:bg-primary-50"
             >
               Précédent
             </button>
@@ -229,7 +229,7 @@ export function PremierJour({ assistant }: { assistant: AssistantDetail }) {
               disabled={pending}
               onClick={finish}
               data-testid="pj-commencer"
-              className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
+              className="min-h-touch rounded-lg bg-accent-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-accent-700"
             >
               {pending ? "…" : "Il peut commencer"}
             </button>
@@ -262,7 +262,7 @@ function Nav({
           type="button"
           onClick={onBack}
           data-testid="pj-precedent"
-          className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-base font-bold text-primary-700 bg-white transition-colors hover:bg-primary-50"
+          className="min-h-touch rounded-lg border-2 border-primary-900 px-5 py-2 text-base font-semibold text-primary-900 bg-white transition-colors hover:bg-primary-50"
         >
           Précédent
         </button>
@@ -272,7 +272,7 @@ function Nav({
         disabled={pending}
         onClick={onNext}
         data-testid="pj-suivant"
-        className="min-h-touch rounded-full bg-primary-600 px-6 py-2 text-base font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
+        className="min-h-touch rounded-lg bg-accent-600 px-6 py-2 text-base font-semibold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-accent-700"
       >
         {pending ? "…" : "Suivant"}
       </button>

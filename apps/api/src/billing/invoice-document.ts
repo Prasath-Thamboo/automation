@@ -34,18 +34,18 @@ export function renderInvoiceDocument(inv: InvoiceDoc): string {
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(inv.number)}</title>
 <style>
   :root{color-scheme:light}
-  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:#1c1a17;line-height:1.5;max-width:760px;margin:40px auto;padding:0 24px}
+  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:#1B2A38;line-height:1.5;max-width:760px;margin:40px auto;padding:0 24px}
   h1{font-size:22px;margin:0}
   .grid{display:flex;justify-content:space-between;gap:24px;margin-top:24px}
-  .muted{color:#6b665c;font-size:13px;margin:2px 0}
+  .muted{color:#56677A;font-size:13px;margin:2px 0}
   table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
-  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #e7e3da}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #E4EAEF}
   th.num,td.num{text-align:right;white-space:nowrap}
   .totals{margin-top:12px;margin-left:auto;width:280px;font-size:14px}
   .totals div{display:flex;justify-content:space-between;padding:3px 0}
-  .totals .ttc{font-size:17px;font-weight:700;border-top:1px solid #1c1a17;margin-top:4px;padding-top:6px}
-  .legal{margin-top:28px;font-size:11px;color:#6b665c;border-top:1px solid #e7e3da;padding-top:10px}
-  .badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#eef6f1;color:#1f5c3d}
+  .totals .ttc{font-size:17px;font-weight:700;border-top:1px solid #1B2A38;margin-top:4px;padding-top:6px}
+  .legal{margin-top:28px;font-size:11px;color:#56677A;border-top:1px solid #E4EAEF;padding-top:10px}
+  .badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#EEF3F7;color:#0F1F2E}
   @media print{body{margin:0}}
 </style></head><body>
   <div style="display:flex;justify-content:space-between;align-items:baseline">

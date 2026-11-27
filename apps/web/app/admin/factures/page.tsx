@@ -29,13 +29,13 @@ export default async function AdminFacturesPage() {
         <div className="flex gap-2 text-sm">
           <Link
             href="/admin/factures/export?format=csv"
-            className="rounded-md border border-primary-600 px-3 py-2 font-semibold text-primary-700 no-underline"
+            className="rounded-md border border-primary-900 px-3 py-2 font-semibold text-primary-700 no-underline"
           >
             Export CSV
           </Link>
           <Link
             href="/admin/factures/export?format=fec"
-            className="rounded-md border border-primary-600 px-3 py-2 font-semibold text-primary-700 no-underline"
+            className="rounded-md border border-primary-900 px-3 py-2 font-semibold text-primary-700 no-underline"
           >
             Export FEC
           </Link>

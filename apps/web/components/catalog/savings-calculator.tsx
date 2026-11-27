@@ -38,7 +38,7 @@ export function SavingsCalculator({ savings }: { savings: Savings }) {
 
       <p className="mt-6 text-lg text-ink-900">
         Environ{" "}
-        <span className="font-heading text-2xl font-bold text-primary-700">
+        <span className="font-heading text-2xl font-semibold text-primary-700">
           {hoursPerMonth} heures
         </span>{" "}
         gagnées par mois.
@@ -66,7 +66,7 @@ function Slider({
     <div>
       <label htmlFor={id} className="flex items-center justify-between gap-4 text-base font-semibold text-ink-900">
         <span>{label}</span>
-        <span className="grid h-10 min-w-10 place-items-center rounded-full bg-white px-3 font-heading text-lg font-bold text-primary-700 shadow-soft">{value}</span>
+        <span className="grid h-10 min-w-10 place-items-center rounded-full bg-white px-3 font-heading text-lg font-semibold text-primary-700 shadow-soft">{value}</span>
       </label>
       <input
         id={id}
@@ -75,7 +75,7 @@ function Slider({
         max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 h-11 w-full accent-primary-600"
+        className="mt-2 h-11 w-full accent-primary-900"
       />
     </div>
   );

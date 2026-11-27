@@ -23,7 +23,7 @@ export function NameForm({ current }: { current: string }) {
       <button
         type="submit"
         disabled={saving}
-        className="min-h-touch self-start rounded-full bg-primary-600 px-5 py-2 text-sm font-bold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-primary-700"
+        className="min-h-touch self-start rounded-lg bg-accent-600 px-5 py-2 text-sm font-semibold text-white disabled:opacity-60 shadow-soft transition-colors hover:bg-accent-700"
       >
         {saving ? "…" : "Enregistrer"}
       </button>
@@ -35,7 +35,7 @@ export function ExportButton() {
   return (
     <a
       href="/mon-equipe/compte/export"
-      className="inline-flex min-h-touch items-center rounded-full border-2 border-primary-600 px-5 py-2 text-sm font-bold text-primary-700 no-underline bg-white transition-colors hover:bg-primary-50"
+      className="inline-flex min-h-touch items-center rounded-lg border-2 border-primary-900 px-5 py-2 text-sm font-semibold text-primary-900 no-underline bg-white transition-colors hover:bg-primary-50"
     >
       Télécharger toutes mes données
     </a>
@@ -58,7 +58,7 @@ export function CancelSubscriptionButton({ active }: { active: boolean }) {
             setNotice(r.error ?? "Abonnement résilié.");
           });
         }}
-        className="min-h-touch rounded-full border-2 border-primary-600 px-5 py-2 text-sm font-bold text-primary-700 disabled:opacity-60 bg-white transition-colors hover:bg-primary-50"
+        className="min-h-touch rounded-lg border-2 border-primary-900 px-5 py-2 text-sm font-semibold text-primary-900 disabled:opacity-60 bg-white transition-colors hover:bg-primary-50"
       >
         Résilier mon abonnement
       </button>

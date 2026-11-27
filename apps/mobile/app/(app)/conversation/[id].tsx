@@ -37,7 +37,7 @@ export default function ConversationScreen() {
           style={{
             maxWidth: "85%",
             alignSelf: m.author === "client" ? "flex-start" : "flex-end",
-            backgroundColor: m.author === "client" ? "#e7e3da" : t.color.primary + "22",
+            backgroundColor: m.author === "client" ? t.color.border : t.color.primary + "22",
             borderRadius: t.radius.md,
             paddingHorizontal: 12,
             paddingVertical: 8,

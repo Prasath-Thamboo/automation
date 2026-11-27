@@ -22,7 +22,7 @@ export function Problem() {
           );
         })}
       </ul>
-      <p className="mt-10 max-w-3xl border-l-4 border-accent-500 pl-5 font-heading text-xl font-bold text-ink-900 sm:text-2xl">
+      <p className="mt-10 max-w-3xl border-l-4 border-accent-500 pl-5 font-heading text-xl font-semibold text-ink-900 sm:text-2xl">
         {problem.punch}
       </p>
     </Section>

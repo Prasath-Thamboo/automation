@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 import type { ReactNode } from "react";
 import { site, nav } from "@velekya/copy";
-import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
-import "@fontsource-variable/bricolage-grotesque/wght.css";
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource/poppins/latin-600.css";
 import "@velekya/ui/styles.css";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
@@ -13,9 +13,8 @@ import { HideWhenEmbedded } from "@/components/hide-when-embedded";
 import { SITE_URL, organizationJsonLd } from "@/lib/site";
 
 // Typographie auto-hébergée (paquets @fontsource, servis par notre propre
-// serveur : aucune requête tierce, build sans réseau). Corps : Atkinson
-// Hyperlegible Next, dessinée pour les lecteurs malvoyants. Titres : Bricolage
-// Grotesque.
+// serveur : aucune requête tierce, build sans réseau). Charte v2.0 (§4) :
+// titres en Poppins SemiBold (600), corps en Inter.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

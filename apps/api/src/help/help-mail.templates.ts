@@ -3,9 +3,9 @@ import type { OutgoingMail } from "../mail/mail.service";
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const shell = (b: string) =>
-  `<!doctype html><html lang="fr"><body style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1c1a17;line-height:1.5;">${b}<p style="margin-top:24px;">— Velekya</p></body></html>`;
+  `<!doctype html><html lang="fr"><body style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1B2A38;line-height:1.5;">${b}<p style="margin-top:24px;">— Velekya</p></body></html>`;
 const quote = (s: string) =>
-  `<blockquote style="margin:12px 0;padding:8px 14px;border-left:4px solid #26714b;background:#f4f1ea;white-space:pre-wrap;">${esc(s)}</blockquote>`;
+  `<blockquote style="margin:12px 0;padding:8px 14px;border-left:4px solid #9E1F3F;background:#F4F8F8;white-space:pre-wrap;">${esc(s)}</blockquote>`;
 
 /** Interne : une question transmise à l'équipe Velekya (vocabulaire technique admis). */
 export function helpTransmittedEmail(

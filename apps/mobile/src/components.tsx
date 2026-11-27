@@ -27,7 +27,7 @@ export function ConnectivityBanner(): React.ReactElement | null {
   return (
     <View
       style={{
-        backgroundColor: online === false ? "#e7e3da" : t.color.primary + "22",
+        backgroundColor: online === false ? t.color.border : t.color.primary + "22",
         paddingVertical: 8,
         paddingHorizontal: t.space[4],
       }}
